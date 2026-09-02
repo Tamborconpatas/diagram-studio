@@ -1,6 +1,6 @@
 # Diagram Studio
 
-Visor y editor local de diagramas: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, Excalidraw, TikZ, Ditaa (ASCII art), DBML (esquemas de base de datos), Blockdiag (bloques/redes) y Sankey (flujos proporcionales), más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
+Visor y editor local de diagramas: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, Excalidraw, TikZ, Ditaa (ASCII art), DBML (esquemas de base de datos), Blockdiag (bloques/redes), Sankey (flujos proporcionales) y Nomnoml (UML simple), más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
 
 ## Setup
 

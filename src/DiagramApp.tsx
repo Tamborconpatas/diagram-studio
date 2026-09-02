@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -11,6 +11,7 @@ import DitaaEditor from './editors/DitaaEditor';
 import DbmlEditor from './editors/DbmlEditor';
 import BlockdiagEditor from './editors/BlockdiagEditor';
 import SankeyEditor from './editors/SankeyEditor';
+import NomnomlEditor from './editors/NomnomlEditor';
 import type { PendingScene } from './sceneHandoff';
 
 const TOOLS = [
@@ -25,6 +26,7 @@ const TOOLS = [
   { id: 'dbml', label: 'DBML', icon: Database, Component: DbmlEditor, description: 'Esquemas de base de datos: tablas, tipos y relaciones ER.' },
   { id: 'blockdiag', label: 'Blockdiag', icon: Boxes, Component: BlockdiagEditor, description: 'Diagramas de bloques y redes desde texto simple.' },
   { id: 'sankey', label: 'Sankey', icon: Waves, Component: SankeyEditor, description: 'Diagramas de flujo proporcional, 100% en el navegador.' },
+  { id: 'nomnoml', label: 'Nomnoml', icon: ComponentIcon, Component: NomnomlEditor, description: 'UML simple (clases, herencia), 100% en el navegador.' },
 ] as const;
 
 type ToolId = (typeof TOOLS)[number]['id'];
