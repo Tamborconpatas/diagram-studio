@@ -1,13 +1,30 @@
-import { useRef } from 'react';
-import { Excalidraw, exportToSvg, serializeAsJSON } from '@excalidraw/excalidraw';
+import { useEffect, useRef, useState } from 'react';
+import { Excalidraw, exportToSvg, serializeAsJSON, convertToExcalidrawElements } from '@excalidraw/excalidraw';
 import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 import '@excalidraw/excalidraw/index.css';
 import { toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { downloadText } from '../export';
+import type { PendingScene } from '../sceneHandoff';
 
-export default function ExcalidrawEditor() {
+export default function ExcalidrawEditor({
+  pendingScene,
+  onSceneConsumed,
+}: {
+  pendingScene?: PendingScene | null;
+  onSceneConsumed?: () => void;
+}) {
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
+  const [apiReady, setApiReady] = useState(false);
+
+  useEffect(() => {
+    if (!apiReady || !pendingScene) return;
+    const api = apiRef.current!;
+    api.updateScene({ elements: convertToExcalidrawElements(pendingScene.elements) });
+    if (pendingScene.files) api.addFiles(Object.values(pendingScene.files));
+    api.scrollToContent(undefined, { fitToContent: true });
+    onSceneConsumed?.();
+  }, [apiReady, pendingScene, onSceneConsumed]);
 
   const getSvg = async () => {
     const api = apiRef.current;
@@ -34,7 +51,13 @@ export default function ExcalidrawEditor() {
         <ExportButtons filename="diagrama-excalidraw" getSvg={getSvg} />
       </div>
       <div className="flex-1 relative">
-        <Excalidraw excalidrawAPI={(api) => (apiRef.current = api)} theme="dark" />
+        <Excalidraw
+          excalidrawAPI={(api) => {
+            apiRef.current = api;
+            setApiReady(true);
+          }}
+          theme="dark"
+        />
       </div>
     </div>
   );

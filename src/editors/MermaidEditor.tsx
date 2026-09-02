@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
+import { parseMermaidToExcalidraw } from '@excalidraw/mermaid-to-excalidraw';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
+import type { PendingScene } from '../sceneHandoff';
 
 const THEMES = ['default', 'neutral', 'dark', 'forest', 'base'] as const;
 
@@ -14,12 +16,25 @@ const DEFAULT_CODE = `flowchart TD
 
 let renderCount = 0;
 
-export default function MermaidEditor() {
+export default function MermaidEditor({ onEditInExcalidraw }: { onEditInExcalidraw?: (scene: PendingScene) => void }) {
   const outRef = useRef<HTMLDivElement>(null);
   const [code, setCode] = useState(DEFAULT_CODE);
   const [theme, setTheme] = useState<(typeof THEMES)[number]>('dark');
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [converting, setConverting] = useState(false);
+
+  const editVisually = async () => {
+    setConverting(true);
+    try {
+      const { elements, files } = await parseMermaidToExcalidraw(code);
+      onEditInExcalidraw?.({ elements, files });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setConverting(false);
+    }
+  };
 
   const render = async (src: string, t: (typeof THEMES)[number]) => {
     try {
@@ -66,6 +81,11 @@ export default function MermaidEditor() {
           <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.mmd')}>
             Descargar .mmd
           </button>
+          {onEditInExcalidraw && (
+            <button className={toolbarBtn} onClick={editVisually} disabled={converting}>
+              {converting ? 'Convirtiendo…' : 'Editar visualmente'}
+            </button>
+          )}
           <ExportButtons filename="diagrama-mermaid" getSvg={async () => svgMarkup} />
         </>
       }

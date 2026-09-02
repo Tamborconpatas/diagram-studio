@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ComponentType } from 'react';
 import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
@@ -7,6 +7,7 @@ import GraphvizEditor from './editors/GraphvizEditor';
 import ExcalidrawEditor from './editors/ExcalidrawEditor';
 import PythonDiagramsEditor from './editors/PythonDiagramsEditor';
 import TikzEditor from './editors/TikzEditor';
+import type { PendingScene } from './sceneHandoff';
 
 const TOOLS = [
   { id: 'bpmn', label: 'BPMN', icon: Workflow, Component: BpmnEditor },
@@ -18,10 +19,21 @@ const TOOLS = [
   { id: 'tikz', label: 'TikZ', icon: Sigma, Component: TikzEditor },
 ] as const;
 
+type ToolId = (typeof TOOLS)[number]['id'];
+
+// Only MermaidEditor (onEditInExcalidraw) and ExcalidrawEditor
+// (pendingScene/onSceneConsumed) read these; the rest ignore them.
+type HandoffProps = {
+  onEditInExcalidraw?: (scene: PendingScene) => void;
+  pendingScene?: PendingScene | null;
+  onSceneConsumed?: () => void;
+};
+
 export default function DiagramApp() {
-  const [active, setActive] = useState<(typeof TOOLS)[number]['id']>('bpmn');
+  const [active, setActive] = useState<ToolId>('bpmn');
+  const [pendingScene, setPendingScene] = useState<PendingScene | null>(null);
   const tool = TOOLS.find((t) => t.id === active)!;
-  const Active = tool.Component;
+  const Active = tool.Component as ComponentType<HandoffProps>;
 
   return (
     <div className="h-screen w-screen flex flex-col bg-[#040507] text-zinc-100 font-sans">
@@ -48,7 +60,15 @@ export default function DiagramApp() {
           ))}
         </nav>
       </header>
-      <Active key={active} />
+      <Active
+        key={active}
+        onEditInExcalidraw={(scene) => {
+          setPendingScene(scene);
+          setActive('excalidraw');
+        }}
+        pendingScene={pendingScene}
+        onSceneConsumed={() => setPendingScene(null)}
+      />
     </div>
   );
 }
