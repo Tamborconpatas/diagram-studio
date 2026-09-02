@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -8,6 +8,7 @@ import ExcalidrawEditor from './editors/ExcalidrawEditor';
 import PythonDiagramsEditor from './editors/PythonDiagramsEditor';
 import TikzEditor from './editors/TikzEditor';
 import DitaaEditor from './editors/DitaaEditor';
+import DbmlEditor from './editors/DbmlEditor';
 import type { PendingScene } from './sceneHandoff';
 
 const TOOLS = [
@@ -19,6 +20,7 @@ const TOOLS = [
   { id: 'aws', label: 'Arquitectura (Python)', icon: Cloud, Component: PythonDiagramsEditor, description: 'Diagramas AWS/GCP/Azure desde código Python (`diagrams`).' },
   { id: 'tikz', label: 'TikZ', icon: Sigma, Component: TikzEditor, description: 'Gráficos vectoriales de precisión vía LaTeX.' },
   { id: 'ditaa', label: 'Ditaa (ASCII art)', icon: Terminal, Component: DitaaEditor, description: 'Convierte arte ASCII en diagramas prolijos.' },
+  { id: 'dbml', label: 'DBML', icon: Database, Component: DbmlEditor, description: 'Esquemas de base de datos: tablas, tipos y relaciones ER.' },
 ] as const;
 
 type ToolId = (typeof TOOLS)[number]['id'];

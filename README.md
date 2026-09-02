@@ -1,6 +1,6 @@
 # Diagram Studio
 
-Visor y editor local de diagramas: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, Excalidraw, TikZ y Ditaa (ASCII art), más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
+Visor y editor local de diagramas: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, Excalidraw, TikZ, Ditaa (ASCII art) y DBML (esquemas de base de datos), más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
 
 ## Setup
 
@@ -20,4 +20,4 @@ npm run dev
 
 Abre `http://localhost:5173`. O doble clic en **Diagram Studio** en el escritorio (arranca el server si no está corriendo).
 
-Cada editor permite pegar/editar el código fuente, descargarlo en su formato nativo (.bpmn/.mmd/.puml/.dot/.excalidraw/.py/.tex/.ditaa) y exportar el diagrama renderizado en SVG/PNG/JPG a alta resolución.
+Cada editor permite pegar/editar el código fuente, descargarlo en su formato nativo (.bpmn/.mmd/.puml/.dot/.excalidraw/.py/.tex/.ditaa/.dbml) y exportar el diagrama renderizado en SVG/PNG/JPG a alta resolución.

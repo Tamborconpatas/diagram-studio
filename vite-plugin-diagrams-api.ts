@@ -6,6 +6,7 @@ import type { Connect, Plugin, ViteDevServer } from 'vite';
 
 const PYTHON = join(import.meta.dirname, '.venv-diagrams', 'bin', 'python3');
 const RUNNER = join(import.meta.dirname, 'scripts', 'diagrams-runner.py');
+const DBML_RENDERER = join(import.meta.dirname, 'node_modules', '.bin', 'dbml-renderer');
 const MAX_BODY_BYTES = 200_000;
 
 async function readBody(req: import('node:http').IncomingMessage): Promise<string> {
@@ -110,6 +111,12 @@ async function renderDitaa(code: string, dir: string): Promise<string> {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" xlink:href="data:image/png;base64,${png.toString('base64')}"/></svg>`;
 }
 
+async function renderDbml(code: string, dir: string): Promise<string> {
+  await writeFile(join(dir, 'input.dbml'), code, 'utf-8');
+  await run(DBML_RENDERER, ['-i', 'input.dbml', '-o', 'output.svg'], dir, 15_000);
+  return readFile(join(dir, 'output.svg'), 'utf-8');
+}
+
 export function diagramsApiPlugin(): Plugin {
   return {
     name: 'diagrams-python-api',
@@ -117,6 +124,7 @@ export function diagramsApiPlugin(): Plugin {
       jsonEndpoint(server, '/api/render-diagrams', 'diagrams-', renderDiagrams);
       jsonEndpoint(server, '/api/render-tikz', 'tikz-', renderTikz);
       jsonEndpoint(server, '/api/render-ditaa', 'ditaa-', renderDitaa);
+      jsonEndpoint(server, '/api/render-dbml', 'dbml-', renderDbml);
     },
   };
 }
