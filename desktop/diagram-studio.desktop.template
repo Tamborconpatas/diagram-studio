@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Diagram Studio
+Comment=Visor y editor de diagramas BPMN, Mermaid, PlantUML, Graphviz, Excalidraw y arquitectura (Python)
+Exec=__APP_DIR__/launch-diagrams.sh
+Icon=applications-graphics
+Terminal=true
+Categories=Development;
+StartupNotify=true
+Keywords=bpmn;mermaid;plantuml;graphviz;excalidraw;diagram;xml;aws;architecture;

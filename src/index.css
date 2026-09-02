@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background-color: #040507;
+    color: #e2e8f0;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.04) 0%, transparent 40%),
+      linear-gradient(rgba(18, 18, 24, 0.8) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(18, 18, 24, 0.8) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  }
+
+  .font-mono-code {
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #040507;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #141b27;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0d9488;
+}
+
+/* Cyber Terminal / CRT Overlay */
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  z-index: 20;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Hologram keycard background */
+.hologram-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(8, 12, 22, 0.9) 0%, rgba(18, 26, 42, 0.65) 100%);
+  border: 1px solid rgba(20, 184, 166, 0.25);
+  box-shadow: 
+    0 0 25px rgba(6, 182, 212, 0.06),
+    inset 0 0 15px rgba(20, 184, 166, 0.05);
+}
+
+.hologram-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(20, 184, 166, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Cassette Animation & Styling */
+@keyframes spin-gear {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cassette-gear-spin {
+  animation: spin-gear 4s linear infinite;
+}
+
+.cassette-gear-spin-paused {
+  animation-play-state: paused;
+}
+
+/* Custom visualizer bars */
+@keyframes equalizer {
+  0%, 100% { height: 4px; }
+  50% { height: 24px; }
+}
+
+.wave-bar {
+  width: 3px;
+  background: linear-gradient(to top, #0d9488, #06b6d4);
+  border-radius: 9999px;
+  animation: equalizer 1s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.wave-bar:nth-child(2) { animation-delay: 0.15s; animation-duration: 0.7s; }
+.wave-bar:nth-child(3) { animation-delay: 0.35s; animation-duration: 1.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.05s; animation-duration: 0.9s; }
+.wave-bar:nth-child(5) { animation-delay: 0.25s; animation-duration: 1.1s; }
+
+/* Glowing Border System */
+.cyber-card {
+  position: relative;
+  background: rgba(8, 10, 14, 0.85);
+  border: 1px solid rgba(63, 63, 70, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cyber-card:hover {
+  border-color: rgba(20, 184, 166, 0.45);
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.8),
+    0 0 30px -5px rgba(20, 184, 166, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Corner Accents for Cyber Cards */
+.cyber-corners {
+  position: relative;
+}
+
+.cyber-corners::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 12px; height: 12px;
+  border-top: 2px solid #14b8a6;
+  border-left: 2px solid #14b8a6;
+  border-top-left-radius: 4px;
+  pointer-events: none;
+}
+
+.cyber-corners::after {
+  content: "";
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 12px; height: 12px;
+  border-bottom: 2px solid #14b8a6;
+  border-right: 2px solid #14b8a6;
+  border-bottom-right-radius: 4px;
+  pointer-events: none;
+}
+
+/* Running diagnostics line */
+@keyframes diagnostic-sweep {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.diagnostic-sweep-line {
+  position: absolute;
+  left: 0; width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(6, 182, 212, 0.4), transparent);
+  animation: diagnostic-sweep 4s linear infinite;
+  pointer-events: none;
+}
+
+/* Print styles for CV conversion */
+@media print {
+  @page {
+    margin: 1.6cm 1.4cm;
+    size: letter;
+  }
+  body {
+    background: #ffffff none !important;
+    color: #111827 !important;
+  }
+  /* Ensure colors are printed properly */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
