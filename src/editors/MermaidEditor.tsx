@@ -155,6 +155,84 @@ Presupuesto,Ocio,200`,
   y-axis "Unidades" 0 --> 1000
   bar [500, 620, 480, 750, 900]`,
   },
+  {
+    label: 'Requirement',
+    code: `requirementDiagram
+requirement test_req {
+id: 1
+text: el sistema debe autenticar usuarios
+risk: high
+verifymethod: test
+}
+element test_entity {
+type: simulation
+}
+test_entity - satisfies -> test_req`,
+  },
+  {
+    label: 'C4',
+    code: `C4Context
+title Diagrama de contexto
+Person(user, "Usuario")
+System(sys, "Sistema")
+Rel(user, sys, "usa")`,
+  },
+  {
+    label: 'Packet',
+    code: `packet-beta
+title Paquete UDP
+0-7: "Puerto origen"
+8-15: "Puerto destino"
+16-31: "Longitud"`,
+  },
+  {
+    label: 'Kanban',
+    code: `kanban
+  Por hacer
+    task1[Diseñar UI]
+    task2[Definir API]
+  En progreso
+    task3[Implementar backend]
+  Hecho
+    task4[Setup inicial]`,
+  },
+  {
+    label: 'Architecture',
+    code: `architecture-beta
+  group api(cloud)[API]
+  service db(database)[Database] in api
+  service server(server)[Server] in api
+  server:R -- L:db`,
+  },
+  {
+    label: 'Radar',
+    code: `radar-beta
+title Habilidades
+axis Diseno, Codigo, Testing, Docs
+curve Actual{80, 90, 60, 40}
+curve Meta{90, 95, 85, 70}`,
+  },
+  {
+    label: 'Ishikawa',
+    code: `ishikawa
+Causa raiz del bug
+Personas
+  Falta capacitacion
+Proceso
+  Sin revision de codigo
+Tecnologia
+  Libreria desactualizada`,
+  },
+  {
+    label: 'Wardley',
+    code: `wardley-beta
+title Mapa Wardley
+component Usuario [0.9, 0.1]
+component App [0.7, 0.5]
+component Base de datos [0.3, 0.8]
+Usuario -> App
+App -> Base de datos`,
+  },
 ] as const;
 
 let renderCount = 0;

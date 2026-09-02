@@ -114,6 +114,116 @@ object Pedido {
 Usuario -- Pedido
 @enduml`,
   },
+  {
+    label: 'Timing',
+    code: `@startuml
+robust "Servidor" as S
+S is Idle
+@0
+S is Idle
+@100
+S is Busy
+@enduml`,
+  },
+  {
+    label: 'Wireframe',
+    code: `@startsalt
+{
+  Login
+  ==
+  Password
+  [OK]
+}
+@endsalt`,
+  },
+  {
+    label: 'Gantt',
+    code: `@startgantt
+[Diseño] lasts 5 days
+[Desarrollo] lasts 8 days
+[Desarrollo] starts at [Diseño]'s end
+@endgantt`,
+  },
+  {
+    label: 'MindMap',
+    code: `@startmindmap
+* Proyecto
+** Diseño
+*** UI
+*** UX
+** Desarrollo
+*** Frontend
+*** Backend
+@endmindmap`,
+  },
+  {
+    label: 'WBS',
+    code: `@startwbs
+* Proyecto
+** Diseño
+** Desarrollo
+*** Frontend
+*** Backend
+** Lanzamiento
+@endwbs`,
+  },
+  {
+    label: 'JSON',
+    code: `@startjson
+{
+  "usuario": "ana",
+  "activo": true,
+  "roles": ["admin", "editor"]
+}
+@endjson`,
+  },
+  {
+    label: 'YAML',
+    code: `@startyaml
+usuario: ana
+activo: true
+roles:
+  - admin
+  - editor
+@endyaml`,
+  },
+  {
+    label: 'Archimate',
+    code: `@startuml
+!include <archimate/Archimate>
+Business_Actor(a, "Cliente")
+Application_Component(b, "App")
+Rel_Serving(b, a)
+@enduml`,
+  },
+  {
+    label: 'Network',
+    code: `@startnwdiag
+nwdiag {
+  network dmz {
+    web01;
+    web02;
+  }
+  network internal {
+    web01;
+    db01;
+  }
+}
+@endnwdiag`,
+  },
+  {
+    label: 'Regex',
+    code: `@startregex
+[a-zA-Z][a-zA-Z0-9_]*
+@endregex`,
+  },
+  {
+    label: 'EBNF',
+    code: `@startebnf
+regla = "a", "b" | "c";
+otra = { regla }, [ "opcional" ];
+@endebnf`,
+  },
 ] as const;
 
 // Force the classic UML stick-figure actor: some themes (and the public
@@ -124,9 +234,15 @@ Usuario -- Pedido
 // Instead of injecting alongside whatever the source already has, strip any
 // @start/@end wrapper and conflicting actorStyle lines, then rebuild with
 // our skinparam guaranteed first.
+//
+// Only applies to @startuml/@enduml documents: the other diagram families
+// (gantt, mindmap, wbs, json, yaml, salt, regex, ebnf, nwdiag, timing...)
+// use their own dedicated start/end tags and don't have actors or themes —
+// rewriting those to @startuml would break them, so pass them through as-is.
 function withTheme(code: string, theme: string) {
-  const body = code
-    .replace(/^﻿/, '')
+  const clean = code.replace(/^﻿/, '');
+  if (!/^\s*@startuml\b/im.test(clean)) return clean;
+  const body = clean
     .replace(/^\s*@start\w+.*$/im, '')
     .replace(/\s*@end\w+\s*$/im, '')
     .replace(/^\s*skinparam\s+actorStyle\s+\S+\s*$/gim, '')
