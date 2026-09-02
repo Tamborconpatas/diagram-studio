@@ -23,6 +23,23 @@ rm -rf .venv-diagrams
 python3 -m venv .venv-diagrams
 .venv-diagrams/bin/pip install --quiet --upgrade pip diagrams
 
+echo "==> Comprobando LaTeX/TikZ"
+if ! command -v latex >/dev/null || ! command -v dvisvgm >/dev/null; then
+  echo "ERROR: falta 'latex' o 'dvisvgm'. Instala una distribución TeX, p.ej.:" >&2
+  echo "  Debian/Ubuntu: sudo apt install texlive-latex-base texlive-pictures dvisvgm" >&2
+  echo "  Fedora:        sudo dnf install texlive-scheme-basic texlive-pgf texlive-dvisvgm" >&2
+  echo "  Arch:          sudo pacman -S texlive-basic texlive-pictures" >&2
+  echo "  o TinyTeX: https://yihui.org/tinytex/" >&2
+  exit 1
+fi
+if ! kpsewhich tikz.sty >/dev/null 2>&1 && command -v tlmgr >/dev/null; then
+  tlmgr install pgf dvisvgm >/dev/null
+fi
+if ! kpsewhich tikz.sty >/dev/null 2>&1; then
+  echo "ERROR: falta el paquete LaTeX 'pgf/tikz' (tikz.sty). Instálalo con tu gestor de paquetes TeX." >&2
+  exit 1
+fi
+
 echo "==> Instalando lanzador de escritorio"
 mkdir -p "$HOME/Desktop"
 sed "s#__APP_DIR__#$(pwd)#g" desktop/diagram-studio.desktop.template > "$HOME/Desktop/diagram-studio.desktop"

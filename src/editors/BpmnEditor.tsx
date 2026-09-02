@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Modeler from 'bpmn-js/lib/Modeler';
+import type Modeling from 'bpmn-js/lib/features/modeling/Modeling';
 import { layoutProcess } from 'bpmn-auto-layout';
-import { EditorLayout, toolbarBtn } from '../EditorLayout';
+import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { downloadText } from '../export';
 
@@ -22,11 +23,34 @@ const EMPTY_DIAGRAM = `<?xml version="1.0" encoding="UTF-8"?>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>`;
 
+const STYLE_PRESETS = {
+  ninguno: null,
+  azul: { fill: '#e0f2fe', stroke: '#0284c7' },
+  verde: { fill: '#dcfce7', stroke: '#16a34a' },
+  ambar: { fill: '#fef3c7', stroke: '#d97706' },
+  pastel: { fill: '#fde2e4', stroke: '#c9184a' },
+} as const;
+
+type StylePreset = keyof typeof STYLE_PRESETS;
+
+type ElementRegistry = { getAll: () => Array<{ type: string; parent: unknown }> };
+
 export default function BpmnEditor() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<Modeler | null>(null);
   const [xml, setXml] = useState(EMPTY_DIAGRAM);
+  const [style, setStyle] = useState<StylePreset>('ninguno');
   const [error, setError] = useState<string | null>(null);
+
+  const applyStyle = (preset: StylePreset) => {
+    const colors = STYLE_PRESETS[preset];
+    if (!colors) return;
+    const modeler = modelerRef.current!;
+    const modeling = modeler.get<Modeling>('modeling');
+    const elementRegistry = modeler.get<ElementRegistry>('elementRegistry');
+    const elements = elementRegistry.getAll().filter((el) => el.parent && el.type !== 'label');
+    modeling.setColor(elements as Parameters<Modeling['setColor']>[0], colors);
+  };
 
   useEffect(() => {
     const modeler = new Modeler({ container: canvasRef.current! });
@@ -49,6 +73,7 @@ export default function BpmnEditor() {
         }
       }
       modelerRef.current!.get<{ zoom: (v: string) => void }>('canvas').zoom('fit-viewport');
+      applyStyle(style);
       setXml(toImport);
       setError(null);
     } catch (err) {
@@ -66,6 +91,19 @@ export default function BpmnEditor() {
       toolbar={
         <>
           <button className={toolbarBtn} onClick={loadXml}>Cargar → diagrama</button>
+          <select
+            className={toolbarSelect}
+            value={style}
+            onChange={(e) => {
+              const s = e.target.value as StylePreset;
+              setStyle(s);
+              applyStyle(s);
+            }}
+          >
+            {Object.keys(STYLE_PRESETS).map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
           <button className={toolbarBtn} onClick={exportXml}>Diagrama → XML</button>
           <button className={toolbarBtn} onClick={() => downloadText(xml, 'diagrama.bpmn')}>
             Descargar .bpmn

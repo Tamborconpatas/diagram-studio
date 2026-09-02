@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
 import GraphvizEditor from './editors/GraphvizEditor';
 import ExcalidrawEditor from './editors/ExcalidrawEditor';
 import PythonDiagramsEditor from './editors/PythonDiagramsEditor';
+import TikzEditor from './editors/TikzEditor';
 
 const TOOLS = [
   { id: 'bpmn', label: 'BPMN', icon: Workflow, Component: BpmnEditor },
@@ -14,6 +15,7 @@ const TOOLS = [
   { id: 'graphviz', label: 'Graphviz', icon: Share2, Component: GraphvizEditor },
   { id: 'excalidraw', label: 'Excalidraw', icon: PenTool, Component: ExcalidrawEditor },
   { id: 'aws', label: 'Arquitectura (Python)', icon: Cloud, Component: PythonDiagramsEditor },
+  { id: 'tikz', label: 'TikZ', icon: Sigma, Component: TikzEditor },
 ] as const;
 
 export default function DiagramApp() {

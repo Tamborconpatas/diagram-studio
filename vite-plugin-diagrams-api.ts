@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { Plugin } from 'vite';
+import type { Connect, Plugin, ViteDevServer } from 'vite';
 
 const PYTHON = join(import.meta.dirname, '.venv-diagrams', 'bin', 'python3');
 const RUNNER = join(import.meta.dirname, 'scripts', 'diagrams-runner.py');
@@ -38,45 +38,70 @@ async function inlineLocalImages(svg: string): Promise<string> {
   return result;
 }
 
+function run(command: string, args: string[], cwd: string, timeout: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    execFile(command, args, { cwd, timeout }, (err, stdout, stderr) => {
+      if (err) reject(new Error(stderr || stdout || err.message));
+      else resolve();
+    });
+  });
+}
+
+type Handler = (code: string, dir: string) => Promise<string>;
+
+function jsonEndpoint(server: ViteDevServer, path: string, tmpPrefix: string, handler: Handler) {
+  server.middlewares.use(path, (async (req: Connect.IncomingMessage, res) => {
+    if (req.method !== 'POST') {
+      res.statusCode = 405;
+      res.end('Method Not Allowed');
+      return;
+    }
+
+    let dir: string | null = null;
+    try {
+      const { code } = JSON.parse(await readBody(req));
+      if (typeof code !== 'string' || !code.trim()) throw new Error('Falta el código');
+
+      dir = await mkdtemp(join(tmpdir(), tmpPrefix));
+      const svg = await handler(code, dir);
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ svg }));
+    } catch (err) {
+      res.statusCode = 400;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
+    } finally {
+      if (dir) await rm(dir, { recursive: true, force: true });
+    }
+  }) as Connect.NextHandleFunction);
+}
+
+async function renderDiagrams(code: string, dir: string): Promise<string> {
+  const scriptPath = join(dir, 'user_script.py');
+  await writeFile(scriptPath, code, 'utf-8');
+  await run(PYTHON, [RUNNER, scriptPath], dir, 15_000);
+  const rawSvg = await readFile(join(dir, 'output.svg'), 'utf-8');
+  return inlineLocalImages(rawSvg);
+}
+
+const TIKZ_LIBRARIES = 'arrows.meta,positioning,shapes.geometric,calc,decorations.pathmorphing,patterns';
+
+async function renderTikz(code: string, dir: string): Promise<string> {
+  const doc = code.includes('\\documentclass')
+    ? code
+    : `\\documentclass[tikz,dvisvgm,border=2pt]{standalone}\n\\usetikzlibrary{${TIKZ_LIBRARIES}}\n\\begin{document}\n${code}\n\\end{document}`;
+  await writeFile(join(dir, 'doc.tex'), doc, 'utf-8');
+  await run('latex', ['-interaction=nonstopmode', '-halt-on-error', 'doc.tex'], dir, 20_000);
+  await run('dvisvgm', ['doc.dvi', '-o', 'doc.svg'], dir, 20_000);
+  return readFile(join(dir, 'doc.svg'), 'utf-8');
+}
+
 export function diagramsApiPlugin(): Plugin {
   return {
     name: 'diagrams-python-api',
     configureServer(server) {
-      server.middlewares.use('/api/render-diagrams', async (req, res) => {
-        if (req.method !== 'POST') {
-          res.statusCode = 405;
-          res.end('Method Not Allowed');
-          return;
-        }
-
-        let dir: string | null = null;
-        try {
-          const { code } = JSON.parse(await readBody(req));
-          if (typeof code !== 'string' || !code.trim()) throw new Error('Falta el código Python');
-
-          dir = await mkdtemp(join(tmpdir(), 'diagrams-'));
-          const scriptPath = join(dir, 'user_script.py');
-          await writeFile(scriptPath, code, 'utf-8');
-
-          await new Promise<void>((resolve, reject) => {
-            execFile(PYTHON, [RUNNER, scriptPath], { cwd: dir!, timeout: 15_000 }, (err, _stdout, stderr) => {
-              if (err) reject(new Error(stderr || err.message));
-              else resolve();
-            });
-          });
-
-          const rawSvg = await readFile(join(dir, 'output.svg'), 'utf-8');
-          const svg = await inlineLocalImages(rawSvg);
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ svg }));
-        } catch (err) {
-          res.statusCode = 400;
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
-        } finally {
-          if (dir) await rm(dir, { recursive: true, force: true });
-        }
-      });
+      jsonEndpoint(server, '/api/render-diagrams', 'diagrams-', renderDiagrams);
+      jsonEndpoint(server, '/api/render-tikz', 'tikz-', renderTikz);
     },
   };
 }

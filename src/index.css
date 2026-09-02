@@ -173,6 +173,12 @@
   pointer-events: none;
 }
 
+/* bpmn-js's context-pad/popup icons don't set their own text color, so our
+   dark theme's light body color was leaking in and making them invisible. */
+.djs-container {
+  color: #1a1a1a;
+}
+
 /* Print styles for CV conversion */
 @media print {
   @page {
