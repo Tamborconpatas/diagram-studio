@@ -26,6 +26,7 @@ export default function ExcalidrawEditor({
       ? { elements: convertToExcalidrawElements(pendingScene.elements), files: pendingScene.files, scrollToContent: true }
       : null,
   );
+  const [warning] = useState(() => pendingScene?.warning ?? null);
 
   // Only clears the one-shot handoff this instance was mounted with, so this
   // intentionally runs once and ignores subsequent pendingScene/callback changes.
@@ -56,6 +57,7 @@ export default function ExcalidrawEditor({
       <div className="flex flex-wrap items-center gap-2 p-3 border-b border-zinc-800/80 bg-zinc-950/40">
         <button className={toolbarBtn} onClick={downloadScene}>Descargar .excalidraw</button>
         <ExportButtons filename="diagrama-excalidraw" getSvg={getSvg} />
+        {warning && <span className="text-amber-400 text-[11px] font-mono-code">{warning}</span>}
       </div>
       <div className="flex-1 relative">
         <Excalidraw

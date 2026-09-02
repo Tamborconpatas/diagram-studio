@@ -28,7 +28,19 @@ export default function MermaidEditor({ onEditInExcalidraw }: { onEditInExcalidr
     setConverting(true);
     try {
       const { elements, files } = await parseMermaidToExcalidraw(code);
-      onEditInExcalidraw?.({ elements, files });
+      // The converter only breaks flowchart/sequence/class/ER/state diagrams
+      // into real editable elements; anything else (pie, gantt, mindmap,
+      // gitGraph, journey...) comes back as a single flat embedded image.
+      // The warning has to travel with the scene: we switch tabs right after,
+      // so setting our own `error` here would never be seen.
+      const isFlatImage = elements.length === 1 && elements[0].type === 'image';
+      onEditInExcalidraw?.({
+        elements,
+        files,
+        warning: isFlatImage
+          ? 'Este tipo de diagrama Mermaid no se puede editar nodo por nodo (solo flowchart, sequence, class, ER y state) — se pegó como una sola imagen.'
+          : undefined,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
