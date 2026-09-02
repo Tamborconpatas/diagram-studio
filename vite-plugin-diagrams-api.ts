@@ -19,6 +19,25 @@ async function readBody(req: import('node:http').IncomingMessage): Promise<strin
   return Buffer.concat(chunks).toString('utf-8');
 }
 
+const MIME_BY_EXT: Record<string, string> = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml' };
+
+// graphviz's SVG output references node icons (aws/gcp/azure PNGs) by absolute
+// filesystem path; the browser can't load those, so inline them as data URIs.
+async function inlineLocalImages(svg: string): Promise<string> {
+  const hrefRe = /xlink:href="(\/[^"]+\.(?:png|jpe?g|svg))"/g;
+  let result = svg;
+  for (const [full, path] of svg.matchAll(hrefRe)) {
+    try {
+      const data = await readFile(path);
+      const mime = MIME_BY_EXT[path.split('.').pop()!.toLowerCase()] ?? 'application/octet-stream';
+      result = result.replace(full, `xlink:href="data:${mime};base64,${data.toString('base64')}"`);
+    } catch {
+      // leave the original href if the file can't be read
+    }
+  }
+  return result;
+}
+
 export function diagramsApiPlugin(): Plugin {
   return {
     name: 'diagrams-python-api',
@@ -46,7 +65,8 @@ export function diagramsApiPlugin(): Plugin {
             });
           });
 
-          const svg = await readFile(join(dir, 'output.svg'), 'utf-8');
+          const rawSvg = await readFile(join(dir, 'output.svg'), 'utf-8');
+          const svg = await inlineLocalImages(rawSvg);
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ svg }));
         } catch (err) {
