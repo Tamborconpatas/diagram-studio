@@ -15,16 +15,23 @@ export default function ExcalidrawEditor({
   onSceneConsumed?: () => void;
 }) {
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
-  const [apiReady, setApiReady] = useState(false);
 
+  // This component fully remounts (see `key={active}` in DiagramApp) whenever
+  // the tab is opened, and `pendingScene` is already set by then, so loading
+  // it via `initialData` (Excalidraw's own documented path) avoids the
+  // imperative updateScene()-right-after-mount race that silently dropped
+  // elements when tried instead.
+  const [initialData] = useState(() =>
+    pendingScene
+      ? { elements: convertToExcalidrawElements(pendingScene.elements), files: pendingScene.files, scrollToContent: true }
+      : null,
+  );
+
+  // Only clears the one-shot handoff this instance was mounted with, so this
+  // intentionally runs once and ignores subsequent pendingScene/callback changes.
   useEffect(() => {
-    if (!apiReady || !pendingScene) return;
-    const api = apiRef.current!;
-    api.updateScene({ elements: convertToExcalidrawElements(pendingScene.elements) });
-    if (pendingScene.files) api.addFiles(Object.values(pendingScene.files));
-    api.scrollToContent(undefined, { fitToContent: true });
-    onSceneConsumed?.();
-  }, [apiReady, pendingScene, onSceneConsumed]);
+    if (pendingScene) onSceneConsumed?.();
+  }, []);
 
   const getSvg = async () => {
     const api = apiRef.current;
@@ -52,11 +59,9 @@ export default function ExcalidrawEditor({
       </div>
       <div className="flex-1 relative">
         <Excalidraw
-          excalidrawAPI={(api) => {
-            apiRef.current = api;
-            setApiReady(true);
-          }}
-          theme="dark"
+          excalidrawAPI={(api) => (apiRef.current = api)}
+          theme="light"
+          initialData={initialData}
         />
       </div>
     </div>

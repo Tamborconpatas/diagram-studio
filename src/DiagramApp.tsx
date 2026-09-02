@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react';
+import { useCallback, useState, type ComponentType } from 'react';
 import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
@@ -35,6 +35,15 @@ export default function DiagramApp() {
   const tool = TOOLS.find((t) => t.id === active)!;
   const Active = tool.Component as ComponentType<HandoffProps>;
 
+  // Stable identities: ExcalidrawEditor keeps mounted (same `key`) across the
+  // pendingScene->null transition, and inline callbacks here would otherwise
+  // get a fresh reference on every render, which resets the Excalidraw canvas.
+  const handleEditInExcalidraw = useCallback((scene: PendingScene) => {
+    setPendingScene(scene);
+    setActive('excalidraw');
+  }, []);
+  const handleSceneConsumed = useCallback(() => setPendingScene(null), []);
+
   return (
     <div className="h-screen w-screen flex flex-col bg-[#040507] text-zinc-100 font-sans">
       <header className="flex items-center gap-4 px-4 py-2.5 border-b border-zinc-800/80 bg-zinc-950/60 font-mono-code">
@@ -62,12 +71,9 @@ export default function DiagramApp() {
       </header>
       <Active
         key={active}
-        onEditInExcalidraw={(scene) => {
-          setPendingScene(scene);
-          setActive('excalidraw');
-        }}
+        onEditInExcalidraw={handleEditInExcalidraw}
         pendingScene={pendingScene}
-        onSceneConsumed={() => setPendingScene(null)}
+        onSceneConsumed={handleSceneConsumed}
       />
     </div>
   );
