@@ -11,6 +11,12 @@ export const toolbarSelect =
   'bg-zinc-950/60 border border-zinc-800 hover:border-teal-500/40 ' +
   'text-zinc-400 cursor-pointer transition-all outline-none';
 
+// The <select> itself picks up toolbarSelect fine, but its <option> popup is
+// painted by the browser using its own colors unless the options carry their
+// own — without this the dropdown list shows up light-gray-on-black-text,
+// clashing with the dark theme.
+export const toolbarOption = 'bg-zinc-900 text-zinc-200';
+
 export function EditorLayout({
   examples,
   actions,

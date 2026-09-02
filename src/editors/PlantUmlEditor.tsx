@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import plantumlEncoder from 'plantuml-encoder';
-import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
+import { EditorLayout, toolbarBtn, toolbarSelect, toolbarOption } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
@@ -124,7 +124,7 @@ export default function PlantUmlEditor() {
             }}
           >
             {THEMES.map((t) => (
-              <option key={t} value={t}>{t === '_none_' ? 'sin tema' : t}</option>
+              <option key={t} value={t} className={toolbarOption}>{t === '_none_' ? 'sin tema' : t}</option>
             ))}
           </select>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.puml')}>

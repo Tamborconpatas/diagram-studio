@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Modeler from 'bpmn-js/lib/Modeler';
 import type Modeling from 'bpmn-js/lib/features/modeling/Modeling';
 import { layoutProcess } from 'bpmn-auto-layout';
-import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
+import { EditorLayout, toolbarBtn, toolbarSelect, toolbarOption } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
@@ -218,7 +218,7 @@ export default function BpmnEditor() {
             }}
           >
             {Object.keys(STYLE_PRESETS).map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s} className={toolbarOption}>{s}</option>
             ))}
           </select>
           <button className={toolbarBtn} onClick={exportXml}>Diagrama → XML</button>

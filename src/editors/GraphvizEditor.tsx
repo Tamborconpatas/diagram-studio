@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Graphviz } from '@hpcc-js/wasm-graphviz';
-import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
+import { EditorLayout, toolbarBtn, toolbarSelect, toolbarOption } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
@@ -112,7 +112,7 @@ export default function GraphvizEditor() {
             }}
           >
             {Object.keys(STYLE_PRESETS).map((s) => (
-              <option key={s} value={s}>{s}</option>
+              <option key={s} value={s} className={toolbarOption}>{s}</option>
             ))}
           </select>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.dot')}>
