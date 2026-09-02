@@ -17,9 +17,22 @@ Bob --> Alice: Respuesta
 
 // Force the classic UML stick-figure actor: some themes (and the public
 // server's current default) swap it for a modern "avatar" icon otherwise.
+// PlantUML applies skinparams in document order and locks in an actor's
+// style as soon as it's declared, so a later override is too late if the
+// source already set actorStyle (or a !theme did) before its own actors.
+// Instead of injecting alongside whatever the source already has, strip any
+// @start/@end wrapper and conflicting actorStyle lines, then rebuild with
+// our skinparam guaranteed first.
 function withTheme(code: string, theme: string) {
-  const themeLine = theme === '_none_' ? '' : `\n!theme ${theme}`;
-  return code.replace(/^@startuml.*$/m, (line) => `${line}${themeLine}\nskinparam actorStyle stick`);
+  const body = code
+    .replace(/^﻿/, '')
+    .replace(/^\s*@start\w+.*$/im, '')
+    .replace(/\s*@end\w+\s*$/im, '')
+    .replace(/^\s*skinparam\s+actorStyle\s+\S+\s*$/gim, '')
+    .replace(/^\s*!theme\s+\S+\s*$/gim, '')
+    .trim();
+  const themeLine = theme === '_none_' ? '' : `!theme ${theme}\n`;
+  return `@startuml\n${themeLine}skinparam actorStyle stick\n${body}\n@enduml`;
 }
 
 function toUrl(text: string, theme: string) {
