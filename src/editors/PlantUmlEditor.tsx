@@ -15,9 +15,11 @@ Alice -> Bob: Hola
 Bob --> Alice: Respuesta
 @enduml`;
 
+// Force the classic UML stick-figure actor: some themes (and the public
+// server's current default) swap it for a modern "avatar" icon otherwise.
 function withTheme(code: string, theme: string) {
-  if (theme === '_none_') return code;
-  return code.replace(/^@startuml.*$/m, (line) => `${line}\n!theme ${theme}`);
+  const themeLine = theme === '_none_' ? '' : `\n!theme ${theme}`;
+  return code.replace(/^@startuml.*$/m, (line) => `${line}${themeLine}\nskinparam actorStyle stick`);
 }
 
 function toUrl(text: string, theme: string) {
