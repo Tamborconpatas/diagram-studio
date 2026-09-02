@@ -40,6 +40,14 @@ if ! kpsewhich tikz.sty >/dev/null 2>&1; then
   exit 1
 fi
 
+echo "==> Comprobando Ditaa"
+if ! command -v ditaa >/dev/null; then
+  echo "ERROR: falta 'ditaa'. Instálalo, p.ej.:" >&2
+  echo "  Debian/Ubuntu: sudo apt install ditaa" >&2
+  echo "  Fedora/Arch:   busca el paquete 'ditaa' de tu distro (requiere Java)" >&2
+  exit 1
+fi
+
 echo "==> Instalando lanzador de escritorio"
 mkdir -p "$HOME/Desktop"
 sed "s#__APP_DIR__#$(pwd)#g" desktop/diagram-studio.desktop.template > "$HOME/Desktop/diagram-studio.desktop"

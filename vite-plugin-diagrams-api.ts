@@ -96,12 +96,27 @@ async function renderTikz(code: string, dir: string): Promise<string> {
   return readFile(join(dir, 'doc.svg'), 'utf-8');
 }
 
+// ditaa only ever produces a raster PNG (no real SVG output), so wrap it in a
+// minimal SVG <image> to reuse the app's existing SVG-based render/export path.
+function pngDimensions(png: Buffer): { width: number; height: number } {
+  return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
+}
+
+async function renderDitaa(code: string, dir: string): Promise<string> {
+  await writeFile(join(dir, 'input.ditaa'), code, 'utf-8');
+  await run('ditaa', ['input.ditaa', 'output.png', '-o'], dir, 15_000);
+  const png = await readFile(join(dir, 'output.png'));
+  const { width, height } = pngDimensions(png);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" xlink:href="data:image/png;base64,${png.toString('base64')}"/></svg>`;
+}
+
 export function diagramsApiPlugin(): Plugin {
   return {
     name: 'diagrams-python-api',
     configureServer(server) {
       jsonEndpoint(server, '/api/render-diagrams', 'diagrams-', renderDiagrams);
       jsonEndpoint(server, '/api/render-tikz', 'tikz-', renderTikz);
+      jsonEndpoint(server, '/api/render-ditaa', 'ditaa-', renderDitaa);
     },
   };
 }

@@ -15,6 +15,20 @@ Alice -> Bob: Hola
 Bob --> Alice: Respuesta
 @enduml`;
 
+// C4-PlantUML isn't a separate tool — it's include-able templates on top of
+// PlantUML itself, fetched by the public server at render time.
+const C4_EXAMPLE = `@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Usuario")
+System_Boundary(sys, "Sistema") {
+  Container(app, "App", "React")
+  Container(db, "DB", "Postgres")
+}
+Rel(user, app, "usa")
+Rel(app, db, "lee/escribe")
+@enduml`;
+
 // Force the classic UML stick-figure actor: some themes (and the public
 // server's current default) swap it for a modern "avatar" icon otherwise.
 // PlantUML applies skinparams in document order and locks in an actor's
@@ -64,6 +78,15 @@ export default function PlantUmlEditor() {
             }}
           />
           <button className={toolbarBtn} onClick={() => setSrc(toUrl(code, theme))}>Renderizar</button>
+          <button
+            className={toolbarBtn}
+            onClick={() => {
+              setCode(C4_EXAMPLE);
+              setSrc(toUrl(C4_EXAMPLE, theme));
+            }}
+          >
+            C4 (ejemplo)
+          </button>
           <select
             className={toolbarSelect}
             value={theme}

@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -7,6 +7,7 @@ import GraphvizEditor from './editors/GraphvizEditor';
 import ExcalidrawEditor from './editors/ExcalidrawEditor';
 import PythonDiagramsEditor from './editors/PythonDiagramsEditor';
 import TikzEditor from './editors/TikzEditor';
+import DitaaEditor from './editors/DitaaEditor';
 import type { PendingScene } from './sceneHandoff';
 
 const TOOLS = [
@@ -17,6 +18,7 @@ const TOOLS = [
   { id: 'excalidraw', label: 'Excalidraw', icon: PenTool, Component: ExcalidrawEditor },
   { id: 'aws', label: 'Arquitectura (Python)', icon: Cloud, Component: PythonDiagramsEditor },
   { id: 'tikz', label: 'TikZ', icon: Sigma, Component: TikzEditor },
+  { id: 'ditaa', label: 'Ditaa (ASCII art)', icon: Terminal, Component: DitaaEditor },
 ] as const;
 
 type ToolId = (typeof TOOLS)[number]['id'];
