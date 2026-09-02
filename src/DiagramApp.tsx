@@ -11,14 +11,14 @@ import DitaaEditor from './editors/DitaaEditor';
 import type { PendingScene } from './sceneHandoff';
 
 const TOOLS = [
-  { id: 'bpmn', label: 'BPMN', icon: Workflow, Component: BpmnEditor },
-  { id: 'mermaid', label: 'Mermaid', icon: GitBranch, Component: MermaidEditor },
-  { id: 'plantuml', label: 'PlantUML', icon: Waypoints, Component: PlantUmlEditor },
-  { id: 'graphviz', label: 'Graphviz', icon: Share2, Component: GraphvizEditor },
-  { id: 'excalidraw', label: 'Excalidraw', icon: PenTool, Component: ExcalidrawEditor },
-  { id: 'aws', label: 'Arquitectura (Python)', icon: Cloud, Component: PythonDiagramsEditor },
-  { id: 'tikz', label: 'TikZ', icon: Sigma, Component: TikzEditor },
-  { id: 'ditaa', label: 'Ditaa (ASCII art)', icon: Terminal, Component: DitaaEditor },
+  { id: 'bpmn', label: 'BPMN', icon: Workflow, Component: BpmnEditor, description: 'Procesos de negocio, editable arrastrando tareas y flechas.' },
+  { id: 'mermaid', label: 'Mermaid', icon: GitBranch, Component: MermaidEditor, description: '~15 tipos en un motor: flowcharts, secuencia, clases, ER, estado...' },
+  { id: 'plantuml', label: 'PlantUML', icon: Waypoints, Component: PlantUmlEditor, description: 'UML clásico y C4, con temas y actores en notación tradicional.' },
+  { id: 'graphviz', label: 'Graphviz', icon: Share2, Component: GraphvizEditor, description: 'Grafos DOT con layout automático y presets de estilo.' },
+  { id: 'excalidraw', label: 'Excalidraw', icon: PenTool, Component: ExcalidrawEditor, description: 'Pizarra a mano alzada, 100% arrastrable.' },
+  { id: 'aws', label: 'Arquitectura (Python)', icon: Cloud, Component: PythonDiagramsEditor, description: 'Diagramas AWS/GCP/Azure desde código Python (`diagrams`).' },
+  { id: 'tikz', label: 'TikZ', icon: Sigma, Component: TikzEditor, description: 'Gráficos vectoriales de precisión vía LaTeX.' },
+  { id: 'ditaa', label: 'Ditaa (ASCII art)', icon: Terminal, Component: DitaaEditor, description: 'Convierte arte ASCII en diagramas prolijos.' },
 ] as const;
 
 type ToolId = (typeof TOOLS)[number]['id'];
@@ -31,11 +31,34 @@ type HandoffProps = {
   onSceneConsumed?: () => void;
 };
 
+function HomeGrid({ onSelect }: { onSelect: (id: ToolId) => void }) {
+  return (
+    <div className="flex-1 overflow-auto p-8">
+      <div className="max-w-5xl mx-auto">
+        <p className="text-zinc-500 text-xs font-mono-code mb-6">Elige una herramienta para empezar.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {TOOLS.map(({ id, label, icon: Icon, description }) => (
+            <button
+              key={id}
+              onClick={() => onSelect(id)}
+              className="cyber-card cyber-corners text-left p-5 flex flex-col gap-3 cursor-pointer"
+            >
+              <Icon className="w-6 h-6 text-teal-400" />
+              <div className="font-mono-code text-sm font-bold text-zinc-100">{label}</div>
+              <p className="text-xs text-zinc-500 leading-relaxed">{description}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DiagramApp() {
-  const [active, setActive] = useState<ToolId>('bpmn');
+  const [active, setActive] = useState<ToolId | 'home'>('home');
   const [pendingScene, setPendingScene] = useState<PendingScene | null>(null);
-  const tool = TOOLS.find((t) => t.id === active)!;
-  const Active = tool.Component as ComponentType<HandoffProps>;
+  const tool = active === 'home' ? null : TOOLS.find((t) => t.id === active)!;
+  const Active = tool?.Component as ComponentType<HandoffProps> | undefined;
 
   // Stable identities: ExcalidrawEditor keeps mounted (same `key`) across the
   // pendingScene->null transition, and inline callbacks here would otherwise
@@ -49,10 +72,13 @@ export default function DiagramApp() {
   return (
     <div className="h-screen w-screen flex flex-col bg-[#040507] text-zinc-100 font-sans">
       <header className="flex items-center gap-4 px-4 py-2.5 border-b border-zinc-800/80 bg-zinc-950/60 font-mono-code">
-        <div className="flex items-center gap-2 text-xs font-bold tracking-widest text-teal-400 shrink-0">
+        <button
+          onClick={() => setActive('home')}
+          className="flex items-center gap-2 text-xs font-bold tracking-widest text-teal-400 shrink-0 cursor-pointer"
+        >
           <Waypoints className="w-4 h-4" />
           <span>DIAGRAM STUDIO</span>
-        </div>
+        </button>
         <nav className="flex items-center gap-1.5 overflow-x-auto">
           {TOOLS.map(({ id, label, icon: Icon }) => (
             <button
@@ -71,12 +97,16 @@ export default function DiagramApp() {
           ))}
         </nav>
       </header>
-      <Active
-        key={active}
-        onEditInExcalidraw={handleEditInExcalidraw}
-        pendingScene={pendingScene}
-        onSceneConsumed={handleSceneConsumed}
-      />
+      {active === 'home' || !Active ? (
+        <HomeGrid onSelect={setActive} />
+      ) : (
+        <Active
+          key={active}
+          onEditInExcalidraw={handleEditInExcalidraw}
+          pendingScene={pendingScene}
+          onSceneConsumed={handleSceneConsumed}
+        />
+      )}
     </div>
   );
 }
