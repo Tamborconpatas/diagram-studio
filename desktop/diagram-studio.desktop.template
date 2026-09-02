@@ -2,10 +2,10 @@
 Version=1.0
 Type=Application
 Name=Diagram Studio
-Comment=Visor y editor de diagramas BPMN, Mermaid, PlantUML, Graphviz, Excalidraw y arquitectura (Python)
+Comment=Visor y editor de 12 tipos de diagramas: BPMN, Mermaid, PlantUML, Graphviz, Excalidraw, TikZ, Ditaa, DBML, Blockdiag, Sankey, Nomnoml, SMC
 Exec=__APP_DIR__/launch-diagrams.sh
 Icon=applications-graphics
 Terminal=true
 Categories=Development;
 StartupNotify=true
-Keywords=bpmn;mermaid;plantuml;graphviz;excalidraw;diagram;xml;aws;architecture;
+Keywords=bpmn;mermaid;plantuml;graphviz;excalidraw;tikz;ditaa;dbml;blockdiag;sankey;nomnoml;smc;diagram;xml;aws;architecture;
