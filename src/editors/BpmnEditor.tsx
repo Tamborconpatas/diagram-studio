@@ -69,8 +69,14 @@ export default function BpmnEditor() {
   useEffect(() => {
     const modeler = new Modeler({ container: canvasRef.current! });
     modelerRef.current = modeler;
-    modeler.importXML(EMPTY_DIAGRAM).catch((err: Error) => setError(err.message));
-    return () => modeler.destroy();
+    // React StrictMode mounts, cleans up, and mounts again; if destroy() ran
+    // while this import was still in flight, bpmn-js would try to draw into
+    // a canvas layer that no longer exists ("Cannot read properties of
+    // undefined (reading 'root-0')"). Wait for the import to settle first.
+    const importDone = modeler.importXML(EMPTY_DIAGRAM).catch((err: Error) => setError(err.message));
+    return () => {
+      importDone.finally(() => modeler.destroy());
+    };
   }, []);
 
   const loadXml = async (source?: string) => {
