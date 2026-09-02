@@ -5,6 +5,7 @@ import { layoutProcess } from 'bpmn-auto-layout';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const EMPTY_DIAGRAM = `<?xml version="1.0" encoding="UTF-8"?>
@@ -23,6 +24,84 @@ const EMPTY_DIAGRAM = `<?xml version="1.0" encoding="UTF-8"?>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>`;
+
+const GATEWAY_EXAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:startEvent id="Start" name="Inicio"><bpmn:outgoing>F1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:task id="Revisar" name="Revisar solicitud"><bpmn:incoming>F1</bpmn:incoming><bpmn:outgoing>F2</bpmn:outgoing></bpmn:task>
+    <bpmn:exclusiveGateway id="Gw" name="¿Aprobada?"><bpmn:incoming>F2</bpmn:incoming><bpmn:outgoing>F3</bpmn:outgoing><bpmn:outgoing>F4</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:task id="Aprobar" name="Aprobar"><bpmn:incoming>F3</bpmn:incoming><bpmn:outgoing>F5</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Rechazar" name="Rechazar"><bpmn:incoming>F4</bpmn:incoming><bpmn:outgoing>F6</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End" name="Fin"><bpmn:incoming>F5</bpmn:incoming><bpmn:incoming>F6</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Revisar" />
+    <bpmn:sequenceFlow id="F2" sourceRef="Revisar" targetRef="Gw" />
+    <bpmn:sequenceFlow id="F3" name="Sí" sourceRef="Gw" targetRef="Aprobar" />
+    <bpmn:sequenceFlow id="F4" name="No" sourceRef="Gw" targetRef="Rechazar" />
+    <bpmn:sequenceFlow id="F5" sourceRef="Aprobar" targetRef="End" />
+    <bpmn:sequenceFlow id="F6" sourceRef="Rechazar" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="D1"><bpmndi:BPMNPlane id="P1" bpmnElement="Process_1">
+    <bpmndi:BPMNShape id="s1" bpmnElement="Start"><dc:Bounds x="140" y="151" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s2" bpmnElement="Revisar"><dc:Bounds x="220" y="129" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s3" bpmnElement="Gw"><dc:Bounds x="365" y="144" width="50" height="50" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s4" bpmnElement="Aprobar"><dc:Bounds x="460" y="40" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s5" bpmnElement="Rechazar"><dc:Bounds x="460" y="220" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s6" bpmnElement="End"><dc:Bounds x="622" y="151" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="e1" bpmnElement="F1"><di:waypoint x="176" y="169" /><di:waypoint x="220" y="169" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e2" bpmnElement="F2"><di:waypoint x="320" y="169" /><di:waypoint x="365" y="169" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e3" bpmnElement="F3"><di:waypoint x="390" y="144" /><di:waypoint x="390" y="80" /><di:waypoint x="460" y="80" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e4" bpmnElement="F4"><di:waypoint x="390" y="194" /><di:waypoint x="390" y="260" /><di:waypoint x="460" y="260" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e5" bpmnElement="F5"><di:waypoint x="560" y="80" /><di:waypoint x="640" y="80" /><di:waypoint x="640" y="151" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e6" bpmnElement="F6"><di:waypoint x="560" y="260" /><di:waypoint x="640" y="260" /><di:waypoint x="640" y="187" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+
+const POOL_EXAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:collaboration id="Collab">
+    <bpmn:participant id="Part" name="Equipo" processRef="Process_1" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:laneSet id="Lanes">
+      <bpmn:lane id="L1" name="Cliente"><bpmn:flowNodeRef>Start</bpmn:flowNodeRef><bpmn:flowNodeRef>Pedir</bpmn:flowNodeRef></bpmn:lane>
+      <bpmn:lane id="L2" name="Soporte"><bpmn:flowNodeRef>Atender</bpmn:flowNodeRef><bpmn:flowNodeRef>End</bpmn:flowNodeRef></bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="Inicio"><bpmn:outgoing>F1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:task id="Pedir" name="Hacer pedido"><bpmn:incoming>F1</bpmn:incoming><bpmn:outgoing>F2</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Atender" name="Atender pedido"><bpmn:incoming>F2</bpmn:incoming><bpmn:outgoing>F3</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End" name="Fin"><bpmn:incoming>F3</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Pedir" />
+    <bpmn:sequenceFlow id="F2" sourceRef="Pedir" targetRef="Atender" />
+    <bpmn:sequenceFlow id="F3" sourceRef="Atender" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="D1"><bpmndi:BPMNPlane id="P1" bpmnElement="Collab">
+    <bpmndi:BPMNShape id="pd" bpmnElement="Part" isHorizontal="true"><dc:Bounds x="140" y="60" width="500" height="240" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="l1d" bpmnElement="L1" isHorizontal="true"><dc:Bounds x="170" y="60" width="470" height="120" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="l2d" bpmnElement="L2" isHorizontal="true"><dc:Bounds x="170" y="180" width="470" height="120" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s1" bpmnElement="Start"><dc:Bounds x="220" y="102" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s2" bpmnElement="Pedir"><dc:Bounds x="310" y="80" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s3" bpmnElement="Atender"><dc:Bounds x="310" y="220" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s4" bpmnElement="End"><dc:Bounds x="470" y="242" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="e1" bpmnElement="F1"><di:waypoint x="256" y="120" /><di:waypoint x="310" y="120" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e2" bpmnElement="F2"><di:waypoint x="360" y="160" /><di:waypoint x="360" y="220" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e3" bpmnElement="F3"><di:waypoint x="410" y="260" /><di:waypoint x="470" y="260" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+
+const EXAMPLES = [
+  { label: 'Simple', code: EMPTY_DIAGRAM },
+  { label: 'Gateway (aprobación)', code: GATEWAY_EXAMPLE },
+  { label: 'Pool con lanes', code: POOL_EXAMPLE },
+] as const;
 
 // fill/stroke '' clears any previously-applied color (bpmn-js treats a falsy
 // value as "remove the override"), used for the 'ninguno' preset.
@@ -109,7 +188,16 @@ export default function BpmnEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setXml(exampleCode);
+            loadXml(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".bpmn,.xml"

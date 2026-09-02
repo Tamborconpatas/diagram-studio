@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { CollapsibleSection } from './CollapsibleSection';
 
 export const toolbarBtn =
   'px-2.5 py-1.5 rounded-lg text-[10px] font-mono-code font-bold tracking-wide uppercase ' +
@@ -11,13 +12,15 @@ export const toolbarSelect =
   'text-zinc-400 cursor-pointer transition-all outline-none';
 
 export function EditorLayout({
-  toolbar,
+  examples,
+  actions,
   error,
   code,
   onCodeChange,
   renderArea,
 }: {
-  toolbar: ReactNode;
+  examples?: ReactNode;
+  actions: ReactNode;
   error: string | null;
   code: string;
   onCodeChange: (v: string) => void;
@@ -25,8 +28,9 @@ export function EditorLayout({
 }) {
   return (
     <div className="flex flex-1 min-h-0">
-      <div className="w-105 flex flex-col border-r border-zinc-800/80 bg-zinc-950/40 shrink-0">
-        <div className="flex flex-wrap items-center gap-2 p-3 border-b border-zinc-800/80">{toolbar}</div>
+      <div className="w-105 flex flex-col border-r border-zinc-800/80 bg-zinc-950/40 shrink-0 overflow-y-auto">
+        {examples && <CollapsibleSection title="Ejemplos">{examples}</CollapsibleSection>}
+        <CollapsibleSection title="Acciones">{actions}</CollapsibleSection>
         {error && (
           <div className="px-3 py-2 text-[11px] text-red-400 font-mono-code border-b border-red-900/40 bg-red-950/20">
             {error}
@@ -36,7 +40,7 @@ export function EditorLayout({
           value={code}
           onChange={(e) => onCodeChange(e.target.value)}
           spellCheck={false}
-          className="flex-1 bg-transparent text-zinc-200 font-mono-code text-xs p-3 resize-none outline-none"
+          className="flex-1 min-h-40 bg-transparent text-zinc-200 font-mono-code text-xs p-3 resize-none outline-none"
         />
       </div>
       <div className="flex-1 relative bg-[#0a0b0e]">{renderArea}</div>

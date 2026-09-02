@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `Table users {
@@ -18,6 +19,32 @@ Table posts {
 
 Ref: posts.user_id > users.id
 `;
+
+const EXAMPLES = [
+  { label: '2 tablas', code: DEFAULT_CODE },
+  {
+    label: 'Muchos a muchos',
+    code: `Table students {
+  id int [pk]
+  name varchar
+}
+
+Table courses {
+  id int [pk]
+  title varchar
+}
+
+Table enrollments {
+  student_id int
+  course_id int
+  enrolled_at date
+}
+
+Ref: enrollments.student_id > students.id
+Ref: enrollments.course_id > courses.id
+`,
+  },
+] as const;
 
 export default function DbmlEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -50,7 +77,16 @@ export default function DbmlEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".dbml,.txt"

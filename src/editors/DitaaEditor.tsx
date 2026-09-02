@@ -2,12 +2,36 @@ import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `+--------+   +----------+   +-------+
 | Cliente|-->| Servidor |-->|  DB   |
 +--------+   +----------+   +-------+
 `;
+
+const EXAMPLES = [
+  { label: 'Flujo simple', code: DEFAULT_CODE },
+  {
+    label: 'Con decisión',
+    code: `+---------+
+| Entrada |
++---------+
+     |
+     v
+ /--------\\
+< ¿Válido? >
+ \\--------/
+   |     |
+  Sí     No
+   |     |
+   v     v
++-----+ +-------+
+| OK  | | Error |
++-----+ +-------+
+`,
+  },
+] as const;
 
 export default function DitaaEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -40,7 +64,16 @@ export default function DitaaEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".ditaa,.txt"

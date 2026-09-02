@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `from diagrams import Diagram
@@ -15,6 +16,38 @@ with Diagram("arquitectura"):
     db = RDS("db")
     lb >> web >> db
 `;
+
+const EXAMPLES = [
+  { label: 'AWS 3-capas', code: DEFAULT_CODE },
+  {
+    label: 'GCP',
+    code: `from diagrams import Diagram
+from diagrams.gcp.compute import GCE
+from diagrams.gcp.database import SQL
+from diagrams.gcp.network import LoadBalancing
+
+with Diagram("arquitectura-gcp"):
+    lb = LoadBalancing("balanceador")
+    web = GCE("web")
+    db = SQL("db")
+    lb >> web >> db
+`,
+  },
+  {
+    label: 'Azure',
+    code: `from diagrams import Diagram
+from diagrams.azure.compute import VM
+from diagrams.azure.database import SQLDatabases
+from diagrams.azure.network import LoadBalancers
+
+with Diagram("arquitectura-azure"):
+    lb = LoadBalancers("balanceador")
+    web = VM("web")
+    db = SQLDatabases("db")
+    lb >> web >> db
+`,
+  },
+] as const;
 
 export default function PythonDiagramsEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -47,7 +80,16 @@ export default function PythonDiagramsEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".py,.txt"

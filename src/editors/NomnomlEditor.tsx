@@ -3,6 +3,7 @@ import { renderSvg } from 'nomnoml';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `[<abstract>Shape]
@@ -11,6 +12,17 @@ const DEFAULT_CODE = `[<abstract>Shape]
 [Circle]->[Point]
 [Circle|radius: float|area()]
 `;
+
+const EXAMPLES = [
+  { label: 'Herencia', code: DEFAULT_CODE },
+  {
+    label: 'Asociación simple',
+    code: `[Usuario|+nombre: string|+login()]
+[Pedido|+fecha: date|+total()]
+[Usuario] 1 -- * [Pedido]
+`,
+  },
+] as const;
 
 export default function NomnomlEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -32,7 +44,16 @@ export default function NomnomlEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".nomnoml,.txt"

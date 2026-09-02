@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `%class Turnstile
@@ -20,6 +21,31 @@ Unlocked
 }
 %%
 `;
+
+const EXAMPLES = [
+  { label: 'Torniquete', code: DEFAULT_CODE },
+  {
+    label: 'Semáforo',
+    code: `%class Semaforo
+%start MainMap::Rojo
+%map MainMap
+%%
+Rojo
+{
+  siguiente Verde { encenderVerde(); }
+}
+Verde
+{
+  siguiente Amarillo { encenderAmarillo(); }
+}
+Amarillo
+{
+  siguiente Rojo { encenderRojo(); }
+}
+%%
+`,
+  },
+] as const;
 
 export default function SmcEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -52,7 +78,16 @@ export default function SmcEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".sm,.txt"

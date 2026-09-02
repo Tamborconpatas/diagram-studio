@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `\\begin{tikzpicture}
@@ -10,6 +11,30 @@ const DEFAULT_CODE = `\\begin{tikzpicture}
   \\draw[-{Latex}] (a) -- (b);
 \\end{tikzpicture}
 `;
+
+const EXAMPLES = [
+  { label: 'Nodos y flecha', code: DEFAULT_CODE },
+  {
+    label: 'Función matemática',
+    code: `\\begin{tikzpicture}
+  \\draw[->] (-0.2,0) -- (3.2,0) node[right] {$x$};
+  \\draw[->] (0,-0.2) -- (0,3.2) node[above] {$y$};
+  \\draw[domain=0:3, smooth, variable=\\x, blue] plot ({\\x}, {\\x*\\x/3});
+\\end{tikzpicture}
+`,
+  },
+  {
+    label: 'Árbol',
+    code: `\\begin{tikzpicture}[level distance=1.5cm, sibling distance=2.2cm]
+  \\node {Raíz}
+    child { node {Hijo A}
+      child { node {A1} }
+      child { node {A2} } }
+    child { node {Hijo B} };
+\\end{tikzpicture}
+`,
+  },
+] as const;
 
 export default function TikzEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -42,7 +67,16 @@ export default function TikzEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".tex,.txt"

@@ -4,6 +4,7 @@ import { parseMermaidToExcalidraw } from '@excalidraw/mermaid-to-excalidraw';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 import { withMermaidIdCompat } from '../mermaidToExcalidrawCompat';
 import type { PendingScene } from '../sceneHandoff';
@@ -14,6 +15,72 @@ const DEFAULT_CODE = `flowchart TD
   A[Inicio] --> B{Decisión}
   B -->|Sí| C[Hacer algo]
   B -->|No| D[Fin]`;
+
+const EXAMPLES = [
+  { label: 'Flowchart', code: DEFAULT_CODE },
+  {
+    label: 'Sequence',
+    code: `sequenceDiagram
+  participant Cliente
+  participant Servidor
+  Cliente->>Servidor: Solicitud
+  Servidor-->>Cliente: Respuesta`,
+  },
+  {
+    label: 'Class',
+    code: `classDiagram
+  class Animal {
+    +String nombre
+    +hacerSonido()
+  }
+  class Perro
+  Animal <|-- Perro`,
+  },
+  {
+    label: 'Entity Relationship',
+    code: `erDiagram
+  USUARIO ||--o{ PEDIDO : realiza
+  PEDIDO ||--|{ ITEM : contiene`,
+  },
+  {
+    label: 'State',
+    code: `stateDiagram-v2
+  [*] --> Inactivo
+  Inactivo --> Activo: iniciar
+  Activo --> Inactivo: detener
+  Activo --> [*]`,
+  },
+  {
+    label: 'Gantt',
+    code: `gantt
+  title Plan de proyecto
+  dateFormat YYYY-MM-DD
+  section Diseño
+  Investigación :a1, 2026-01-01, 5d
+  Prototipo     :a2, after a1, 5d
+  section Desarrollo
+  Build         :a3, after a2, 10d`,
+  },
+  {
+    label: 'Pie',
+    code: `pie title Distribución
+  "Vivienda" : 40
+  "Comida" : 25
+  "Ahorro" : 20
+  "Ocio" : 15`,
+  },
+  {
+    label: 'Journey',
+    code: `journey
+  title Compra online
+  section Buscar
+    Ver catálogo: 5: Cliente
+    Comparar precios: 3: Cliente
+  section Comprar
+    Agregar al carrito: 4: Cliente
+    Pagar: 2: Cliente`,
+  },
+] as const;
 
 let renderCount = 0;
 
@@ -67,7 +134,16 @@ export default function MermaidEditor({ onEditInExcalidraw }: { onEditInExcalidr
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode, theme);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".mmd,.mermaid,.txt"

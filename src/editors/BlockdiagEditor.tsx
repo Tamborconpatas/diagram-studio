@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `blockdiag {
@@ -9,6 +10,20 @@ const DEFAULT_CODE = `blockdiag {
   Servidor -> Cache;
 }
 `;
+
+const EXAMPLES = [
+  { label: 'Simple', code: DEFAULT_CODE },
+  {
+    label: 'Con colores',
+    code: `blockdiag {
+  A [color = "#e0f2fe"];
+  B [color = "#dcfce7"];
+  C [color = "#fef3c7"];
+  A -> B -> C;
+}
+`,
+  },
+] as const;
 
 export default function BlockdiagEditor() {
   const [code, setCode] = useState(DEFAULT_CODE);
@@ -41,7 +56,16 @@ export default function BlockdiagEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".diag,.txt"

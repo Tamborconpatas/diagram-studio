@@ -3,6 +3,7 @@ import { Graphviz } from '@hpcc-js/wasm-graphviz';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const STYLE_PRESETS = {
@@ -18,6 +19,31 @@ const DEFAULT_CODE = `digraph G {
   rankdir=LR;
   Inicio -> Proceso -> Fin;
 }`;
+
+const EXAMPLES = [
+  { label: 'Grafo simple', code: DEFAULT_CODE },
+  {
+    label: 'Subgrafos/clusters',
+    code: `digraph G {
+  subgraph cluster_0 {
+    label="Frontend";
+    App -> API;
+  }
+  subgraph cluster_1 {
+    label="Backend";
+    API -> DB;
+  }
+}`,
+  },
+  {
+    label: 'No dirigido',
+    code: `graph G {
+  A -- B;
+  B -- C;
+  C -- A;
+}`,
+  },
+] as const;
 
 function withStyle(dot: string, preset: StylePreset) {
   const inject = STYLE_PRESETS[preset];
@@ -56,7 +82,16 @@ export default function GraphvizEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode, style);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".dot,.gv,.txt"

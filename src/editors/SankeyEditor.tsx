@@ -3,6 +3,7 @@ import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `Salario [1500] Presupuesto
@@ -11,6 +12,19 @@ Presupuesto [400] Comida
 Presupuesto [300] Ahorro
 Presupuesto [200] Ocio
 `;
+
+const EXAMPLES = [
+  { label: 'Presupuesto', code: DEFAULT_CODE },
+  {
+    label: 'Energía',
+    code: `Planta [100] Red
+Red [45] Residencial
+Red [35] Industrial
+Red [20] Comercial
+Residencial [10] Pérdidas
+`,
+  },
+] as const;
 
 const PALETTE = ['#14b8a6', '#0ea5e9', '#8b5cf6', '#f59e0b', '#ef4444', '#22c55e', '#ec4899', '#64748b'];
 
@@ -99,7 +113,16 @@ export default function SankeyEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            render(exampleCode);
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".txt"

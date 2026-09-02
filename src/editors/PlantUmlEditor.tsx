@@ -3,6 +3,7 @@ import plantumlEncoder from 'plantuml-encoder';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
+import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 
 const THEMES = [
@@ -28,6 +29,32 @@ System_Boundary(sys, "Sistema") {
 Rel(user, app, "usa")
 Rel(app, db, "lee/escribe")
 @enduml`;
+
+const EXAMPLES = [
+  { label: 'Sequence', code: DEFAULT_CODE },
+  {
+    label: 'Class',
+    code: `@startuml
+class Animal {
+  +String nombre
+  +hacerSonido()
+}
+class Perro
+Animal <|-- Perro
+@enduml`,
+  },
+  {
+    label: 'Use Case',
+    code: `@startuml
+actor Usuario
+usecase "Iniciar sesión" as UC1
+usecase "Ver reportes" as UC2
+Usuario -- UC1
+Usuario -- UC2
+@enduml`,
+  },
+  { label: 'C4 Container', code: C4_EXAMPLE },
+] as const;
 
 // Force the classic UML stick-figure actor: some themes (and the public
 // server's current default) swap it for a modern "avatar" icon otherwise.
@@ -67,7 +94,16 @@ export default function PlantUmlEditor() {
 
   return (
     <EditorLayout
-      toolbar={
+      examples={
+        <ExamplesMenu
+          examples={EXAMPLES}
+          onSelect={(exampleCode) => {
+            setCode(exampleCode);
+            setSrc(toUrl(exampleCode, theme));
+          }}
+        />
+      }
+      actions={
         <>
           <OpenFileButton
             accept=".puml,.pu,.plantuml,.txt"
@@ -78,15 +114,6 @@ export default function PlantUmlEditor() {
             }}
           />
           <button className={toolbarBtn} onClick={() => setSrc(toUrl(code, theme))}>Renderizar</button>
-          <button
-            className={toolbarBtn}
-            onClick={() => {
-              setCode(C4_EXAMPLE);
-              setSrc(toUrl(C4_EXAMPLE, theme));
-            }}
-          >
-            C4 (ejemplo)
-          </button>
           <select
             className={toolbarSelect}
             value={theme}
