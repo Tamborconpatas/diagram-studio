@@ -45,6 +45,27 @@ Amarillo
 %%
 `,
   },
+  {
+    label: 'Con guardas',
+    code: `%class Cajero
+%start MainMap::Esperando
+%map MainMap
+%%
+Esperando
+{
+  ingresarPin [saldoDisponible()] Validado { mostrarMenu(); }
+  ingresarPin [!saldoDisponible()] Bloqueado { alertar(); }
+}
+Validado
+{
+  retirar Esperando { entregarEfectivo(); }
+}
+Bloqueado
+{
+}
+%%
+`,
+  },
 ] as const;
 
 export default function SmcEditor() {

@@ -34,6 +34,39 @@ const EXAMPLES = [
 \\end{tikzpicture}
 `,
   },
+  {
+    label: 'Diagrama de Venn',
+    code: `\\begin{tikzpicture}
+  \\draw[fill=blue, opacity=0.4] (0,0) circle (1.5cm);
+  \\draw[fill=red, opacity=0.4] (1.5,0) circle (1.5cm);
+  \\node at (-0.6,0) {A};
+  \\node at (2.1,0) {B};
+  \\node at (0.75,0) {A∩B};
+\\end{tikzpicture}
+`,
+  },
+  {
+    label: 'Gráfico de barras',
+    code: `\\begin{tikzpicture}
+  \\draw[->] (0,0) -- (5,0);
+  \\draw[->] (0,0) -- (0,4);
+  \\draw[fill=blue!60] (0.5,0) rectangle (1.2,1.5);
+  \\draw[fill=blue!60] (1.7,0) rectangle (2.4,3);
+  \\draw[fill=blue!60] (2.9,0) rectangle (3.6,2.2);
+  \\node at (0.85,-0.3) {Ene};
+  \\node at (2.05,-0.3) {Feb};
+  \\node at (3.25,-0.3) {Mar};
+\\end{tikzpicture}
+`,
+  },
+  {
+    label: 'Patrón/relleno',
+    code: `\\begin{tikzpicture}
+  \\draw[pattern=north east lines] (0,0) rectangle (2,2);
+  \\draw[pattern=dots] (2.5,0) rectangle (4.5,2);
+\\end{tikzpicture}
+`,
+  },
 ] as const;
 
 export default function TikzEditor() {

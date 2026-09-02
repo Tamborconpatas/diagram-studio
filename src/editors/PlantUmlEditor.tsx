@@ -54,6 +54,66 @@ Usuario -- UC2
 @enduml`,
   },
   { label: 'C4 Container', code: C4_EXAMPLE },
+  {
+    label: 'Activity',
+    code: `@startuml
+start
+:Recibir pedido;
+if (¿Stock disponible?) then (sí)
+  :Preparar envío;
+else (no)
+  :Notificar demora;
+endif
+:Enviar confirmación;
+stop
+@enduml`,
+  },
+  {
+    label: 'Component',
+    code: `@startuml
+package "Sistema" {
+  [Frontend] --> [API]
+  [API] --> [Base de Datos]
+  [API] --> [Cache]
+}
+@enduml`,
+  },
+  {
+    label: 'State',
+    code: `@startuml
+[*] --> Inactivo
+Inactivo --> Activo : iniciar
+Activo --> Pausado : pausar
+Pausado --> Activo : reanudar
+Activo --> [*] : detener
+@enduml`,
+  },
+  {
+    label: 'Deployment',
+    code: `@startuml
+node "Servidor Web" {
+  [App]
+}
+node "Servidor DB" {
+  database "Postgres"
+}
+[App] --> Postgres : JDBC
+@enduml`,
+  },
+  {
+    label: 'Object',
+    code: `@startuml
+object Usuario {
+  nombre = "Ana"
+  rol = "admin"
+}
+object Pedido {
+  id = 1023
+  total = 59.90
+}
+Usuario -- Pedido
+@enduml`,
+  },
 ] as const;
 
 // Force the classic UML stick-figure actor: some themes (and the public

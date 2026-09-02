@@ -43,6 +43,42 @@ const EXAMPLES = [
   C -- A;
 }`,
   },
+  {
+    label: 'Árbol jerárquico',
+    code: `digraph G {
+  CEO -> Ventas;
+  CEO -> Ingeniería;
+  Ingeniería -> Frontend;
+  Ingeniería -> Backend;
+  Ventas -> "Cuentas Clave";
+}`,
+  },
+  {
+    label: 'Nodos tipo registro',
+    code: `digraph G {
+  node [shape=record];
+  usuario [label="Usuario|+id: int\\l+nombre: string\\l"];
+  pedido [label="Pedido|+id: int\\l+total: float\\l"];
+  usuario -> pedido;
+}`,
+  },
+  {
+    label: 'Layout circular',
+    code: `digraph G {
+  layout=circo;
+  A -> B -> C -> D -> A;
+  A -> C;
+}`,
+  },
+  {
+    label: 'Layout radial',
+    code: `digraph G {
+  layout=twopi;
+  root -- a; root -- b; root -- c;
+  a -- a1; a -- a2;
+  b -- b1;
+}`,
+  },
 ] as const;
 
 function withStyle(dot: string, preset: StylePreset) {

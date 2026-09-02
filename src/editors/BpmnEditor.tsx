@@ -97,9 +97,73 @@ const POOL_EXAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
   </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
 </bpmn:definitions>`;
 
+const PARALLEL_EXAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:startEvent id="Start" name="Inicio"><bpmn:outgoing>F1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:parallelGateway id="Split"><bpmn:incoming>F1</bpmn:incoming><bpmn:outgoing>F2</bpmn:outgoing><bpmn:outgoing>F3</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:task id="Pago" name="Procesar pago"><bpmn:incoming>F2</bpmn:incoming><bpmn:outgoing>F4</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Stock" name="Reservar stock"><bpmn:incoming>F3</bpmn:incoming><bpmn:outgoing>F5</bpmn:outgoing></bpmn:task>
+    <bpmn:parallelGateway id="Join"><bpmn:incoming>F4</bpmn:incoming><bpmn:incoming>F5</bpmn:incoming><bpmn:outgoing>F6</bpmn:outgoing></bpmn:parallelGateway>
+    <bpmn:endEvent id="End" name="Fin"><bpmn:incoming>F6</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Split" />
+    <bpmn:sequenceFlow id="F2" sourceRef="Split" targetRef="Pago" />
+    <bpmn:sequenceFlow id="F3" sourceRef="Split" targetRef="Stock" />
+    <bpmn:sequenceFlow id="F4" sourceRef="Pago" targetRef="Join" />
+    <bpmn:sequenceFlow id="F5" sourceRef="Stock" targetRef="Join" />
+    <bpmn:sequenceFlow id="F6" sourceRef="Join" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="D1"><bpmndi:BPMNPlane id="P1" bpmnElement="Process_1">
+    <bpmndi:BPMNShape id="s1" bpmnElement="Start"><dc:Bounds x="140" y="151" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s2" bpmnElement="Split"><dc:Bounds x="225" y="144" width="50" height="50" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s3" bpmnElement="Pago"><dc:Bounds x="330" y="40" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s4" bpmnElement="Stock"><dc:Bounds x="330" y="220" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s5" bpmnElement="Join"><dc:Bounds x="485" y="144" width="50" height="50" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s6" bpmnElement="End"><dc:Bounds x="582" y="151" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="e1" bpmnElement="F1"><di:waypoint x="176" y="169" /><di:waypoint x="225" y="169" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e2" bpmnElement="F2"><di:waypoint x="250" y="144" /><di:waypoint x="250" y="80" /><di:waypoint x="330" y="80" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e3" bpmnElement="F3"><di:waypoint x="250" y="194" /><di:waypoint x="250" y="260" /><di:waypoint x="330" y="260" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e4" bpmnElement="F4"><di:waypoint x="430" y="80" /><di:waypoint x="510" y="80" /><di:waypoint x="510" y="144" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e5" bpmnElement="F5"><di:waypoint x="430" y="260" /><di:waypoint x="510" y="260" /><di:waypoint x="510" y="194" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e6" bpmnElement="F6"><di:waypoint x="535" y="169" /><di:waypoint x="582" y="169" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+
+const TIMER_EXAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_1" isExecutable="false">
+    <bpmn:startEvent id="Start" name="Pedido creado"><bpmn:outgoing>F1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:intermediateCatchEvent id="Timer" name="Esperar 24h"><bpmn:incoming>F1</bpmn:incoming><bpmn:outgoing>F2</bpmn:outgoing><bpmn:timerEventDefinition /></bpmn:intermediateCatchEvent>
+    <bpmn:task id="Recordatorio" name="Enviar recordatorio"><bpmn:incoming>F2</bpmn:incoming><bpmn:outgoing>F3</bpmn:outgoing></bpmn:task>
+    <bpmn:endEvent id="End" name="Fin"><bpmn:incoming>F3</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="F1" sourceRef="Start" targetRef="Timer" />
+    <bpmn:sequenceFlow id="F2" sourceRef="Timer" targetRef="Recordatorio" />
+    <bpmn:sequenceFlow id="F3" sourceRef="Recordatorio" targetRef="End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="D1"><bpmndi:BPMNPlane id="P1" bpmnElement="Process_1">
+    <bpmndi:BPMNShape id="s1" bpmnElement="Start"><dc:Bounds x="140" y="151" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s2" bpmnElement="Timer"><dc:Bounds x="230" y="151" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s3" bpmnElement="Recordatorio"><dc:Bounds x="320" y="129" width="100" height="80" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="s4" bpmnElement="End"><dc:Bounds x="472" y="151" width="36" height="36" /></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="e1" bpmnElement="F1"><di:waypoint x="176" y="169" /><di:waypoint x="230" y="169" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e2" bpmnElement="F2"><di:waypoint x="266" y="169" /><di:waypoint x="320" y="169" /></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="e3" bpmnElement="F3"><di:waypoint x="420" y="169" /><di:waypoint x="472" y="169" /></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+
 const EXAMPLES = [
   { label: 'Simple', code: EMPTY_DIAGRAM },
   { label: 'Gateway (aprobación)', code: GATEWAY_EXAMPLE },
+  { label: 'Gateway paralelo', code: PARALLEL_EXAMPLE },
+  { label: 'Timer intermedio', code: TIMER_EXAMPLE },
   { label: 'Pool con lanes', code: POOL_EXAMPLE },
 ] as const;
 

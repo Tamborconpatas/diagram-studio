@@ -24,6 +24,15 @@ Red [20] Comercial
 Residencial [10] Pérdidas
 `,
   },
+  {
+    label: 'Embudo de ventas',
+    code: `Visitas [10000] Registros
+Registros [2500] Prueba gratis
+Prueba gratis [800] Clientes pagos
+Visitas [7500] Rebote
+Registros [2200] Abandono
+`,
+  },
 ] as const;
 
 const PALETTE = ['#14b8a6', '#0ea5e9', '#8b5cf6', '#f59e0b', '#ef4444', '#22c55e', '#ec4899', '#64748b'];

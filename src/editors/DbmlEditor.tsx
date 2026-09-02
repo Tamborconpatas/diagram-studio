@@ -44,6 +44,34 @@ Ref: enrollments.student_id > students.id
 Ref: enrollments.course_id > courses.id
 `,
   },
+  {
+    label: 'Con enum e índices',
+    code: `Enum estado_pedido {
+  pendiente
+  pagado
+  enviado
+  cancelado
+}
+
+Table pedidos {
+  id int [pk]
+  cliente_id int [not null]
+  estado estado_pedido [default: 'pendiente']
+  creado_en timestamp
+
+  indexes {
+    (cliente_id, creado_en) [name: "idx_cliente_fecha"]
+  }
+}
+
+Table clientes {
+  id int [pk]
+  email varchar [unique]
+}
+
+Ref: pedidos.cliente_id > clientes.id
+`,
+  },
 ] as const;
 
 export default function DbmlEditor() {

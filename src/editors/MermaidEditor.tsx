@@ -80,6 +80,81 @@ const EXAMPLES = [
     Agregar al carrito: 4: Cliente
     Pagar: 2: Cliente`,
   },
+  {
+    label: 'Mindmap',
+    code: `mindmap
+  root((Proyecto))
+    Diseño
+      UI
+      UX
+    Desarrollo
+      Frontend
+      Backend
+    Lanzamiento
+      Marketing
+      Soporte`,
+  },
+  {
+    label: 'Quadrant',
+    code: `quadrantChart
+  title Esfuerzo vs Impacto
+  x-axis Bajo Esfuerzo --> Alto Esfuerzo
+  y-axis Bajo Impacto --> Alto Impacto
+  quadrant-1 Ganancia rápida
+  quadrant-2 Proyecto grande
+  quadrant-3 Relleno
+  quadrant-4 Reconsiderar
+  Tarea A: [0.3, 0.7]
+  Tarea B: [0.7, 0.8]
+  Tarea C: [0.2, 0.2]`,
+  },
+  {
+    label: 'Timeline',
+    code: `timeline
+  title Historia del proyecto
+  2024 : Idea inicial
+  2025 : Primer prototipo : Beta pública
+  2026 : Lanzamiento : Escalamiento`,
+  },
+  {
+    label: 'GitGraph',
+    code: `gitGraph
+  commit
+  branch develop
+  checkout develop
+  commit
+  commit
+  checkout main
+  merge develop
+  commit`,
+  },
+  {
+    label: 'Sankey',
+    code: `sankey-beta
+Salario,Presupuesto,1500
+Presupuesto,Vivienda,600
+Presupuesto,Comida,400
+Presupuesto,Ahorro,300
+Presupuesto,Ocio,200`,
+  },
+  {
+    label: 'Block',
+    code: `block-beta
+  columns 3
+  Cliente space:2
+  down<["usa"]>(down) space:2
+  API space:2
+  down2<["consulta"]>(down) space:2
+  DB space:2`,
+  },
+  {
+    label: 'XY Chart',
+    code: `xychart-beta
+  title "Ventas mensuales"
+  x-axis [Ene, Feb, Mar, Abr, May]
+  y-axis "Unidades" 0 --> 1000
+  bar [500, 620, 480, 750, 900]`,
+  },
 ] as const;
 
 let renderCount = 0;

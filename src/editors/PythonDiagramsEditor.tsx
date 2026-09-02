@@ -47,6 +47,36 @@ with Diagram("arquitectura-azure"):
     lb >> web >> db
 `,
   },
+  {
+    label: 'Kubernetes',
+    code: `from diagrams import Diagram
+from diagrams.k8s.compute import Deployment, Pod
+from diagrams.k8s.network import Service, Ingress
+
+with Diagram("arquitectura-k8s"):
+    ing = Ingress("ingress")
+    svc = Service("service")
+    dep = Deployment("deployment")
+    pod = Pod("pod")
+    ing >> svc >> dep >> pod
+`,
+  },
+  {
+    label: 'On-Prem',
+    code: `from diagrams import Diagram
+from diagrams.onprem.network import Nginx
+from diagrams.onprem.compute import Server
+from diagrams.onprem.database import PostgreSQL
+from diagrams.onprem.queue import Kafka
+
+with Diagram("arquitectura-onprem"):
+    lb = Nginx("nginx")
+    web = Server("app")
+    queue = Kafka("cola")
+    db = PostgreSQL("db")
+    lb >> web >> queue >> db
+`,
+  },
 ] as const;
 
 export default function PythonDiagramsEditor() {

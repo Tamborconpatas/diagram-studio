@@ -31,6 +31,35 @@ const EXAMPLES = [
 +-----+ +-------+
 `,
   },
+  {
+    label: 'Con colores',
+    code: `+------------+
+| cREDCache  |
++------------+
+     |
+     v
++------------+
+| cGREOrigen |
++------------+
+     |
+     v
++------------+
+|  cBLULog   |
++------------+
+`,
+  },
+  {
+    label: 'Esquinas redondeadas',
+    code: `/---------\\
+| Sistema |
+\\---------/
+     |
+     v
+/-----------\\
+| Respuesta |
+\\-----------/
+`,
+  },
 ] as const;
 
 export default function DitaaEditor() {

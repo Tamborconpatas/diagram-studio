@@ -22,6 +22,24 @@ const EXAMPLES = [
 [Usuario] 1 -- * [Pedido]
 `,
   },
+  {
+    label: 'Con nota y paquete',
+    code: `[<frame>Módulo Auth|
+  [Login]
+  [Token]
+  [Login] -> [Token]
+]
+[<note>Requiere HTTPS] -- [Login]
+`,
+  },
+  {
+    label: 'Diagrama de estado',
+    code: `[<start>Inicio] -> [<state>Activo]
+[<state>Activo] -> [<state>Pausado]: pausar
+[<state>Pausado] -> [<state>Activo]: reanudar
+[<state>Activo] -> [<end>Fin]: terminar
+`,
+  },
 ] as const;
 
 export default function NomnomlEditor() {

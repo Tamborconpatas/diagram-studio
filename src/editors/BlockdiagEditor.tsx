@@ -23,6 +23,34 @@ const EXAMPLES = [
 }
 `,
   },
+  {
+    label: 'Con grupos',
+    code: `blockdiag {
+  group {
+    label = "Frontend";
+    App; UI;
+  }
+  group {
+    label = "Backend";
+    API; DB;
+  }
+  App -> API -> DB;
+  UI -> API;
+}
+`,
+  },
+  {
+    label: 'Formas y estilos',
+    code: `blockdiag {
+  Inicio [shape = beginpoint];
+  Decision [shape = diamond];
+  Proceso [shape = box];
+  Fin [shape = endpoint];
+  Inicio -> Decision -> Proceso -> Fin;
+  Decision -> Fin [style = dashed, label = "atajo"];
+}
+`,
+  },
 ] as const;
 
 export default function BlockdiagEditor() {
