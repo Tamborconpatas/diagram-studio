@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
+import zenuml from '@mermaid-js/mermaid-zenuml';
 import { parseMermaidToExcalidraw } from '@excalidraw/mermaid-to-excalidraw';
 import { EditorLayout, toolbarBtn, toolbarSelect, toolbarOption } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
@@ -233,9 +234,85 @@ component Base de datos [0.3, 0.8]
 Usuario -> App
 App -> Base de datos`,
   },
+  {
+    label: 'Treemap',
+    code: `treemap-beta
+  "Categoría A"
+  "Item A1": 10
+  "Item A2": 20
+  "Categoría B"
+  "Item B1": 15
+  "Item B2": 25`,
+  },
+  {
+    label: 'Venn',
+    code: `venn-beta
+  set A
+  set B
+  set C
+  union A, B
+  union B, C`,
+  },
+  {
+    label: 'Cynefin',
+    code: `cynefin-beta
+  title Respuesta a incidentes
+
+  complex
+  "Investigar causa raíz"
+  "Ejecutar experimento controlado"
+
+  complicated
+  "Analizar datos de rendimiento"
+  "Requiere revisión experta"
+
+  clear
+  "Reiniciar servicio"
+  "Aplicar solución conocida"
+
+  chaotic
+  "Escalar a guardia inmediatamente"`,
+  },
+  {
+    label: 'TreeView',
+    code: `treeView-beta
+  "raíz"
+  "carpeta1"
+      "archivo1.js"
+      "archivo2.ts"
+  "carpeta2"
+      "archivo3.spec.ts"
+  "archivo4.ts"`,
+  },
+  {
+    label: 'Event Modeling',
+    code: `eventmodeling
+
+tf 01 ui CarritoUI
+tf 02 cmd AgregarItem
+tf 03 evt ItemAgregado
+tf 04 rmo VistaCarrito ->> 03`,
+  },
+  {
+    label: 'ZenUML',
+    code: `zenuml
+    Servicio.Procesar(id) {
+      usuario = Sesion.ObtenerUsuario()
+      if (usuario.activo) {
+        Repositorio.Actualizar(id, usuario)
+        return "ok"
+      } else {
+        return "rechazado"
+      }
+    }`,
+  },
 ] as const;
 
 let renderCount = 0;
+
+// zenuml is a separate rendering engine, not bundled in mermaid core —
+// registered once so the `zenuml` diagram type is recognized.
+const zenumlReady = mermaid.registerExternalDiagrams([zenuml]);
 
 export default function MermaidEditor({ onEditInExcalidraw }: { onEditInExcalidraw?: (scene: PendingScene) => void }) {
   const outRef = useRef<HTMLDivElement>(null);
@@ -271,6 +348,7 @@ export default function MermaidEditor({ onEditInExcalidraw }: { onEditInExcalidr
 
   const render = async (src: string, t: (typeof THEMES)[number]) => {
     try {
+      await zenumlReady;
       mermaid.initialize({ startOnLoad: false, theme: t, securityLevel: 'strict' });
       const { svg } = await mermaid.render(`mermaid-diagram-${renderCount++}`, src);
       setSvgMarkup(svg);
