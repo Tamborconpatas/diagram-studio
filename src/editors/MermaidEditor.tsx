@@ -5,6 +5,7 @@ import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
+import { withMermaidIdCompat } from '../mermaidToExcalidrawCompat';
 import type { PendingScene } from '../sceneHandoff';
 
 const THEMES = ['default', 'neutral', 'dark', 'forest', 'base'] as const;
@@ -27,7 +28,7 @@ export default function MermaidEditor({ onEditInExcalidraw }: { onEditInExcalidr
   const editVisually = async () => {
     setConverting(true);
     try {
-      const { elements, files } = await parseMermaidToExcalidraw(code);
+      const { elements, files } = await withMermaidIdCompat(() => parseMermaidToExcalidraw(code));
       // The converter only breaks flowchart/sequence/class/ER/state diagrams
       // into real editable elements; anything else (pie, gantt, mindmap,
       // gitGraph, journey...) comes back as a single flat embedded image.
