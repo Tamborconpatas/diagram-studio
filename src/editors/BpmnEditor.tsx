@@ -4,6 +4,7 @@ import type Modeling from 'bpmn-js/lib/features/modeling/Modeling';
 import { layoutProcess } from 'bpmn-auto-layout';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
+import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
 
 const EMPTY_DIAGRAM = `<?xml version="1.0" encoding="UTF-8"?>
@@ -72,14 +73,15 @@ export default function BpmnEditor() {
     return () => modeler.destroy();
   }, []);
 
-  const loadXml = async () => {
+  const loadXml = async (source?: string) => {
     try {
-      let toImport = xml;
+      const original = source ?? xml;
+      let toImport = original;
       try {
         await modelerRef.current!.importXML(toImport);
       } catch (err) {
         if (err instanceof Error && err.message === 'no diagram to display') {
-          toImport = await layoutProcess(xml);
+          toImport = await layoutProcess(original);
           await modelerRef.current!.importXML(toImport);
         } else {
           throw err;
@@ -103,7 +105,15 @@ export default function BpmnEditor() {
     <EditorLayout
       toolbar={
         <>
-          <button className={toolbarBtn} onClick={loadXml}>Cargar → diagrama</button>
+          <OpenFileButton
+            accept=".bpmn,.xml"
+            label="Abrir .bpmn"
+            onOpen={(text) => {
+              setXml(text);
+              loadXml(text);
+            }}
+          />
+          <button className={toolbarBtn} onClick={() => loadXml()}>Cargar → diagrama</button>
           <select
             className={toolbarSelect}
             value={style}

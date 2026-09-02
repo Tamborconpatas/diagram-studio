@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
+import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `\\begin{tikzpicture}
@@ -43,6 +44,14 @@ export default function TikzEditor() {
     <EditorLayout
       toolbar={
         <>
+          <OpenFileButton
+            accept=".tex,.txt"
+            label="Abrir .tex"
+            onOpen={(text) => {
+              setCode(text);
+              render(text);
+            }}
+          />
           <button className={toolbarBtn} onClick={() => render(code)} disabled={loading}>
             {loading ? 'Compilando…' : 'Renderizar'}
           </button>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
+import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
 
 const DEFAULT_CODE = `from diagrams import Diagram
@@ -48,6 +49,14 @@ export default function PythonDiagramsEditor() {
     <EditorLayout
       toolbar={
         <>
+          <OpenFileButton
+            accept=".py,.txt"
+            label="Abrir .py"
+            onOpen={(text) => {
+              setCode(text);
+              render(text);
+            }}
+          />
           <button className={toolbarBtn} onClick={() => render(code)} disabled={loading}>
             {loading ? 'Renderizando…' : 'Renderizar'}
           </button>

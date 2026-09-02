@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Graphviz } from '@hpcc-js/wasm-graphviz';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
+import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
 
 const STYLE_PRESETS = {
@@ -57,6 +58,14 @@ export default function GraphvizEditor() {
     <EditorLayout
       toolbar={
         <>
+          <OpenFileButton
+            accept=".dot,.gv,.txt"
+            label="Abrir .dot"
+            onOpen={(text) => {
+              setCode(text);
+              render(text, style);
+            }}
+          />
           <button className={toolbarBtn} onClick={() => render(code, style)}>Renderizar</button>
           <select
             className={toolbarSelect}

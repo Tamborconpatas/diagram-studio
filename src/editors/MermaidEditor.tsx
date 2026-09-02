@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import mermaid from 'mermaid';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
+import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
 
 const THEMES = ['default', 'neutral', 'dark', 'forest', 'base'] as const;
@@ -40,6 +41,14 @@ export default function MermaidEditor() {
     <EditorLayout
       toolbar={
         <>
+          <OpenFileButton
+            accept=".mmd,.mermaid,.txt"
+            label="Abrir .mmd"
+            onOpen={(text) => {
+              setCode(text);
+              render(text, theme);
+            }}
+          />
           <button className={toolbarBtn} onClick={() => render(code, theme)}>Renderizar</button>
           <select
             className={toolbarSelect}

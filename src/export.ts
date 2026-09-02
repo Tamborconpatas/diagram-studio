@@ -66,4 +66,21 @@ export function downloadText(text: string, filename: string) {
   triggerDownload(new Blob([text], { type: 'text/plain;charset=utf-8' }), filename);
 }
 
+export function openTextFile(accept: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = accept;
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (!file) {
+        reject(new Error('No se seleccionó ningún archivo'));
+        return;
+      }
+      file.text().then(resolve, reject);
+    };
+    input.click();
+  });
+}
+
 export { triggerDownload };

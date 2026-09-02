@@ -2,6 +2,7 @@ import { useState } from 'react';
 import plantumlEncoder from 'plantuml-encoder';
 import { EditorLayout, toolbarBtn, toolbarSelect } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
+import { OpenFileButton } from '../OpenFileButton';
 import { downloadText } from '../export';
 
 const THEMES = [
@@ -39,6 +40,14 @@ export default function PlantUmlEditor() {
     <EditorLayout
       toolbar={
         <>
+          <OpenFileButton
+            accept=".puml,.pu,.plantuml,.txt"
+            label="Abrir .puml"
+            onOpen={(text) => {
+              setCode(text);
+              setSrc(toUrl(text, theme));
+            }}
+          />
           <button className={toolbarBtn} onClick={() => setSrc(toUrl(code, theme))}>Renderizar</button>
           <select
             className={toolbarSelect}
