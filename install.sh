@@ -54,6 +54,14 @@ if ! command -v ditaa >/dev/null; then
   exit 1
 fi
 
+echo "==> Comprobando Java (SMC)"
+if ! command -v java >/dev/null; then
+  echo "ERROR: falta 'java'. Instálalo, p.ej.:" >&2
+  echo "  Debian/Ubuntu: sudo apt install default-jre" >&2
+  echo "  Fedora/Arch:   busca un paquete 'jre'/'jdk' de tu distro" >&2
+  exit 1
+fi
+
 echo "==> Instalando lanzador de escritorio"
 mkdir -p "$HOME/Desktop"
 sed "s#__APP_DIR__#$(pwd)#g" desktop/diagram-studio.desktop.template > "$HOME/Desktop/diagram-studio.desktop"

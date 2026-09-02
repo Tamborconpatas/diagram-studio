@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -12,6 +12,7 @@ import DbmlEditor from './editors/DbmlEditor';
 import BlockdiagEditor from './editors/BlockdiagEditor';
 import SankeyEditor from './editors/SankeyEditor';
 import NomnomlEditor from './editors/NomnomlEditor';
+import SmcEditor from './editors/SmcEditor';
 import type { PendingScene } from './sceneHandoff';
 
 const TOOLS = [
@@ -27,6 +28,7 @@ const TOOLS = [
   { id: 'blockdiag', label: 'Blockdiag', icon: Boxes, Component: BlockdiagEditor, description: 'Diagramas de bloques y redes desde texto simple.' },
   { id: 'sankey', label: 'Sankey', icon: Waves, Component: SankeyEditor, description: 'Diagramas de flujo proporcional, 100% en el navegador.' },
   { id: 'nomnoml', label: 'Nomnoml', icon: ComponentIcon, Component: NomnomlEditor, description: 'UML simple (clases, herencia), 100% en el navegador.' },
+  { id: 'smc', label: 'SMC', icon: ArrowRightLeft, Component: SmcEditor, description: 'Máquinas de estado desde tabla de transiciones (State Machine Compiler).' },
 ] as const;
 
 type ToolId = (typeof TOOLS)[number]['id'];

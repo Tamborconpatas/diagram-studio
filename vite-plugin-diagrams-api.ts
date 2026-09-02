@@ -8,6 +8,7 @@ const PYTHON = join(import.meta.dirname, '.venv-diagrams', 'bin', 'python3');
 const RUNNER = join(import.meta.dirname, 'scripts', 'diagrams-runner.py');
 const BLOCKDIAG_RUNNER = join(import.meta.dirname, 'scripts', 'blockdiag-runner.py');
 const DBML_RENDERER = join(import.meta.dirname, 'node_modules', '.bin', 'dbml-renderer');
+const SMC_JAR = join(import.meta.dirname, 'tools', 'Smc.jar');
 const MAX_BODY_BYTES = 200_000;
 
 async function readBody(req: import('node:http').IncomingMessage): Promise<string> {
@@ -124,6 +125,13 @@ async function renderBlockdiag(code: string, dir: string): Promise<string> {
   return readFile(join(dir, 'output.svg'), 'utf-8');
 }
 
+async function renderSmc(code: string, dir: string): Promise<string> {
+  await writeFile(join(dir, 'input.sm'), code, 'utf-8');
+  await run('java', ['-jar', SMC_JAR, '-graph', '-glevel', '1', 'input.sm'], dir, 15_000);
+  await run('dot', ['-Tsvg', 'input_sm.dot', '-o', 'output.svg'], dir, 10_000);
+  return readFile(join(dir, 'output.svg'), 'utf-8');
+}
+
 export function diagramsApiPlugin(): Plugin {
   return {
     name: 'diagrams-python-api',
@@ -133,6 +141,7 @@ export function diagramsApiPlugin(): Plugin {
       jsonEndpoint(server, '/api/render-ditaa', 'ditaa-', renderDitaa);
       jsonEndpoint(server, '/api/render-dbml', 'dbml-', renderDbml);
       jsonEndpoint(server, '/api/render-blockdiag', 'blockdiag-', renderBlockdiag);
+      jsonEndpoint(server, '/api/render-smc', 'smc-', renderSmc);
     },
   };
 }
