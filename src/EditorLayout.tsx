@@ -27,6 +27,7 @@ export function EditorLayout({
   renderArea,
   examplesTitle,
   actionsTitle,
+  codeTitle,
 }: {
   examples?: ReactNode;
   actions: ReactNode;
@@ -36,29 +37,42 @@ export function EditorLayout({
   renderArea: ReactNode;
   examplesTitle?: string;
   actionsTitle?: string;
+  codeTitle?: string;
 }) {
   const { t } = useI18n();
 
   return (
     <div className="flex flex-1 min-h-0">
-      <div className="w-105 flex flex-col border-r border-zinc-800/80 bg-zinc-950/40 shrink-0 overflow-y-auto">
-        {examples && (
-          <CollapsibleSection title={examplesTitle ?? t.examplesTitle}>
-            {examples}
-          </CollapsibleSection>
-        )}
-        <CollapsibleSection title={actionsTitle ?? t.actionsTitle}>{actions}</CollapsibleSection>
-        {error && (
-          <div className="px-3 py-2 text-[11px] text-red-400 font-mono-code border-b border-red-900/40 bg-red-950/20">
-            {error}
+      <div className="w-105 flex flex-col border-r border-zinc-800/80 bg-zinc-950/40 shrink-0 min-h-0">
+        {/* Código arriba como sección principal */}
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-800/80 bg-zinc-950/60 text-[10px] font-mono-code font-bold tracking-widest uppercase text-teal-400 shrink-0 select-none">
+            <span>{codeTitle ?? t.codeTitle}</span>
           </div>
-        )}
-        <textarea
-          value={code}
-          onChange={(e) => onCodeChange(e.target.value)}
-          spellCheck={false}
-          className="flex-1 min-h-40 bg-transparent text-zinc-200 font-mono-code text-xs p-3 resize-none outline-none"
-        />
+          {error && (
+            <div className="px-3 py-2 text-[11px] text-red-400 font-mono-code border-b border-red-900/40 bg-red-950/20 shrink-0 max-h-28 overflow-y-auto">
+              {error}
+            </div>
+          )}
+          <textarea
+            value={code}
+            onChange={(e) => onCodeChange(e.target.value)}
+            spellCheck={false}
+            className="flex-1 w-full bg-transparent text-zinc-200 font-mono-code text-xs p-3 resize-none outline-none overflow-auto"
+          />
+        </div>
+
+        {/* Los demás abajo: Acciones y Ejemplos */}
+        <div className="shrink-0 max-h-[45vh] overflow-y-auto border-t border-zinc-800/80 flex flex-col">
+          <CollapsibleSection title={actionsTitle ?? t.actionsTitle} defaultOpen={true}>
+            {actions}
+          </CollapsibleSection>
+          {examples && (
+            <CollapsibleSection title={examplesTitle ?? t.examplesTitle} defaultOpen={false}>
+              {examples}
+            </CollapsibleSection>
+          )}
+        </div>
       </div>
       <div className="flex-1 relative bg-[#0a0b0e]">{renderArea}</div>
     </div>

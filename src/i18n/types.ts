@@ -9,6 +9,7 @@ export interface Translations {
   homeSubtitle: string;
   examplesTitle: string;
   actionsTitle: string;
+  codeTitle: string;
   renderBtn: string;
   renderingBtn: string;
   compilingBtn: string;

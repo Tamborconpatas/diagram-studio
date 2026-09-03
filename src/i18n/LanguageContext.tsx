@@ -24,7 +24,6 @@ function detectInitialLanguage(): Language {
   }
   return 'es';
 }
-
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(detectInitialLanguage);
 
