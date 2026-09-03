@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { CollapsibleSection } from './CollapsibleSection';
 import { useI18n } from './i18n';
 
@@ -42,7 +42,6 @@ export function EditorLayout({
   onAutoRender?: (code: string) => void;
 }) {
   const { t } = useI18n();
-  const [isPending, setIsPending] = useState(false);
   const lastRenderedCodeRef = useRef(code);
   const isFirstMountRef = useRef(true);
 
@@ -54,17 +53,12 @@ export function EditorLayout({
     }
 
     if (!onAutoRender) return;
-    if (code === lastRenderedCodeRef.current) {
-      setIsPending(false);
-      return;
-    }
+    if (code === lastRenderedCodeRef.current) return;
 
-    setIsPending(true);
     const timer = setTimeout(() => {
       lastRenderedCodeRef.current = code;
-      setIsPending(false);
       onAutoRender(code);
-    }, 3500);
+    }, 150);
 
     return () => clearTimeout(timer);
   }, [code, onAutoRender]);
@@ -76,12 +70,6 @@ export function EditorLayout({
         <div className="flex-1 flex flex-col min-h-0">
           <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-800/80 bg-zinc-950/60 text-[10px] font-mono-code font-bold tracking-widest uppercase text-teal-400 shrink-0 select-none">
             <span>{codeTitle ?? t.codeTitle}</span>
-            {isPending && (
-              <span className="text-[10px] text-teal-400/80 font-mono-code lowercase flex items-center gap-1.5 animate-pulse normal-case tracking-normal">
-                <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                {t.autoRenderingIn}
-              </span>
-            )}
           </div>
           {error && (
             <div className="px-3 py-2 text-[11px] text-red-400 font-mono-code border-b border-red-900/40 bg-red-950/20 shrink-0 max-h-28 overflow-y-auto">
