@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { renderSvg } from 'nomnoml';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
+import { useI18n } from '../i18n';
 
 const DEFAULT_CODE = `[<abstract>Shape]
 [Shape]<:--[Circle]
@@ -13,39 +14,75 @@ const DEFAULT_CODE = `[<abstract>Shape]
 [Circle|radius: float|area()]
 `;
 
-const EXAMPLES = [
-  { label: 'Herencia', code: DEFAULT_CODE },
-  {
-    label: 'Asociación simple',
-    code: `[Usuario|+nombre: string|+login()]
+const CODE_EXAMPLES = {
+  es: {
+    inheritance: DEFAULT_CODE,
+    association: `[Usuario|+nombre: string|+login()]
 [Pedido|+fecha: date|+total()]
 [Usuario] 1 -- * [Pedido]
 `,
-  },
-  {
-    label: 'Con nota y paquete',
-    code: `[<frame>Módulo Auth|
+    notePackage: `[<frame>Módulo Auth|
   [Login]
   [Token]
   [Login] -> [Token]
 ]
 [<note>Requiere HTTPS] -- [Login]
 `,
-  },
-  {
-    label: 'Diagrama de estado',
-    code: `[<start>Inicio] -> [<state>Activo]
+    state: `[<start>Inicio] -> [<state>Activo]
 [<state>Activo] -> [<state>Pausado]: pausar
 [<state>Pausado] -> [<state>Activo]: reanudar
 [<state>Activo] -> [<end>Fin]: terminar
 `,
   },
-] as const;
+  en: {
+    inheritance: DEFAULT_CODE,
+    association: `[User|+name: string|+login()]
+[Order|+date: date|+total()]
+[User] 1 -- * [Order]
+`,
+    notePackage: `[<frame>Auth Module|
+  [Login]
+  [Token]
+  [Login] -> [Token]
+]
+[<note>Requires HTTPS] -- [Login]
+`,
+    state: `[<start>Start] -> [<state>Active]
+[<state>Active] -> [<state>Paused]: pause
+[<state>Paused] -> [<state>Active]: resume
+[<state>Active] -> [<end>End]: terminate
+`,
+  },
+};
 
 export default function NomnomlEditor() {
+  const { t, language } = useI18n();
   const [code, setCode] = useState(DEFAULT_CODE);
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  const examples = [
+    { label: t.nomnoml.examples.inheritance, code: CODE_EXAMPLES[language].inheritance },
+    { label: t.nomnoml.examples.association, code: CODE_EXAMPLES[language].association },
+    { label: t.nomnoml.examples.notePackage, code: CODE_EXAMPLES[language].notePackage },
+    { label: t.nomnoml.examples.state, code: CODE_EXAMPLES[language].state },
+  ];
+
+  const prevLangRef = useRef(language);
+  useEffect(() => {
+    if (prevLangRef.current !== language) {
+      const prevLang = prevLangRef.current;
+      prevLangRef.current = language;
+      const prevCodes = Object.values(CODE_EXAMPLES[prevLang]);
+      const nextCodes = Object.values(CODE_EXAMPLES[language]);
+      const idx = prevCodes.indexOf(code);
+      if (idx !== -1) {
+        const nextCode = nextCodes[idx];
+        setCode(nextCode);
+        render(nextCode);
+      }
+    }
+  }, [language, code]);
 
   const render = (src: string) => {
     try {
@@ -64,7 +101,7 @@ export default function NomnomlEditor() {
     <EditorLayout
       examples={
         <ExamplesMenu
-          examples={EXAMPLES}
+          examples={examples}
           onSelect={(exampleCode) => {
             setCode(exampleCode);
             render(exampleCode);
@@ -75,15 +112,15 @@ export default function NomnomlEditor() {
         <>
           <OpenFileButton
             accept=".nomnoml,.txt"
-            label="Abrir .nomnoml"
+            label={t.openFileBtn('.nomnoml')}
             onOpen={(text) => {
               setCode(text);
               render(text);
             }}
           />
-          <button className={toolbarBtn} onClick={() => render(code)}>Renderizar</button>
+          <button className={toolbarBtn} onClick={() => render(code)}>{t.renderBtn}</button>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.nomnoml')}>
-            Descargar .nomnoml
+            {t.downloadFileBtn('.nomnoml')}
           </button>
           <ExportButtons filename="diagrama-nomnoml" getSvg={async () => svgMarkup} />
         </>

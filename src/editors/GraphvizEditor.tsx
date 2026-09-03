@@ -5,6 +5,7 @@ import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
+import { useI18n } from '../i18n';
 
 const STYLE_PRESETS = {
   none: '',
@@ -15,16 +16,13 @@ const STYLE_PRESETS = {
 
 type StylePreset = keyof typeof STYLE_PRESETS;
 
-const DEFAULT_CODE = `digraph G {
+const CODE_EXAMPLES = {
+  es: {
+    simple: `digraph G {
   rankdir=LR;
   Inicio -> Proceso -> Fin;
-}`;
-
-const EXAMPLES = [
-  { label: 'Grafo simple', code: DEFAULT_CODE },
-  {
-    label: 'Subgrafos/clusters',
-    code: `digraph G {
+}`,
+    subgraphs: `digraph G {
   subgraph cluster_0 {
     label="Frontend";
     App -> API;
@@ -34,52 +32,82 @@ const EXAMPLES = [
     API -> DB;
   }
 }`,
-  },
-  {
-    label: 'No dirigido',
-    code: `graph G {
+    undirected: `graph G {
   A -- B;
   B -- C;
   C -- A;
 }`,
-  },
-  {
-    label: 'Árbol jerárquico',
-    code: `digraph G {
+    tree: `digraph G {
   CEO -> Ventas;
   CEO -> Ingeniería;
   Ingeniería -> Frontend;
   Ingeniería -> Backend;
   Ventas -> "Cuentas Clave";
 }`,
-  },
-  {
-    label: 'Nodos tipo registro',
-    code: `digraph G {
+    record: `digraph G {
   node [shape=record];
   usuario [label="Usuario|+id: int\\l+nombre: string\\l"];
   pedido [label="Pedido|+id: int\\l+total: float\\l"];
   usuario -> pedido;
 }`,
-  },
-  {
-    label: 'Layout circular',
-    code: `digraph G {
+    circo: `digraph G {
   layout=circo;
   A -> B -> C -> D -> A;
   A -> C;
 }`,
-  },
-  {
-    label: 'Layout radial',
-    code: `digraph G {
+    twopi: `digraph G {
   layout=twopi;
   root -- a; root -- b; root -- c;
   a -- a1; a -- a2;
   b -- b1;
 }`,
   },
-] as const;
+  en: {
+    simple: `digraph G {
+  rankdir=LR;
+  Start -> Process -> End;
+}`,
+    subgraphs: `digraph G {
+  subgraph cluster_0 {
+    label="Frontend";
+    App -> API;
+  }
+  subgraph cluster_1 {
+    label="Backend";
+    API -> DB;
+  }
+}`,
+    undirected: `graph G {
+  A -- B;
+  B -- C;
+  C -- A;
+}`,
+    tree: `digraph G {
+  CEO -> Sales;
+  CEO -> Engineering;
+  Engineering -> Frontend;
+  Engineering -> Backend;
+  Sales -> "Key Accounts";
+}`,
+    record: `digraph G {
+  node [shape=record];
+  user [label="User|+id: int\\l+name: string\\l"];
+  order [label="Order|+id: int\\l+total: float\\l"];
+  user -> order;
+}`,
+    circo: `digraph G {
+  layout=circo;
+  A -> B -> C -> D -> A;
+  A -> C;
+}`,
+    twopi: `digraph G {
+  layout=twopi;
+  root -- a; root -- b; root -- c;
+  a -- a1; a -- a2;
+  b -- b1;
+}`,
+  },
+};
 
 function withStyle(dot: string, preset: StylePreset) {
   const inject = STYLE_PRESETS[preset];
@@ -94,11 +122,38 @@ function loadGraphviz() {
 }
 
 export default function GraphvizEditor() {
+  const { t, language } = useI18n();
   const outRef = useRef<HTMLDivElement>(null);
-  const [code, setCode] = useState(DEFAULT_CODE);
+  const [code, setCode] = useState(() => CODE_EXAMPLES[language].simple);
   const [style, setStyle] = useState<StylePreset>('oscuro');
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
+
+  const examples = [
+    { label: t.graphviz.examples.simple, code: CODE_EXAMPLES[language].simple },
+    { label: t.graphviz.examples.subgraphs, code: CODE_EXAMPLES[language].subgraphs },
+    { label: t.graphviz.examples.undirected, code: CODE_EXAMPLES[language].undirected },
+    { label: t.graphviz.examples.tree, code: CODE_EXAMPLES[language].tree },
+    { label: t.graphviz.examples.record, code: CODE_EXAMPLES[language].record },
+    { label: t.graphviz.examples.circo, code: CODE_EXAMPLES[language].circo },
+    { label: t.graphviz.examples.twopi, code: CODE_EXAMPLES[language].twopi },
+  ];
+
+  const prevLangRef = useRef(language);
+  useEffect(() => {
+    if (prevLangRef.current !== language) {
+      const prevLang = prevLangRef.current;
+      prevLangRef.current = language;
+      const prevCodes = Object.values(CODE_EXAMPLES[prevLang]);
+      const nextCodes = Object.values(CODE_EXAMPLES[language]);
+      const idx = prevCodes.indexOf(code);
+      if (idx !== -1) {
+        const nextCode = nextCodes[idx];
+        setCode(nextCode);
+        render(nextCode, style);
+      }
+    }
+  }, [language, code, style]);
 
   const render = async (src: string, preset: StylePreset) => {
     try {
@@ -113,14 +168,14 @@ export default function GraphvizEditor() {
   };
 
   useEffect(() => {
-    render(DEFAULT_CODE, style);
+    render(CODE_EXAMPLES[language].simple, style);
   }, []);
 
   return (
     <EditorLayout
       examples={
         <ExamplesMenu
-          examples={EXAMPLES}
+          examples={examples}
           onSelect={(exampleCode) => {
             setCode(exampleCode);
             render(exampleCode, style);
@@ -131,13 +186,13 @@ export default function GraphvizEditor() {
         <>
           <OpenFileButton
             accept=".dot,.gv,.txt"
-            label="Abrir .dot"
+            label={t.openFileBtn('.dot')}
             onOpen={(text) => {
               setCode(text);
               render(text, style);
             }}
           />
-          <button className={toolbarBtn} onClick={() => render(code, style)}>Renderizar</button>
+          <button className={toolbarBtn} onClick={() => render(code, style)}>{t.renderBtn}</button>
           <select
             className={toolbarSelect}
             value={style}
@@ -147,12 +202,12 @@ export default function GraphvizEditor() {
               render(code, s);
             }}
           >
-            {Object.keys(STYLE_PRESETS).map((s) => (
-              <option key={s} value={s} className={toolbarOption}>{s}</option>
+            {(Object.keys(STYLE_PRESETS) as StylePreset[]).map((s) => (
+              <option key={s} value={s} className={toolbarOption}>{t.graphviz.presets[s] ?? s}</option>
             ))}
           </select>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.dot')}>
-            Descargar .dot
+            {t.downloadFileBtn('.dot')}
           </button>
           <ExportButtons filename="diagrama-graphviz" getSvg={async () => svgMarkup} />
         </>

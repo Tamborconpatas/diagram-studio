@@ -4,6 +4,7 @@ import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
+import { useI18n } from '../i18n';
 
 const DEFAULT_CODE = `Table users {
   id int [pk]
@@ -20,11 +21,9 @@ Table posts {
 Ref: posts.user_id > users.id
 `;
 
-const EXAMPLES = [
-  { label: '2 tablas', code: DEFAULT_CODE },
-  {
-    label: 'Muchos a muchos',
-    code: `Table students {
+const CODE_EXAMPLES = {
+  twoTables: DEFAULT_CODE,
+  manyToMany: `Table students {
   id int [pk]
   name varchar
 }
@@ -43,10 +42,7 @@ Table enrollments {
 Ref: enrollments.student_id > students.id
 Ref: enrollments.course_id > courses.id
 `,
-  },
-  {
-    label: 'Con enum e índices',
-    code: `Enum estado_pedido {
+  enumIndexes: `Enum estado_pedido {
   pendiente
   pagado
   enviado
@@ -71,14 +67,20 @@ Table clientes {
 
 Ref: pedidos.cliente_id > clientes.id
 `,
-  },
-] as const;
+};
 
 export default function DbmlEditor() {
+  const { t } = useI18n();
   const [code, setCode] = useState(DEFAULT_CODE);
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const examples = [
+    { label: t.dbml.examples.twoTables, code: CODE_EXAMPLES.twoTables },
+    { label: t.dbml.examples.manyToMany, code: CODE_EXAMPLES.manyToMany },
+    { label: t.dbml.examples.enumIndexes, code: CODE_EXAMPLES.enumIndexes },
+  ];
 
   const render = async (src: string) => {
     setLoading(true);
@@ -107,7 +109,7 @@ export default function DbmlEditor() {
     <EditorLayout
       examples={
         <ExamplesMenu
-          examples={EXAMPLES}
+          examples={examples}
           onSelect={(exampleCode) => {
             setCode(exampleCode);
             render(exampleCode);
@@ -118,17 +120,17 @@ export default function DbmlEditor() {
         <>
           <OpenFileButton
             accept=".dbml,.txt"
-            label="Abrir .dbml"
+            label={t.openFileBtn('.dbml')}
             onOpen={(text) => {
               setCode(text);
               render(text);
             }}
           />
           <button className={toolbarBtn} onClick={() => render(code)} disabled={loading}>
-            {loading ? 'Renderizando…' : 'Renderizar'}
+            {loading ? t.renderingBtn : t.renderBtn}
           </button>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'esquema.dbml')}>
-            Descargar .dbml
+            {t.downloadFileBtn('.dbml')}
           </button>
           <ExportButtons filename="diagrama-dbml" getSvg={async () => svgMarkup} />
         </>

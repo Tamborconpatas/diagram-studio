@@ -6,6 +6,7 @@ import { toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { downloadText } from '../export';
 import type { PendingScene } from '../sceneHandoff';
+import { useI18n } from '../i18n';
 
 export default function ExcalidrawEditor({
   pendingScene,
@@ -14,6 +15,7 @@ export default function ExcalidrawEditor({
   pendingScene?: PendingScene | null;
   onSceneConsumed?: () => void;
 }) {
+  const { t } = useI18n();
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
 
   // This component fully remounts (see `key={active}` in DiagramApp) whenever
@@ -55,7 +57,7 @@ export default function ExcalidrawEditor({
   return (
     <div className="flex flex-1 min-h-0 flex-col">
       <div className="flex flex-wrap items-center gap-2 p-3 border-b border-zinc-800/80 bg-zinc-950/40">
-        <button className={toolbarBtn} onClick={downloadScene}>Descargar .excalidraw</button>
+        <button className={toolbarBtn} onClick={downloadScene}>{t.downloadFileBtn('.excalidraw')}</button>
         <ExportButtons filename="diagrama-excalidraw" getSvg={getSvg} />
         {warning && <span className="text-amber-400 text-[11px] font-mono-code">{warning}</span>}
       </div>

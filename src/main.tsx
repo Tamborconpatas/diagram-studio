@@ -5,8 +5,12 @@ import './index.css'
 import 'bpmn-js/dist/assets/diagram-js.css'
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css'
 
+import { LanguageProvider } from './i18n'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <DiagramApp />
+    <LanguageProvider>
+      <DiagramApp />
+    </LanguageProvider>
   </StrictMode>,
 )

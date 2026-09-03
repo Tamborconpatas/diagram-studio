@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
+import { useI18n } from '../i18n';
 
 const DEFAULT_CODE = `%class Turnstile
 %start MainMap::Locked
@@ -22,11 +23,10 @@ Unlocked
 %%
 `;
 
-const EXAMPLES = [
-  { label: 'Torniquete', code: DEFAULT_CODE },
-  {
-    label: 'Semáforo',
-    code: `%class Semaforo
+const CODE_EXAMPLES = {
+  es: {
+    turnstile: DEFAULT_CODE,
+    trafficLight: `%class Semaforo
 %start MainMap::Rojo
 %map MainMap
 %%
@@ -44,10 +44,7 @@ Amarillo
 }
 %%
 `,
-  },
-  {
-    label: 'Con guardas',
-    code: `%class Cajero
+    guards: `%class Cajero
 %start MainMap::Esperando
 %map MainMap
 %%
@@ -66,13 +63,75 @@ Bloqueado
 %%
 `,
   },
-] as const;
+  en: {
+    turnstile: DEFAULT_CODE,
+    trafficLight: `%class TrafficLight
+%start MainMap::Red
+%map MainMap
+%%
+Red
+{
+  next Green { turnGreen(); }
+}
+Green
+{
+  next Yellow { turnYellow(); }
+}
+Yellow
+{
+  next Red { turnRed(); }
+}
+%%
+`,
+    guards: `%class ATM
+%start MainMap::Waiting
+%map MainMap
+%%
+Waiting
+{
+  enterPin [hasBalance()] Validated { showMenu(); }
+  enterPin [!hasBalance()] Blocked { alert(); }
+}
+Validated
+{
+  withdraw Waiting { dispenseCash(); }
+}
+Blocked
+{
+}
+%%
+`,
+  },
+};
 
 export default function SmcEditor() {
+  const { t, language } = useI18n();
   const [code, setCode] = useState(DEFAULT_CODE);
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const examples = [
+    { label: t.smc.examples.turnstile, code: CODE_EXAMPLES[language].turnstile },
+    { label: t.smc.examples.trafficLight, code: CODE_EXAMPLES[language].trafficLight },
+    { label: t.smc.examples.guards, code: CODE_EXAMPLES[language].guards },
+  ];
+
+  const prevLangRef = useRef(language);
+  useEffect(() => {
+    if (prevLangRef.current !== language) {
+      const prevLang = prevLangRef.current;
+      prevLangRef.current = language;
+      const prevCodes = Object.values(CODE_EXAMPLES[prevLang]);
+      const nextCodes = Object.values(CODE_EXAMPLES[language]);
+      const idx = prevCodes.indexOf(code);
+      if (idx !== -1) {
+        const nextCode = nextCodes[idx];
+        setCode(nextCode);
+        render(nextCode);
+      }
+    }
+  }, [language, code]);
 
   const render = async (src: string) => {
     setLoading(true);
@@ -101,7 +160,7 @@ export default function SmcEditor() {
     <EditorLayout
       examples={
         <ExamplesMenu
-          examples={EXAMPLES}
+          examples={examples}
           onSelect={(exampleCode) => {
             setCode(exampleCode);
             render(exampleCode);
@@ -112,17 +171,17 @@ export default function SmcEditor() {
         <>
           <OpenFileButton
             accept=".sm,.txt"
-            label="Abrir .sm"
+            label={t.openFileBtn('.sm')}
             onOpen={(text) => {
               setCode(text);
               render(text);
             }}
           />
           <button className={toolbarBtn} onClick={() => render(code)} disabled={loading}>
-            {loading ? 'Renderizando…' : 'Renderizar'}
+            {loading ? t.renderingBtn : t.renderBtn}
           </button>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'maquina.sm')}>
-            Descargar .sm
+            {t.downloadFileBtn('.sm')}
           </button>
           <ExportButtons filename="diagrama-smc" getSvg={async () => svgMarkup} />
         </>

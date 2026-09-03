@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
+import { useI18n } from '../i18n';
 
-const DEFAULT_CODE = `from diagrams import Diagram
+const CODE_EXAMPLES = {
+  es: {
+    aws: `from diagrams import Diagram
 from diagrams.aws.compute import EC2
 from diagrams.aws.database import RDS
 from diagrams.aws.network import ELB
@@ -15,13 +18,8 @@ with Diagram("arquitectura"):
     web = EC2("web")
     db = RDS("db")
     lb >> web >> db
-`;
-
-const EXAMPLES = [
-  { label: 'AWS 3-capas', code: DEFAULT_CODE },
-  {
-    label: 'GCP',
-    code: `from diagrams import Diagram
+`,
+    gcp: `from diagrams import Diagram
 from diagrams.gcp.compute import GCE
 from diagrams.gcp.database import SQL
 from diagrams.gcp.network import LoadBalancing
@@ -32,10 +30,7 @@ with Diagram("arquitectura-gcp"):
     db = SQL("db")
     lb >> web >> db
 `,
-  },
-  {
-    label: 'Azure',
-    code: `from diagrams import Diagram
+    azure: `from diagrams import Diagram
 from diagrams.azure.compute import VM
 from diagrams.azure.database import SQLDatabases
 from diagrams.azure.network import LoadBalancers
@@ -46,10 +41,7 @@ with Diagram("arquitectura-azure"):
     db = SQLDatabases("db")
     lb >> web >> db
 `,
-  },
-  {
-    label: 'Kubernetes',
-    code: `from diagrams import Diagram
+    k8s: `from diagrams import Diagram
 from diagrams.k8s.compute import Deployment, Pod
 from diagrams.k8s.network import Service, Ingress
 
@@ -60,10 +52,7 @@ with Diagram("arquitectura-k8s"):
     pod = Pod("pod")
     ing >> svc >> dep >> pod
 `,
-  },
-  {
-    label: 'On-Prem',
-    code: `from diagrams import Diagram
+    onprem: `from diagrams import Diagram
 from diagrams.onprem.network import Nginx
 from diagrams.onprem.compute import Server
 from diagrams.onprem.database import PostgreSQL
@@ -77,13 +66,97 @@ with Diagram("arquitectura-onprem"):
     lb >> web >> queue >> db
 `,
   },
-] as const;
+  en: {
+    aws: `from diagrams import Diagram
+from diagrams.aws.compute import EC2
+from diagrams.aws.database import RDS
+from diagrams.aws.network import ELB
+
+with Diagram("architecture"):
+    lb = ELB("balancer")
+    web = EC2("web")
+    db = RDS("db")
+    lb >> web >> db
+`,
+    gcp: `from diagrams import Diagram
+from diagrams.gcp.compute import GCE
+from diagrams.gcp.database import SQL
+from diagrams.gcp.network import LoadBalancing
+
+with Diagram("gcp-architecture"):
+    lb = LoadBalancing("balancer")
+    web = GCE("web")
+    db = SQL("db")
+    lb >> web >> db
+`,
+    azure: `from diagrams import Diagram
+from diagrams.azure.compute import VM
+from diagrams.azure.database import SQLDatabases
+from diagrams.azure.network import LoadBalancers
+
+with Diagram("azure-architecture"):
+    lb = LoadBalancers("balancer")
+    web = VM("web")
+    db = SQLDatabases("db")
+    lb >> web >> db
+`,
+    k8s: `from diagrams import Diagram
+from diagrams.k8s.compute import Deployment, Pod
+from diagrams.k8s.network import Service, Ingress
+
+with Diagram("k8s-architecture"):
+    ing = Ingress("ingress")
+    svc = Service("service")
+    dep = Deployment("deployment")
+    pod = Pod("pod")
+    ing >> svc >> dep >> pod
+`,
+    onprem: `from diagrams import Diagram
+from diagrams.onprem.network import Nginx
+from diagrams.onprem.compute import Server
+from diagrams.onprem.database import PostgreSQL
+from diagrams.onprem.queue import Kafka
+
+with Diagram("onprem-architecture"):
+    lb = Nginx("nginx")
+    web = Server("app")
+    queue = Kafka("queue")
+    db = PostgreSQL("db")
+    lb >> web >> queue >> db
+`,
+  },
+};
 
 export default function PythonDiagramsEditor() {
-  const [code, setCode] = useState(DEFAULT_CODE);
+  const { t, language } = useI18n();
+  const [code, setCode] = useState(() => CODE_EXAMPLES[language].aws);
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const examples = [
+    { label: t.pythonDiagrams.examples.aws, code: CODE_EXAMPLES[language].aws },
+    { label: t.pythonDiagrams.examples.gcp, code: CODE_EXAMPLES[language].gcp },
+    { label: t.pythonDiagrams.examples.azure, code: CODE_EXAMPLES[language].azure },
+    { label: t.pythonDiagrams.examples.k8s, code: CODE_EXAMPLES[language].k8s },
+    { label: t.pythonDiagrams.examples.onprem, code: CODE_EXAMPLES[language].onprem },
+  ];
+
+  const prevLangRef = useRef(language);
+  useEffect(() => {
+    if (prevLangRef.current !== language) {
+      const prevLang = prevLangRef.current;
+      prevLangRef.current = language;
+      const prevCodes = Object.values(CODE_EXAMPLES[prevLang]);
+      const nextCodes = Object.values(CODE_EXAMPLES[language]);
+      const idx = prevCodes.indexOf(code);
+      if (idx !== -1) {
+        const nextCode = nextCodes[idx];
+        setCode(nextCode);
+        render(nextCode);
+      }
+    }
+  }, [language, code]);
 
   const render = async (src: string) => {
     setLoading(true);
@@ -105,14 +178,14 @@ export default function PythonDiagramsEditor() {
   };
 
   useEffect(() => {
-    render(DEFAULT_CODE);
+    render(CODE_EXAMPLES[language].aws);
   }, []);
 
   return (
     <EditorLayout
       examples={
         <ExamplesMenu
-          examples={EXAMPLES}
+          examples={examples}
           onSelect={(exampleCode) => {
             setCode(exampleCode);
             render(exampleCode);
@@ -123,17 +196,17 @@ export default function PythonDiagramsEditor() {
         <>
           <OpenFileButton
             accept=".py,.txt"
-            label="Abrir .py"
+            label={t.openFileBtn('.py')}
             onOpen={(text) => {
               setCode(text);
               render(text);
             }}
           />
           <button className={toolbarBtn} onClick={() => render(code)} disabled={loading}>
-            {loading ? 'Renderizando…' : 'Renderizar'}
+            {loading ? t.renderingBtn : t.renderBtn}
           </button>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.py')}>
-            Descargar .py
+            {t.downloadFileBtn('.py')}
           </button>
           <ExportButtons filename="diagrama-arquitectura" getSvg={async () => svgMarkup} />
         </>

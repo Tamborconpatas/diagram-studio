@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { CollapsibleSection } from './CollapsibleSection';
+import { useI18n } from './i18n';
 
 export const toolbarBtn =
   'px-2.5 py-1.5 rounded-lg text-[10px] font-mono-code font-bold tracking-wide uppercase ' +
@@ -24,6 +25,8 @@ export function EditorLayout({
   code,
   onCodeChange,
   renderArea,
+  examplesTitle,
+  actionsTitle,
 }: {
   examples?: ReactNode;
   actions: ReactNode;
@@ -31,12 +34,20 @@ export function EditorLayout({
   code: string;
   onCodeChange: (v: string) => void;
   renderArea: ReactNode;
+  examplesTitle?: string;
+  actionsTitle?: string;
 }) {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-1 min-h-0">
       <div className="w-105 flex flex-col border-r border-zinc-800/80 bg-zinc-950/40 shrink-0 overflow-y-auto">
-        {examples && <CollapsibleSection title="Ejemplos">{examples}</CollapsibleSection>}
-        <CollapsibleSection title="Acciones">{actions}</CollapsibleSection>
+        {examples && (
+          <CollapsibleSection title={examplesTitle ?? t.examplesTitle}>
+            {examples}
+          </CollapsibleSection>
+        )}
+        <CollapsibleSection title={actionsTitle ?? t.actionsTitle}>{actions}</CollapsibleSection>
         {error && (
           <div className="px-3 py-2 text-[11px] text-red-400 font-mono-code border-b border-red-900/40 bg-red-950/20">
             {error}

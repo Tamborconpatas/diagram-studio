@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EditorLayout, toolbarBtn } from '../EditorLayout';
 import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
+import { useI18n } from '../i18n';
 
-const DEFAULT_CODE = `+--------+   +----------+   +-------+
+const CODE_EXAMPLES = {
+  es: {
+    simple: `+--------+   +----------+   +-------+
 | Cliente|-->| Servidor |-->|  DB   |
 +--------+   +----------+   +-------+
-`;
-
-const EXAMPLES = [
-  { label: 'Flujo simple', code: DEFAULT_CODE },
-  {
-    label: 'Con decisión',
-    code: `+---------+
+`,
+    decision: `+---------+
 | Entrada |
 +---------+
      |
@@ -30,10 +28,7 @@ const EXAMPLES = [
 | OK  | | Error |
 +-----+ +-------+
 `,
-  },
-  {
-    label: 'Con colores',
-    code: `+------------+
+    colors: `+------------+
 | cREDCache  |
 +------------+
      |
@@ -47,10 +42,7 @@ const EXAMPLES = [
 |  cBLULog   |
 +------------+
 `,
-  },
-  {
-    label: 'Esquinas redondeadas',
-    code: `/---------\\
+    rounded: `/---------\\
 | Sistema |
 \\---------/
      |
@@ -60,13 +52,82 @@ const EXAMPLES = [
 \\-----------/
 `,
   },
-] as const;
+  en: {
+    simple: `+--------+   +----------+   +-------+
+| Client |-->|  Server  |-->|  DB   |
++--------+   +----------+   +-------+
+`,
+    decision: `+---------+
+|  Input  |
++---------+
+     |
+     v
+ /--------\\
+<  Valid?  >
+ \\--------/
+   |     |
+  Yes    No
+   |     |
+   v     v
++-----+ +-------+
+| OK  | | Error |
++-----+ +-------+
+`,
+    colors: `+------------+
+| cREDCache  |
++------------+
+     |
+     v
++------------+
+| cGREOrigin |
++------------+
+     |
+     v
++------------+
+|  cBLULog   |
++------------+
+`,
+    rounded: `/---------\\
+| System  |
+\\---------/
+     |
+     v
+/-----------\\
+| Response  |
+\\-----------/
+`,
+  },
+};
 
 export default function DitaaEditor() {
-  const [code, setCode] = useState(DEFAULT_CODE);
+  const { t, language } = useI18n();
+  const [code, setCode] = useState(() => CODE_EXAMPLES[language].simple);
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const examples = [
+    { label: t.ditaa.examples.simple, code: CODE_EXAMPLES[language].simple },
+    { label: t.ditaa.examples.decision, code: CODE_EXAMPLES[language].decision },
+    { label: t.ditaa.examples.colors, code: CODE_EXAMPLES[language].colors },
+    { label: t.ditaa.examples.rounded, code: CODE_EXAMPLES[language].rounded },
+  ];
+
+  const prevLangRef = useRef(language);
+  useEffect(() => {
+    if (prevLangRef.current !== language) {
+      const prevLang = prevLangRef.current;
+      prevLangRef.current = language;
+      const prevCodes = Object.values(CODE_EXAMPLES[prevLang]);
+      const nextCodes = Object.values(CODE_EXAMPLES[language]);
+      const idx = prevCodes.indexOf(code);
+      if (idx !== -1) {
+        const nextCode = nextCodes[idx];
+        setCode(nextCode);
+        render(nextCode);
+      }
+    }
+  }, [language, code]);
 
   const render = async (src: string) => {
     setLoading(true);
@@ -88,14 +149,14 @@ export default function DitaaEditor() {
   };
 
   useEffect(() => {
-    render(DEFAULT_CODE);
+    render(CODE_EXAMPLES[language].simple);
   }, []);
 
   return (
     <EditorLayout
       examples={
         <ExamplesMenu
-          examples={EXAMPLES}
+          examples={examples}
           onSelect={(exampleCode) => {
             setCode(exampleCode);
             render(exampleCode);
@@ -106,17 +167,17 @@ export default function DitaaEditor() {
         <>
           <OpenFileButton
             accept=".ditaa,.txt"
-            label="Abrir .ditaa"
+            label={t.openFileBtn('.ditaa')}
             onOpen={(text) => {
               setCode(text);
               render(text);
             }}
           />
           <button className={toolbarBtn} onClick={() => render(code)} disabled={loading}>
-            {loading ? 'Renderizando…' : 'Renderizar'}
+            {loading ? t.renderingBtn : t.renderBtn}
           </button>
           <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.ditaa')}>
-            Descargar .ditaa
+            {t.downloadFileBtn('.ditaa')}
           </button>
           <ExportButtons filename="diagrama-ditaa" getSvg={async () => svgMarkup} />
         </>
