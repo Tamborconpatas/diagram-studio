@@ -26,9 +26,9 @@ const DEFAULT_CODE_BY_LANG = {
 
 const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: string }[]> = {
   es: [
-    { label: 'Flowchart', code: DEFAULT_CODE_BY_LANG.es },
+    { label: 'Diagrama de flujo', code: DEFAULT_CODE_BY_LANG.es },
     {
-      label: 'Sequence',
+      label: 'Secuencia',
       code: `sequenceDiagram
   participant Cliente
   participant Servidor
@@ -36,7 +36,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
   Servidor-->>Cliente: Respuesta`,
     },
     {
-      label: 'Class',
+      label: 'Clases',
       code: `classDiagram
   class Animal {
     +String nombre
@@ -46,13 +46,13 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
   Animal <|-- Perro`,
     },
     {
-      label: 'Entity Relationship',
+      label: 'Entidad-Relación',
       code: `erDiagram
   USUARIO ||--o{ PEDIDO : realiza
   PEDIDO ||--|{ ITEM : contiene`,
     },
     {
-      label: 'State',
+      label: 'Estados',
       code: `stateDiagram-v2
   [*] --> Inactivo
   Inactivo --> Activo: iniciar
@@ -71,7 +71,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
   Build         :a3, after a2, 10d`,
     },
     {
-      label: 'Pie',
+      label: 'Circular (Pie)',
       code: `pie title Distribución
   "Vivienda" : 40
   "Comida" : 25
@@ -79,7 +79,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
   "Ocio" : 15`,
     },
     {
-      label: 'Journey',
+      label: 'Viaje de usuario',
       code: `journey
   title Compra online
   section Buscar
@@ -90,7 +90,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
     Pagar: 2: Cliente`,
     },
     {
-      label: 'Mindmap',
+      label: 'Mapa mental',
       code: `mindmap
   root((Proyecto))
     Diseño
@@ -104,7 +104,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
       Soporte`,
     },
     {
-      label: 'Quadrant',
+      label: 'Cuadrantes',
       code: `quadrantChart
   title Esfuerzo vs Impacto
   x-axis Bajo Esfuerzo --> Alto Esfuerzo
@@ -118,7 +118,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
   Tarea C: [0.2, 0.2]`,
     },
     {
-      label: 'Timeline',
+      label: 'Línea de tiempo',
       code: `timeline
   title Historia del proyecto
   2024 : Idea inicial
@@ -126,7 +126,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
   2026 : Lanzamiento : Escalamiento`,
     },
     {
-      label: 'GitGraph',
+      label: 'Ramas Git',
       code: `gitGraph
   commit
   branch develop
@@ -138,7 +138,7 @@ const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: stri
   commit`,
     },
     {
-      label: 'Sankey',
+      label: 'Flujo Sankey',
       code: `sankey-beta
 Salario,Presupuesto,1500
 Presupuesto,Vivienda,600
@@ -147,7 +147,7 @@ Presupuesto,Ahorro,300
 Presupuesto,Ocio,200`,
     },
     {
-      label: 'Block',
+      label: 'Bloques',
       code: `block-beta
   columns 3
   Cliente space:2
@@ -157,7 +157,7 @@ Presupuesto,Ocio,200`,
   DB space:2`,
     },
     {
-      label: 'XY Chart',
+      label: 'Gráfico XY',
       code: `xychart-beta
   title "Ventas mensuales"
   x-axis [Ene, Feb, Mar, Abr, May]
@@ -165,7 +165,7 @@ Presupuesto,Ocio,200`,
   bar [500, 620, 480, 750, 900]`,
     },
     {
-      label: 'Requirement',
+      label: 'Requisitos',
       code: `requirementDiagram
 requirement test_req {
 id: 1
@@ -179,7 +179,7 @@ type: simulation
 test_entity - satisfies -> test_req`,
     },
     {
-      label: 'C4',
+      label: 'C4 Contexto',
       code: `C4Context
 title Diagrama de contexto
 Person(user, "Usuario")
@@ -187,7 +187,7 @@ System(sys, "Sistema")
 Rel(user, sys, "usa")`,
     },
     {
-      label: 'Packet',
+      label: 'Paquete UDP',
       code: `packet-beta
 title Paquete UDP
 0-7: "Puerto origen"
@@ -195,7 +195,7 @@ title Paquete UDP
 16-31: "Longitud"`,
     },
     {
-      label: 'Kanban',
+      label: 'Tablero Kanban',
       code: `kanban
   Por hacer
     task1[Diseñar UI]
@@ -206,7 +206,7 @@ title Paquete UDP
     task4[Setup inicial]`,
     },
     {
-      label: 'Architecture',
+      label: 'Arquitectura',
       code: `architecture-beta
   group api(cloud)[API]
   service db(database)[Database] in api
@@ -214,7 +214,7 @@ title Paquete UDP
   server:R -- L:db`,
     },
     {
-      label: 'Radar',
+      label: 'Radar de habilidades',
       code: `radar-beta
 title Habilidades
 axis Diseno, Codigo, Testing, Docs
@@ -222,7 +222,7 @@ curve Actual{80, 90, 60, 40}
 curve Meta{90, 95, 85, 70}`,
     },
     {
-      label: 'Ishikawa',
+      label: 'Causa-Efecto (Ishikawa)',
       code: `ishikawa
 Causa raiz del bug
 Personas
@@ -233,7 +233,7 @@ Tecnologia
   Libreria desactualizada`,
     },
     {
-      label: 'Wardley',
+      label: 'Mapa Wardley',
       code: `wardley-beta
 title Mapa Wardley
 component Usuario [0.9, 0.1]
@@ -243,7 +243,7 @@ Usuario -> App
 App -> Base de datos`,
     },
     {
-      label: 'Treemap',
+      label: 'Mapa de árbol',
       code: `treemap-beta
   "Categoría A"
   "Item A1": 10
@@ -253,7 +253,7 @@ App -> Base de datos`,
   "Item B2": 25`,
     },
     {
-      label: 'Venn',
+      label: 'Diagrama de Venn',
       code: `venn-beta
   set A
   set B
@@ -262,7 +262,7 @@ App -> Base de datos`,
   union B, C`,
     },
     {
-      label: 'Cynefin',
+      label: 'Marco Cynefin',
       code: `cynefin-beta
   title Respuesta a incidentes
 
@@ -282,7 +282,7 @@ App -> Base de datos`,
   "Escalar a guardia inmediatamente"`,
     },
     {
-      label: 'TreeView',
+      label: 'Vista de árbol',
       code: `treeView-beta
   "raíz"
   "carpeta1"
@@ -293,7 +293,7 @@ App -> Base de datos`,
   "archivo4.ts"`,
     },
     {
-      label: 'Event Modeling',
+      label: 'Modelado de eventos',
       code: `eventmodeling
 
 tf 01 ui CarritoUI
@@ -302,7 +302,7 @@ tf 03 evt ItemAgregado
 tf 04 rmo VistaCarrito ->> 03`,
     },
     {
-      label: 'ZenUML',
+      label: 'ZenUML (Secuencia)',
       code: `zenuml
     Servicio.Procesar(id) {
       usuario = Sesion.ObtenerUsuario()

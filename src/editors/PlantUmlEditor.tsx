@@ -25,9 +25,9 @@ Bob --> Alice: Response
 
 const EXAMPLES_BY_LANG: Record<'es' | 'en', readonly { label: string; code: string }[]> = {
   es: [
-    { label: 'Sequence', code: DEFAULT_CODE_BY_LANG.es },
+    { label: 'Secuencia', code: DEFAULT_CODE_BY_LANG.es },
     {
-      label: 'Class',
+      label: 'Clases',
       code: `@startuml
 class Animal {
   +String nombre
@@ -38,7 +38,7 @@ Animal <|-- Perro
 @enduml`,
     },
     {
-      label: 'Use Case',
+      label: 'Casos de uso',
       code: `@startuml
 actor Usuario
 usecase "Iniciar sesión" as UC1
@@ -48,7 +48,7 @@ Usuario -- UC2
 @enduml`,
     },
     {
-      label: 'C4 Container',
+      label: 'C4 Contenedor',
       code: `@startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
@@ -62,7 +62,7 @@ Rel(app, db, "lee/escribe")
 @enduml`,
     },
     {
-      label: 'Activity',
+      label: 'Actividad',
       code: `@startuml
 start
 :Recibir pedido;
@@ -76,7 +76,7 @@ stop
 @enduml`,
     },
     {
-      label: 'Component',
+      label: 'Componentes',
       code: `@startuml
 package "Sistema" {
   [Frontend] --> [API]
@@ -86,7 +86,7 @@ package "Sistema" {
 @enduml`,
     },
     {
-      label: 'State',
+      label: 'Estados',
       code: `@startuml
 [*] --> Inactivo
 Inactivo --> Activo : iniciar
@@ -96,7 +96,7 @@ Activo --> [*] : detener
 @enduml`,
     },
     {
-      label: 'Deployment',
+      label: 'Despliegue',
       code: `@startuml
 node "Servidor Web" {
   [App]
@@ -108,7 +108,7 @@ node "Servidor DB" {
 @enduml`,
     },
     {
-      label: 'Object',
+      label: 'Objetos',
       code: `@startuml
 object Usuario {
   nombre = "Ana"
@@ -122,7 +122,7 @@ Usuario -- Pedido
 @enduml`,
     },
     {
-      label: 'Timing',
+      label: 'Temporización',
       code: `@startuml
 robust "Servidor" as S
 S is Idle
@@ -133,7 +133,7 @@ S is Busy
 @enduml`,
     },
     {
-      label: 'Wireframe',
+      label: 'Boceto (Wireframe)',
       code: `@startsalt
 {
   Login
@@ -152,7 +152,7 @@ S is Busy
 @endgantt`,
     },
     {
-      label: 'MindMap',
+      label: 'Mapa mental',
       code: `@startmindmap
 * Proyecto
 ** Diseño
@@ -164,7 +164,7 @@ S is Busy
 @endmindmap`,
     },
     {
-      label: 'WBS',
+      label: 'Estructura WBS',
       code: `@startwbs
 * Proyecto
 ** Diseño
@@ -175,7 +175,7 @@ S is Busy
 @endwbs`,
     },
     {
-      label: 'JSON',
+      label: 'Datos JSON',
       code: `@startjson
 {
   "usuario": "ana",
@@ -185,7 +185,7 @@ S is Busy
 @endjson`,
     },
     {
-      label: 'YAML',
+      label: 'Datos YAML',
       code: `@startyaml
 usuario: ana
 activo: true
@@ -195,7 +195,7 @@ roles:
 @endyaml`,
     },
     {
-      label: 'Archimate',
+      label: 'ArchiMate',
       code: `@startuml
 !include <archimate/Archimate>
 Business_Actor(a, "Cliente")
@@ -204,7 +204,7 @@ Rel_Serving(b, a)
 @enduml`,
     },
     {
-      label: 'Network',
+      label: 'Topología de red',
       code: `@startnwdiag
 nwdiag {
   network dmz {
@@ -219,13 +219,13 @@ nwdiag {
 @endnwdiag`,
     },
     {
-      label: 'Regex',
+      label: 'Expresión regular',
       code: `@startregex
 [a-zA-Z][a-zA-Z0-9_]*
 @endregex`,
     },
     {
-      label: 'EBNF',
+      label: 'Gramática EBNF',
       code: `@startebnf
 regla = "a", "b" | "c";
 otra = { regla }, [ "opcional" ];

@@ -19,11 +19,8 @@ function detectInitialLanguage(): Language {
     if (saved === 'es' || saved === 'en') {
       return saved;
     }
-    if (typeof navigator !== 'undefined' && navigator.language) {
-      return navigator.language.toLowerCase().startsWith('es') ? 'es' : 'en';
-    }
   } catch {
-    // LocalStorage or navigator not accessible
+    // LocalStorage not accessible
   }
   return 'es';
 }
