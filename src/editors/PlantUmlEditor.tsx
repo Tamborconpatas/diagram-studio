@@ -545,6 +545,7 @@ export default function PlantUmlEditor() {
       error={error}
       code={code}
       onCodeChange={setCode}
+      onAutoRender={(src) => setSrc(toUrl(src, theme))}
       renderArea={
         <div className="w-full h-full flex items-center justify-center overflow-auto p-6">
           <img

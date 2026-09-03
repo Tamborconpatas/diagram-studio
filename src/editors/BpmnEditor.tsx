@@ -460,6 +460,7 @@ export default function BpmnEditor() {
       error={error}
       code={xml}
       onCodeChange={setXml}
+      onAutoRender={(src) => loadXml(src)}
       renderArea={<div ref={canvasRef} className="absolute inset-0" />}
     />
   );

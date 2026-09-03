@@ -215,6 +215,7 @@ export default function GraphvizEditor() {
       error={error}
       code={code}
       onCodeChange={setCode}
+      onAutoRender={(src) => render(src, style)}
       renderArea={
         <div
           ref={outRef}

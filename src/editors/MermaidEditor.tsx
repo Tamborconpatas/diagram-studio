@@ -728,6 +728,7 @@ export default function MermaidEditor({ onEditInExcalidraw }: { onEditInExcalidr
       error={error}
       code={code}
       onCodeChange={setCode}
+      onAutoRender={(src) => render(src, theme)}
       renderArea={
         <div
           ref={outRef}

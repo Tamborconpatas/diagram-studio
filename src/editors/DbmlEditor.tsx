@@ -138,6 +138,7 @@ export default function DbmlEditor() {
       error={error}
       code={code}
       onCodeChange={setCode}
+      onAutoRender={(src) => render(src)}
       renderArea={
         <div
           className="w-full h-full flex items-center justify-center overflow-auto p-6 bg-white [&_svg]:max-w-none"

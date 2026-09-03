@@ -214,6 +214,7 @@ export default function PythonDiagramsEditor() {
       error={error}
       code={code}
       onCodeChange={setCode}
+      onAutoRender={(src) => render(src)}
       renderArea={
         <div
           className="w-full h-full flex items-center justify-center overflow-auto p-6 [&_svg]:max-w-none"
