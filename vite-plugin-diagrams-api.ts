@@ -4,7 +4,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { Connect, Plugin, ViteDevServer } from 'vite';
 
-const PYTHON = join(import.meta.dirname, '.venv-diagrams', 'bin', 'python3');
+const PYTHON = join(
+  import.meta.dirname,
+  '.venv-diagrams',
+  process.platform === 'win32' ? 'Scripts' : 'bin',
+  process.platform === 'win32' ? 'python.exe' : 'python3',
+);
 const RUNNER = join(import.meta.dirname, 'scripts', 'diagrams-runner.py');
 const BLOCKDIAG_RUNNER = join(import.meta.dirname, 'scripts', 'blockdiag-runner.py');
 const DBML_RENDERER = join(import.meta.dirname, 'node_modules', '.bin', 'dbml-renderer');
