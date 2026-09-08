@@ -1,5 +1,11 @@
 Set-Location $PSScriptRoot
 
+# El PATH que este proceso hereda (via Explorer) puede estar desactualizado si
+# se instalo software (graphviz, MiKTeX...) despues del ultimo login/reinicio
+# de Explorer. Releerlo del registro evita que dot/latex/etc. no se encuentren
+# sin tener que cerrar sesion.
+$env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('PATH', 'User')
+
 $url = 'http://localhost:5173/'
 
 try {

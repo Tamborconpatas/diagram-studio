@@ -14,6 +14,17 @@ def _textsize(self, text, font=None, *args, **kwargs):
 
 ImageDraw.ImageDraw.textsize = _textsize
 
+
+# blockdiag also calls the font's own removed getsize() directly (not just
+# through ImageDraw), on both FreeTypeFont and the default bitmap ImageFont.
+def _font_getsize(self, text, *args, **kwargs):
+    bbox = self.getbbox(text)
+    return (bbox[2] - bbox[0], bbox[3] - bbox[1])
+
+
+ImageFont.FreeTypeFont.getsize = _font_getsize
+ImageFont.ImageFont.getsize = _font_getsize
+
 from blockdiag.command import main  # noqa: E402
 
 sys.exit(main(sys.argv[1:]))

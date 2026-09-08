@@ -35,6 +35,12 @@ Write-Host "==> Comprobando LaTeX/TikZ"
 if (-not (Test-Cmd 'latex') -or -not (Test-Cmd 'dvisvgm')) {
     Fail "falta 'latex' o 'dvisvgm'. Instala una distribucion TeX, p.ej.: winget install MiKTeX.MiKTeX (incluye dvisvgm)"
 }
+if (Test-Cmd 'initexmf') {
+    # Sin esto, MiKTeX se queda colgado indefinidamente esperando confirmacion
+    # interactiva para instalar paquetes que falten (standalone, xkeyval...),
+    # lo cual cuelga cualquier compilacion no interactiva (como la del editor).
+    initexmf --set-config-value='[MPM]AutoInstall'=1 *> $null
+}
 kpsewhich tikz.sty *> $null
 if ($LASTEXITCODE -ne 0 -and (Test-Cmd 'mpm')) {
     mpm --install=pgf *> $null
@@ -43,6 +49,23 @@ kpsewhich tikz.sty *> $null
 if ($LASTEXITCODE -ne 0) {
     Fail "falta el paquete LaTeX 'pgf/tikz' (tikz.sty). MiKTeX lo instala solo al primer uso; si falla, instalalo desde la consola de paquetes de MiKTeX."
 }
+
+Write-Host "==> Precalentando paquetes LaTeX del editor TikZ (standalone, xkeyval, decorations...)"
+$warmDir = Join-Path $env:TEMP "diagram-studio-tikz-warmup"
+New-Item -ItemType Directory -Force -Path $warmDir | Out-Null
+Set-Content -Path (Join-Path $warmDir 'doc.tex') -Encoding ascii -Value @'
+\documentclass[tikz,dvisvgm,border=2pt]{standalone}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,decorations.pathmorphing,patterns}
+\begin{document}
+\begin{tikzpicture}
+\draw (0,0) -- (1,1);
+\end{tikzpicture}
+\end{document}
+'@
+Push-Location $warmDir
+latex -interaction=nonstopmode -halt-on-error doc.tex *> $null
+Pop-Location
+Remove-Item -Recurse -Force $warmDir
 
 Write-Host "==> Comprobando Ditaa"
 if (-not (Test-Cmd 'ditaa')) {

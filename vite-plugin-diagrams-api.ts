@@ -12,7 +12,12 @@ const PYTHON = join(
 );
 const RUNNER = join(import.meta.dirname, 'scripts', 'diagrams-runner.py');
 const BLOCKDIAG_RUNNER = join(import.meta.dirname, 'scripts', 'blockdiag-runner.py');
-const DBML_RENDERER = join(import.meta.dirname, 'node_modules', '.bin', 'dbml-renderer');
+const DBML_RENDERER = join(
+  import.meta.dirname,
+  'node_modules',
+  '.bin',
+  process.platform === 'win32' ? 'dbml-renderer.cmd' : 'dbml-renderer',
+);
 const SMC_JAR = join(import.meta.dirname, 'tools', 'Smc.jar');
 const MAX_BODY_BYTES = 200_000;
 
@@ -48,7 +53,11 @@ async function inlineLocalImages(svg: string): Promise<string> {
 
 function run(command: string, args: string[], cwd: string, timeout: number): Promise<void> {
   return new Promise((resolve, reject) => {
-    execFile(command, args, { cwd, timeout }, (err, stdout, stderr) => {
+    // .cmd/.bat shims (e.g. node_modules/.bin on Windows) aren't real PE
+    // executables; execFile needs shell:true to run them there (EINVAL/ENOENT
+    // otherwise), unlike Unix where the file itself is directly executable.
+    const shell = process.platform === 'win32' && /\.(cmd|bat)$/i.test(command);
+    execFile(command, args, { cwd, timeout, shell }, (err, stdout, stderr) => {
       if (err) reject(new Error(stderr || stdout || err.message));
       else resolve();
     });
