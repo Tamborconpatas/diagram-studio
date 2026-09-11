@@ -104,6 +104,14 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Nomnoml',
         description: 'UML simple (clases, herencia), 100% en el navegador.',
       },
+      wavedrom: {
+        label: 'WaveDrom',
+        description: 'Diagramas de temporización digital, 100% en el navegador.',
+      },
+      markmap: {
+        label: 'Markmap',
+        description: 'Mapa mental interactivo desde Markdown, 100% en el navegador.',
+      },
       smc: {
         label: 'SMC',
         description: 'Máquinas de estado desde tabla de transiciones (State Machine Compiler).',
@@ -314,6 +322,19 @@ export const translations: Record<'es' | 'en', Translations> = {
         state: 'Diagrama de estado',
       },
     },
+    wavedrom: {
+      examples: {
+        clock: 'Reloj y bus',
+        request: 'Request/Ack',
+        edges: 'Con flechas entre señales',
+      },
+    },
+    markmap: {
+      examples: {
+        simple: 'Simple',
+        project: 'Plan de proyecto',
+      },
+    },
     pythonDiagrams: {
       examples: {
         aws: 'AWS 3-capas',
@@ -435,6 +456,14 @@ export const translations: Record<'es' | 'en', Translations> = {
       nomnoml: {
         label: 'Nomnoml',
         description: 'Simple UML (classes, inheritance), 100% in the browser.',
+      },
+      wavedrom: {
+        label: 'WaveDrom',
+        description: 'Digital timing diagrams, 100% in the browser.',
+      },
+      markmap: {
+        label: 'Markmap',
+        description: 'Interactive mind map from Markdown, 100% in the browser.',
       },
       smc: {
         label: 'SMC',
@@ -644,6 +673,19 @@ export const translations: Record<'es' | 'en', Translations> = {
         association: 'Simple association',
         notePackage: 'With note and package',
         state: 'State diagram',
+      },
+    },
+    wavedrom: {
+      examples: {
+        clock: 'Clock and bus',
+        request: 'Request/Ack',
+        edges: 'With edges between signals',
+      },
+    },
+    markmap: {
+      examples: {
+        simple: 'Simple',
+        project: 'Project plan',
       },
     },
     pythonDiagrams: {

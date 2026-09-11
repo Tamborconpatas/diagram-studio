@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Waves, Component as ComponentIcon, Globe, LayoutTemplate } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Waves, Component as ComponentIcon, Globe, LayoutTemplate, AudioWaveform, Brain } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -9,6 +9,8 @@ import PythonDiagramsEditor from './editors/PythonDiagramsEditor';
 import DrawioEditor from './editors/DrawioEditor';
 import SankeyEditor from './editors/SankeyEditor';
 import NomnomlEditor from './editors/NomnomlEditor';
+import WaveDromEditor from './editors/WaveDromEditor';
+import MarkmapEditor from './editors/MarkmapEditor';
 import { CliFormatEditor } from './editors/CliBackedEditor';
 import { CLI_BACKED_FORMATS } from './cliBackedFormats';
 import type { PendingScene } from './sceneHandoff';
@@ -30,6 +32,8 @@ const CUSTOM_TOOLS = [
   { id: 'plantuml', icon: Waypoints, Component: PlantUmlEditor, category: 'software', useCases: ['sequence', 'usecase', 'process', 'classUml', 'state'] },
   { id: 'graphviz', icon: Share2, Component: GraphvizEditor, category: 'software', useCases: ['architecture', 'flow'] },
   { id: 'nomnoml', icon: ComponentIcon, Component: NomnomlEditor, category: 'software', useCases: ['classUml'] },
+  { id: 'markmap', icon: Brain, Component: MarkmapEditor, category: 'software', useCases: ['flow'] },
+  { id: 'wavedrom', icon: AudioWaveform, Component: WaveDromEditor, category: 'technical', useCases: ['scientific'] },
   { id: 'aws', icon: Cloud, Component: PythonDiagramsEditor, category: 'infra', useCases: ['architecture'] },
   { id: 'sankey', icon: Waves, Component: SankeyEditor, category: 'process', useCases: ['flow'] },
   { id: 'excalidraw', icon: PenTool, Component: ExcalidrawEditor, category: 'drawing', useCases: ['freeform'] },

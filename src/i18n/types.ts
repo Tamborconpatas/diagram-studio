@@ -48,6 +48,12 @@ export interface Translations {
   nomnoml: {
     examples: Record<string, string>;
   };
+  wavedrom: {
+    examples: Record<string, string>;
+  };
+  markmap: {
+    examples: Record<string, string>;
+  };
   pythonDiagrams: {
     examples: Record<string, string>;
   };
