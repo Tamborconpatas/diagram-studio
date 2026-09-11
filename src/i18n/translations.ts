@@ -32,6 +32,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Excalidraw',
         description: 'Pizarra a mano alzada, 100% arrastrable.',
       },
+      drawio: {
+        label: 'draw.io',
+        description: 'Editor visual completo (arrastrar y soltar), 100% local.',
+      },
       aws: {
         label: 'Arquitectura (Python)',
         description: 'Diagramas AWS/GCP/Azure desde código Python (`diagrams`).',
@@ -317,6 +321,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       excalidraw: {
         label: 'Excalidraw',
         description: 'Hand-drawn whiteboard, 100% draggable.',
+      },
+      drawio: {
+        label: 'draw.io',
+        description: 'Full visual drag-and-drop editor, 100% local.',
       },
       aws: {
         label: 'Architecture (Python)',

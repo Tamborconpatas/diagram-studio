@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft, Globe, MessagesSquare, Route, Network, Package, Server, Shapes } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft, Globe, MessagesSquare, Route, Network, Package, Server, Shapes, LayoutTemplate } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -16,6 +16,7 @@ import NwdiagEditor from './editors/NwdiagEditor';
 import PacketdiagEditor from './editors/PacketdiagEditor';
 import RackdiagEditor from './editors/RackdiagEditor';
 import D2Editor from './editors/D2Editor';
+import DrawioEditor from './editors/DrawioEditor';
 import SankeyEditor from './editors/SankeyEditor';
 import NomnomlEditor from './editors/NomnomlEditor';
 import SmcEditor from './editors/SmcEditor';
@@ -46,6 +47,7 @@ const TOOLS = [
   { id: 'dbml', icon: Database, Component: DbmlEditor, category: 'technical', useCases: ['database'] },
   { id: 'smc', icon: ArrowRightLeft, Component: SmcEditor, category: 'technical', useCases: ['state'] },
   { id: 'excalidraw', icon: PenTool, Component: ExcalidrawEditor, category: 'drawing', useCases: ['freeform'] },
+  { id: 'drawio', icon: LayoutTemplate, Component: DrawioEditor, category: 'drawing', useCases: ['architecture', 'flow', 'freeform'] },
   { id: 'ditaa', icon: Terminal, Component: DitaaEditor, category: 'drawing', useCases: ['freeform'] },
 ] as const;
 
