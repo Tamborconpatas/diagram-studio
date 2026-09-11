@@ -16,6 +16,9 @@ export interface Translations {
   openFileBtn: (ext: string) => string;
   downloadFileBtn: (ext: string) => string;
   tools: Record<string, ToolTranslation>;
+  categories: Record<string, string>;
+  useCases: Record<string, string>;
+  homeViewToggle: { byTool: string; byUseCase: string };
   bpmn: {
     loadToDiagram: string;
     diagramToXml: string;

@@ -21,25 +21,45 @@ import SmcEditor from './editors/SmcEditor';
 import type { PendingScene } from './sceneHandoff';
 import { useI18n } from './i18n';
 
+// Category groups the home screen by tool (single value per tool); useCases
+// groups it by what you're trying to draw (a tool can match several, since
+// e.g. Mermaid/PlantUML alone cover sequence/class/state/ER diagrams). The
+// top nav stays flat (it's already a compact scrollable strip, grouping
+// there buys nothing).
 const TOOLS = [
-  { id: 'bpmn', icon: Workflow, Component: BpmnEditor },
-  { id: 'mermaid', icon: GitBranch, Component: MermaidEditor },
-  { id: 'plantuml', icon: Waypoints, Component: PlantUmlEditor },
-  { id: 'graphviz', icon: Share2, Component: GraphvizEditor },
-  { id: 'excalidraw', icon: PenTool, Component: ExcalidrawEditor },
-  { id: 'aws', icon: Cloud, Component: PythonDiagramsEditor },
-  { id: 'tikz', icon: Sigma, Component: TikzEditor },
-  { id: 'ditaa', icon: Terminal, Component: DitaaEditor },
-  { id: 'dbml', icon: Database, Component: DbmlEditor },
-  { id: 'blockdiag', icon: Boxes, Component: BlockdiagEditor },
-  { id: 'seqdiag', icon: MessagesSquare, Component: SeqdiagEditor },
-  { id: 'actdiag', icon: Route, Component: ActdiagEditor },
-  { id: 'nwdiag', icon: Network, Component: NwdiagEditor },
-  { id: 'packetdiag', icon: Package, Component: PacketdiagEditor },
-  { id: 'rackdiag', icon: Server, Component: RackdiagEditor },
-  { id: 'sankey', icon: Waves, Component: SankeyEditor },
-  { id: 'nomnoml', icon: ComponentIcon, Component: NomnomlEditor },
-  { id: 'smc', icon: ArrowRightLeft, Component: SmcEditor },
+  { id: 'bpmn', icon: Workflow, Component: BpmnEditor, category: 'software', useCases: ['process'] },
+  { id: 'mermaid', icon: GitBranch, Component: MermaidEditor, category: 'software', useCases: ['sequence', 'classUml', 'state', 'database', 'flow'] },
+  { id: 'plantuml', icon: Waypoints, Component: PlantUmlEditor, category: 'software', useCases: ['sequence', 'usecase', 'process', 'classUml', 'state'] },
+  { id: 'graphviz', icon: Share2, Component: GraphvizEditor, category: 'software', useCases: ['architecture', 'flow'] },
+  { id: 'nomnoml', icon: ComponentIcon, Component: NomnomlEditor, category: 'software', useCases: ['classUml'] },
+  { id: 'aws', icon: Cloud, Component: PythonDiagramsEditor, category: 'infra', useCases: ['architecture'] },
+  { id: 'blockdiag', icon: Boxes, Component: BlockdiagEditor, category: 'infra', useCases: ['architecture', 'network'] },
+  { id: 'nwdiag', icon: Network, Component: NwdiagEditor, category: 'infra', useCases: ['network'] },
+  { id: 'packetdiag', icon: Package, Component: PacketdiagEditor, category: 'infra', useCases: ['network'] },
+  { id: 'rackdiag', icon: Server, Component: RackdiagEditor, category: 'infra', useCases: ['network'] },
+  { id: 'seqdiag', icon: MessagesSquare, Component: SeqdiagEditor, category: 'process', useCases: ['sequence'] },
+  { id: 'actdiag', icon: Route, Component: ActdiagEditor, category: 'process', useCases: ['process'] },
+  { id: 'sankey', icon: Waves, Component: SankeyEditor, category: 'process', useCases: ['flow'] },
+  { id: 'tikz', icon: Sigma, Component: TikzEditor, category: 'technical', useCases: ['scientific'] },
+  { id: 'dbml', icon: Database, Component: DbmlEditor, category: 'technical', useCases: ['database'] },
+  { id: 'smc', icon: ArrowRightLeft, Component: SmcEditor, category: 'technical', useCases: ['state'] },
+  { id: 'excalidraw', icon: PenTool, Component: ExcalidrawEditor, category: 'drawing', useCases: ['freeform'] },
+  { id: 'ditaa', icon: Terminal, Component: DitaaEditor, category: 'drawing', useCases: ['freeform'] },
+] as const;
+
+const CATEGORY_ORDER = ['software', 'infra', 'process', 'technical', 'drawing'] as const;
+const USE_CASE_ORDER = [
+  'sequence',
+  'usecase',
+  'process',
+  'classUml',
+  'state',
+  'database',
+  'architecture',
+  'network',
+  'flow',
+  'scientific',
+  'freeform',
 ] as const;
 
 type ToolId = (typeof TOOLS)[number]['id'];
@@ -52,31 +72,70 @@ type HandoffProps = {
   onSceneConsumed?: () => void;
 };
 
+function ToolCard({ id, icon: Icon, onSelect }: { id: ToolId; icon: ComponentType<{ className?: string }>; onSelect: (id: ToolId) => void }) {
+  const { t } = useI18n();
+  const toolTrans = t.tools[id];
+  return (
+    <button
+      onClick={() => onSelect(id)}
+      className="cyber-card cyber-corners text-left p-5 flex flex-col gap-3 cursor-pointer"
+    >
+      <Icon className="w-6 h-6 text-teal-400" />
+      <div className="font-mono-code text-sm font-bold text-zinc-100">{toolTrans?.label ?? id}</div>
+      <p className="text-xs text-zinc-500 leading-relaxed">{toolTrans?.description ?? ''}</p>
+    </button>
+  );
+}
+
 function HomeGrid({ onSelect }: { onSelect: (id: ToolId) => void }) {
   const { t } = useI18n();
+  const [viewMode, setViewMode] = useState<'tool' | 'usecase'>('tool');
+
+  const groups =
+    viewMode === 'tool'
+      ? CATEGORY_ORDER.map((key) => ({
+          key,
+          title: t.categories[key] ?? key,
+          tools: TOOLS.filter((tool) => tool.category === key),
+        }))
+      : USE_CASE_ORDER.map((key) => ({
+          key,
+          title: t.useCases[key] ?? key,
+          tools: TOOLS.filter((tool) => (tool.useCases as readonly string[]).includes(key)),
+        }));
 
   return (
     <div className="flex-1 overflow-auto p-8">
       <div className="max-w-5xl mx-auto">
-        <p className="text-zinc-500 text-xs font-mono-code mb-6">{t.homeSubtitle}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {TOOLS.map(({ id, icon: Icon }) => {
-            const toolTrans = t.tools[id];
-            const label = toolTrans?.label ?? id;
-            const description = toolTrans?.description ?? '';
-            return (
+        <div className="flex items-center justify-between mb-6">
+          <p className="text-zinc-500 text-xs font-mono-code">{t.homeSubtitle}</p>
+          <div className="flex items-center gap-1 shrink-0">
+            {(['tool', 'usecase'] as const).map((mode) => (
               <button
-                key={id}
-                onClick={() => onSelect(id)}
-                className="cyber-card cyber-corners text-left p-5 flex flex-col gap-3 cursor-pointer"
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={
+                  'px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold tracking-wide uppercase cursor-pointer transition-all ' +
+                  (viewMode === mode
+                    ? 'bg-teal-950/70 border border-teal-500/50 text-teal-400'
+                    : 'border border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-800')
+                }
               >
-                <Icon className="w-6 h-6 text-teal-400" />
-                <div className="font-mono-code text-sm font-bold text-zinc-100">{label}</div>
-                <p className="text-xs text-zinc-500 leading-relaxed">{description}</p>
+                {mode === 'tool' ? t.homeViewToggle.byTool : t.homeViewToggle.byUseCase}
               </button>
-            );
-          })}
+            ))}
+          </div>
         </div>
+        {groups.map(({ key, title, tools }) => (
+          <div key={key} className="mb-8 last:mb-0">
+            <h2 className="text-[11px] font-mono-code font-bold tracking-widest uppercase text-teal-400 mb-3">{title}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {tools.map(({ id, icon }) => (
+                <ToolCard key={id} id={id} icon={icon} onSelect={onSelect} />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
