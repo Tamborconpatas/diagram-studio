@@ -1,4 +1,4 @@
-import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, type LucideIcon } from 'lucide-react';
+import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, Compass, type LucideIcon } from 'lucide-react';
 import type { Language, Translations } from './i18n/types';
 
 // Single source of truth for every CLI-backed diagram format (one that
@@ -624,6 +624,24 @@ const SKAK = {
 `,
 };
 
+const METAPOST = {
+  square: `beginfig(1);
+draw (0,0)--(100,0)--(100,100)--(0,100)--cycle;
+draw (0,0)--(100,100) withcolor red;
+label("A", (0,0));
+label("B", (100,100));
+endfig;
+end
+`,
+  curve: `beginfig(1);
+draw (0,0)..(50,80)..(100,20)..(150,90) withcolor blue;
+drawarrow (0,50)--(150,50) withcolor red;
+label.top("curva suave", (75,90));
+endfig;
+end
+`,
+};
+
 export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
   {
     id: 'blockdiag',
@@ -764,5 +782,14 @@ export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
     downloadFilename: 'ajedrez.tex',
     examples: { es: SKAK, en: SKAK },
     loadingLabel: (t) => t.compilingBtn,
+  },
+  {
+    id: 'metapost',
+    icon: Compass,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.mp',
+    downloadFilename: 'diagrama.mp',
+    examples: { es: METAPOST, en: METAPOST },
   },
 ];

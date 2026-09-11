@@ -60,6 +60,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Skak (Ajedrez)',
         description: 'Tableros y partidas de ajedrez vía LaTeX.',
       },
+      metapost: {
+        label: 'MetaPost',
+        description: 'Figuras vectoriales precisas con curvas suaves (incluido con MiKTeX).',
+      },
       ditaa: {
         label: 'Ditaa (ASCII art)',
         description: 'Convierte arte ASCII en diagramas prolijos.',
@@ -313,6 +317,12 @@ export const translations: Record<'es' | 'en', Translations> = {
           opening: 'Apertura (Ruy López)',
         },
       },
+      metapost: {
+        examples: {
+          square: 'Cuadrado con diagonal',
+          curve: 'Curva suave',
+        },
+      },
     },
     nomnoml: {
       examples: {
@@ -412,6 +422,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       skak: {
         label: 'Skak (Chess)',
         description: 'Chess boards and games via LaTeX.',
+      },
+      metapost: {
+        label: 'MetaPost',
+        description: 'Precise vector figures with smooth curves (bundled with MiKTeX).',
       },
       ditaa: {
         label: 'Ditaa (ASCII art)',
@@ -664,6 +678,12 @@ export const translations: Record<'es' | 'en', Translations> = {
         examples: {
           empty: 'Empty board',
           opening: 'Opening (Ruy Lopez)',
+        },
+      },
+      metapost: {
+        examples: {
+          square: 'Square with diagonal',
+          curve: 'Smooth curve',
         },
       },
     },

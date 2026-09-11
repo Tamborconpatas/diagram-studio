@@ -179,6 +179,13 @@ const RENDERERS: Record<string, Handler> = {
   d2: runner('input.d2', 'output.svg', [
     { command: 'd2', args: ['input.d2', 'output.svg'], timeout: 15_000 },
   ]),
+  // mpost's -s outputformat="svg" writes real SVG content straight into the
+  // usual per-figure jobname.N output file (MetaPost's own convention, not
+  // renamed to .svg) — no separate dvisvgm conversion step needed. Ships
+  // with MiKTeX already, same as tikz/dvisvgm.
+  metapost: runner('input.mp', 'input.1', [
+    { command: 'mpost', args: ['-interaction=nonstopmode', '-s', 'outputformat="svg"', 'input.mp'], timeout: 20_000 },
+  ]),
 };
 
 export function diagramsApiPlugin(): Plugin {
