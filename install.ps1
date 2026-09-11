@@ -5,16 +5,40 @@ Set-Location $PSScriptRoot
 function Test-Cmd($name) { [bool](Get-Command $name -ErrorAction SilentlyContinue) }
 function Fail($msg) { Write-Host "ERROR: $msg" -ForegroundColor Red; exit 1 }
 
+# winget actualiza el PATH del sistema/usuario, pero esta sesion de
+# PowerShell arranco con una copia vieja de $env:Path — sin esto, un
+# binario instalado recien no se ve hasta abrir una terminal nueva.
+function Refresh-Path {
+    $env:Path = [System.Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path', 'User')
+}
+
+# Si $test ya pasa, listo. Si no y hay winget, ofrece instalar $wingetId
+# (con confirmacion) y refresca el PATH para poder seguir sin reabrir la
+# terminal. Devuelve si $test termino pasando.
+function Ensure-Dep($label, [scriptblock]$test, $wingetId) {
+    if (& $test) { return $true }
+    if (-not (Test-Cmd 'winget')) { return $false }
+    $answer = Read-Host "Falta '$label'. Instalar ahora con winget? (s/N)"
+    if ($answer -notmatch '^[sS]') { return $false }
+    winget install --id $wingetId --accept-source-agreements --accept-package-agreements
+    Refresh-Path
+    return (& $test)
+}
+
+if (-not (Ensure-Dep 'Node.js' { Test-Cmd 'node' } 'OpenJS.NodeJS.LTS')) {
+    Fail "falta Node.js. Instalalo: winget install OpenJS.NodeJS.LTS (despues abri una terminal nueva)"
+}
+
 Write-Host "==> Instalando dependencias de Node"
 npm install
 if ($LASTEXITCODE -ne 0) { Fail "npm install fallo" }
 
 Write-Host "==> Creando entorno Python para diagramas de arquitectura (aws/gcp/azure)"
-$python = if (Test-Cmd 'py') { 'py' } elseif (Test-Cmd 'python') { 'python' } else { $null }
-if (-not $python) {
+if (-not (Ensure-Dep 'Python 3' { (Test-Cmd 'py') -or (Test-Cmd 'python') } 'Python.Python.3.12')) {
     Fail "python no esta instalado. Instalalo, p.ej.: winget install Python.Python.3.12"
 }
-if (-not (Test-Cmd 'dot')) {
+$python = if (Test-Cmd 'py') { 'py' } elseif (Test-Cmd 'python') { 'python' } else { $null }
+if (-not (Ensure-Dep "Graphviz (comando 'dot')" { Test-Cmd 'dot' } 'Graphviz.Graphviz')) {
     Fail "falta el binario 'graphviz' (comando 'dot'). Instalalo: winget install Graphviz.Graphviz"
 }
 if (Test-Path .venv-diagrams) { Remove-Item -Recurse -Force .venv-diagrams }
@@ -33,7 +57,7 @@ if ($LASTEXITCODE -ne 0) { Fail "pip install diagrams fallo" }
 if ($LASTEXITCODE -ne 0) { Fail "pip install blockdiag fallo" }
 
 Write-Host "==> Comprobando LaTeX/TikZ"
-if (-not (Test-Cmd 'latex') -or -not (Test-Cmd 'dvisvgm')) {
+if (-not (Ensure-Dep 'una distribucion LaTeX (MiKTeX)' { (Test-Cmd 'latex') -and (Test-Cmd 'dvisvgm') } 'MiKTeX.MiKTeX')) {
     Fail "falta 'latex' o 'dvisvgm'. Instala una distribucion TeX, p.ej.: winget install MiKTeX.MiKTeX (incluye dvisvgm)"
 }
 if (Test-Cmd 'initexmf') {
@@ -68,18 +92,13 @@ latex -interaction=nonstopmode -halt-on-error doc.tex *> $null
 Pop-Location
 Remove-Item -Recurse -Force $warmDir
 
-Write-Host "==> Comprobando Ditaa"
-if (-not (Test-Cmd 'ditaa')) {
-    Write-Host "AVISO: falta 'ditaa' (el editor Ditaa/ASCII art no funcionara). No esta en winget: descarga el jar (https://github.com/stathissideris/ditaa/releases) y crea un 'ditaa.bat' en el PATH con: @java -jar C:\ruta\a\ditaa.jar %*" -ForegroundColor Yellow
-}
-
-Write-Host "==> Comprobando Java (SMC)"
-if (-not (Test-Cmd 'java')) {
+Write-Host "==> Comprobando Java (SMC, Ditaa)"
+if (-not (Ensure-Dep 'Java (JRE)' { Test-Cmd 'java' } 'EclipseAdoptium.Temurin.21.JRE')) {
     Fail "falta 'java'. Instalalo, p.ej.: winget install EclipseAdoptium.Temurin.21.JRE"
 }
 
 Write-Host "==> Comprobando D2"
-if (-not (Test-Cmd 'd2')) {
+if (-not (Ensure-Dep 'D2' { Test-Cmd 'd2' } 'Terrastruct.D2')) {
     Fail "falta 'd2'. Instalalo: winget install Terrastruct.D2 (abri una terminal nueva despues para que tome el PATH)"
 }
 

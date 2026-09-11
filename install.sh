@@ -4,6 +4,15 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+if ! command -v node >/dev/null || ! command -v npm >/dev/null; then
+  echo "ERROR: falta Node.js. Instálalo, p.ej.:" >&2
+  echo "  Debian/Ubuntu: sudo apt install nodejs npm" >&2
+  echo "  Fedora:        sudo dnf install nodejs npm" >&2
+  echo "  Arch:          sudo pacman -S nodejs npm" >&2
+  echo "  o nvm: https://github.com/nvm-sh/nvm" >&2
+  exit 1
+fi
+
 echo "==> Instalando dependencias de Node"
 npm install
 
@@ -47,15 +56,7 @@ if ! kpsewhich tikz.sty >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "==> Comprobando Ditaa"
-if ! command -v ditaa >/dev/null; then
-  echo "ERROR: falta 'ditaa'. Instálalo, p.ej.:" >&2
-  echo "  Debian/Ubuntu: sudo apt install ditaa" >&2
-  echo "  Fedora/Arch:   busca el paquete 'ditaa' de tu distro (requiere Java)" >&2
-  exit 1
-fi
-
-echo "==> Comprobando Java (SMC)"
+echo "==> Comprobando Java (SMC, Ditaa)"
 if ! command -v java >/dev/null; then
   echo "ERROR: falta 'java'. Instálalo, p.ej.:" >&2
   echo "  Debian/Ubuntu: sudo apt install default-jre" >&2

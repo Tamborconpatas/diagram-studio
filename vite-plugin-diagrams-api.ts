@@ -19,6 +19,7 @@ const DBML_RENDERER = join(
   process.platform === 'win32' ? 'dbml-renderer.cmd' : 'dbml-renderer',
 );
 const SMC_JAR = join(import.meta.dirname, 'tools', 'Smc.jar');
+const DITAA_JAR = join(import.meta.dirname, 'tools', 'ditaa.jar');
 const MAX_BODY_BYTES = 200_000;
 
 async function readBody(req: import('node:http').IncomingMessage): Promise<string> {
@@ -121,7 +122,10 @@ function pngDimensions(png: Buffer): { width: number; height: number } {
 
 async function renderDitaa(code: string, dir: string): Promise<string> {
   await writeFile(join(dir, 'input.ditaa'), code, 'utf-8');
-  await run('ditaa', ['input.ditaa', 'output.png', '-o'], dir, 15_000);
+  // Vendored (tools/ditaa.jar, LGPL-3.0, see tools/DITAA-LICENSE.txt) instead
+  // of requiring a 'ditaa' command on PATH — no package exists for it on
+  // Windows (no winget package), and this keeps Linux/macOS consistent too.
+  await run('java', ['-jar', DITAA_JAR, 'input.ditaa', 'output.png', '-o'], dir, 15_000);
   const png = await readFile(join(dir, 'output.png'));
   const { width, height } = pngDimensions(png);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" xlink:href="data:image/png;base64,${png.toString('base64')}"/></svg>`;
