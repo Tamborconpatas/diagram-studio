@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Waves, Component as ComponentIcon, Globe, LayoutTemplate, AudioWaveform, Brain, TestTube, Box } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Waves, Component as ComponentIcon, Globe, LayoutTemplate, AudioWaveform, Brain, TestTube, Box, Music } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -13,6 +13,7 @@ import WaveDromEditor from './editors/WaveDromEditor';
 import MarkmapEditor from './editors/MarkmapEditor';
 import SmilesEditor from './editors/SmilesEditor';
 import PikchrEditor from './editors/PikchrEditor';
+import AbcEditor from './editors/AbcEditor';
 import { CliFormatEditor } from './editors/CliBackedEditor';
 import { CLI_BACKED_FORMATS } from './cliBackedFormats';
 import type { PendingScene } from './sceneHandoff';
@@ -38,6 +39,7 @@ const CUSTOM_TOOLS = [
   { id: 'markmap', icon: Brain, Component: MarkmapEditor, category: 'software', useCases: ['flow'] },
   { id: 'wavedrom', icon: AudioWaveform, Component: WaveDromEditor, category: 'technical', useCases: ['scientific'] },
   { id: 'smiles', icon: TestTube, Component: SmilesEditor, category: 'technical', useCases: ['scientific'] },
+  { id: 'abc', icon: Music, Component: AbcEditor, category: 'technical', useCases: ['scientific'] },
   { id: 'aws', icon: Cloud, Component: PythonDiagramsEditor, category: 'infra', useCases: ['architecture'] },
   { id: 'sankey', icon: Waves, Component: SankeyEditor, category: 'process', useCases: ['flow'] },
   { id: 'excalidraw', icon: PenTool, Component: ExcalidrawEditor, category: 'drawing', useCases: ['freeform'] },

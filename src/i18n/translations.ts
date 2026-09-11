@@ -128,6 +128,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'SMILES',
         description: 'Notación molecular química, 100% en el navegador.',
       },
+      abc: {
+        label: 'ABC',
+        description: 'Notación musical (partituras), 100% en el navegador.',
+      },
       smc: {
         label: 'SMC',
         description: 'Máquinas de estado desde tabla de transiciones (State Machine Compiler).',
@@ -376,6 +380,12 @@ export const translations: Record<'es' | 'en', Translations> = {
         colors: 'Círculos con color',
       },
     },
+    abc: {
+      examples: {
+        scale: 'Escala simple',
+        tune: 'Melodía',
+      },
+    },
     pythonDiagrams: {
       examples: {
         aws: 'AWS 3-capas',
@@ -521,6 +531,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       smiles: {
         label: 'SMILES',
         description: 'Chemical molecular notation, 100% in the browser.',
+      },
+      abc: {
+        label: 'ABC',
+        description: 'Music notation (sheet music), 100% in the browser.',
       },
       smc: {
         label: 'SMC',
@@ -768,6 +782,12 @@ export const translations: Record<'es' | 'en', Translations> = {
       examples: {
         flow: 'Simple flow',
         colors: 'Colored circles',
+      },
+    },
+    abc: {
+      examples: {
+        scale: 'Simple scale',
+        tune: 'Melody',
       },
     },
     pythonDiagrams: {

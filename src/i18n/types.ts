@@ -60,6 +60,9 @@ export interface Translations {
   pikchr: {
     examples: Record<string, string>;
   };
+  abc: {
+    examples: Record<string, string>;
+  };
   pythonDiagrams: {
     examples: Record<string, string>;
   };

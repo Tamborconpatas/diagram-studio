@@ -17,6 +17,7 @@
     "@mermaid-js/mermaid-zenuml": "^0.2.3",
     "@softwaretechnik/dbml-renderer": "^1.0.31",
     "@tailwindcss/vite": "^4.3.0",
+    "abcjs": "^6.7.0",
     "bpmn-auto-layout": "^1.3.0",
     "bpmn-js": "^18.27.0",
     "d3-sankey": "^0.12.3",
