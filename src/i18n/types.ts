@@ -54,6 +54,9 @@ export interface Translations {
   markmap: {
     examples: Record<string, string>;
   };
+  smiles: {
+    examples: Record<string, string>;
+  };
   pythonDiagrams: {
     examples: Record<string, string>;
   };

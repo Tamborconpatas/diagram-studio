@@ -120,6 +120,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Markmap',
         description: 'Mapa mental interactivo desde Markdown, 100% en el navegador.',
       },
+      smiles: {
+        label: 'SMILES',
+        description: 'Notación molecular química, 100% en el navegador.',
+      },
       smc: {
         label: 'SMC',
         description: 'Máquinas de estado desde tabla de transiciones (State Machine Compiler).',
@@ -355,6 +359,13 @@ export const translations: Record<'es' | 'en', Translations> = {
         project: 'Plan de proyecto',
       },
     },
+    smiles: {
+      examples: {
+        aspirin: 'Aspirina',
+        caffeine: 'Cafeína',
+        glucose: 'Glucosa',
+      },
+    },
     pythonDiagrams: {
       examples: {
         aws: 'AWS 3-capas',
@@ -492,6 +503,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       markmap: {
         label: 'Markmap',
         description: 'Interactive mind map from Markdown, 100% in the browser.',
+      },
+      smiles: {
+        label: 'SMILES',
+        description: 'Chemical molecular notation, 100% in the browser.',
       },
       smc: {
         label: 'SMC',
@@ -726,6 +741,13 @@ export const translations: Record<'es' | 'en', Translations> = {
       examples: {
         simple: 'Simple',
         project: 'Project plan',
+      },
+    },
+    smiles: {
+      examples: {
+        aspirin: 'Aspirin',
+        caffeine: 'Caffeine',
+        glucose: 'Glucose',
       },
     },
     pythonDiagrams: {
