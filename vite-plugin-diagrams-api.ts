@@ -195,6 +195,9 @@ const RENDERERS: Record<string, Handler> = {
   wireviz: runner('input.yml', 'output.svg', [
     { command: WIREVIZ, args: ['-f', 's', '-O', 'output', 'input.yml'], timeout: 20_000 },
   ]),
+  svgbob: runner('input.bob', 'output.svg', [
+    { command: 'svgbob_cli', args: ['input.bob', '-o', 'output.svg'], timeout: 10_000 },
+  ]),
 };
 
 export function diagramsApiPlugin(): Plugin {

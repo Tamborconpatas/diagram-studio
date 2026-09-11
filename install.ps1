@@ -119,6 +119,17 @@ if (-not (Ensure-Dep 'D2' { Test-Cmd 'd2' } 'Terrastruct.D2')) {
     Fail "falta 'd2'. Instalalo: winget install Terrastruct.D2 (abri una terminal nueva despues para que tome el PATH)"
 }
 
+Write-Host "==> Comprobando Rust (cargo) para Svgbob"
+if (-not (Ensure-Dep 'Rust (cargo)' { Test-Cmd 'cargo' } 'Rustlang.Rustup')) {
+    Fail "falta 'cargo'. Instalalo: winget install Rustlang.Rustup (abri una terminal nueva despues para que tome el PATH)"
+}
+if (-not (Test-Cmd 'svgbob_cli')) {
+    Write-Host "==> Instalando svgbob_cli (cargo install, tarda un rato la primera vez)"
+    cargo install svgbob_cli
+    if ($LASTEXITCODE -ne 0) { Fail "cargo install svgbob_cli fallo" }
+    Refresh-Path
+}
+
 Write-Host "==> Creando acceso directo en el escritorio"
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shell = New-Object -ComObject WScript.Shell
@@ -127,7 +138,7 @@ $shortcut.TargetPath = 'powershell.exe'
 $shortcut.Arguments = "-NoLogo -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$PSScriptRoot\launch-diagrams.ps1`""
 $shortcut.WorkingDirectory = $PSScriptRoot
 $shortcut.IconLocation = 'shell32.dll,44'
-$shortcut.Description = 'Visor y editor local de diagramas: 20 formatos (BPMN, Mermaid, PlantUML, Graphviz, D2, draw.io, Excalidraw, TikZ, Ditaa, DBML, Blockdiag y familia, Sankey, Nomnoml, SMC)'
+$shortcut.Description = 'Visor y editor local de diagramas: 32 formatos (BPMN, Mermaid, PlantUML, Graphviz, D2, draw.io, Excalidraw, TikZ, Ditaa, Svgbob, DBML, Blockdiag y familia, Sankey, Nomnoml, Pikchr, SMC, SMILES, ABC, WaveDrom, Markmap)'
 $shortcut.Save()
 
 Write-Host "==> Listo. Doble clic en 'Diagram Studio' en el escritorio, o: .\launch-diagrams.ps1"

@@ -1,4 +1,4 @@
-import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, Compass, Cable, type LucideIcon } from 'lucide-react';
+import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, Compass, Cable, Grid3x3, type LucideIcon } from 'lucide-react';
 import type { Language, Translations } from './i18n/types';
 
 // Single source of truth for every CLI-backed diagram format (one that
@@ -696,6 +696,54 @@ connections:
 `,
 };
 
+// svgbob draws shapes purely from line geometry (box corners, / \ diagonals),
+// it has no notion of a "diamond" or "circle" primitive the way ditaa/pikchr
+// do — `<`/`>` only render as arrowheads, never as a decision-shape outline.
+// Stick to boxes + straight/diagonal lines in examples.
+const SVGBOB_NETWORK = `        +--------+
+        | Router |
+        +---+----+
+            |
+    +-------+-------+
+    |               |
++---+---+       +---+---+
+| Host A|       | Host B|
++-------+       +-------+
+`;
+const SVGBOB_BRANCH = `   +---------+
+   |  Input  |
+   +----+----+
+        |
+    .---+---.
+    |       |
+    v       v
++-------+ +-------+
+| Left  | | Right |
++---+---+ +---+---+
+    |         |
+    '----+----'
+         v
+    +--------+
+    | Output |
+    +--------+
+`;
+const SVGBOB_ES = {
+  flujo: `+-------+     +--------+     +-------------+
+|Cliente|---->|Servidor|---->|Base de datos|
++-------+     +--------+     +-------------+
+`,
+  ramificacion: SVGBOB_BRANCH,
+  red: SVGBOB_NETWORK,
+};
+const SVGBOB_EN = {
+  flujo: `+------+     +------+     +--------+
+|Client|---->|Server|---->|Database|
++------+     +------+     +--------+
+`,
+  ramificacion: SVGBOB_BRANCH,
+  red: SVGBOB_NETWORK,
+};
+
 export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
   {
     id: 'blockdiag',
@@ -854,5 +902,14 @@ export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
     fileExt: '.yml',
     downloadFilename: 'arnes.yml',
     examples: { es: WIREVIZ, en: WIREVIZ },
+  },
+  {
+    id: 'svgbob',
+    icon: Grid3x3,
+    category: 'drawing',
+    useCases: ['freeform'],
+    fileExt: '.bob',
+    downloadFilename: 'diagrama.bob',
+    examples: { es: SVGBOB_ES, en: SVGBOB_EN },
   },
 ];

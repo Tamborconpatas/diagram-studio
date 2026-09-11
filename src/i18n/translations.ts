@@ -72,6 +72,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Ditaa (ASCII art)',
         description: 'Convierte arte ASCII en diagramas prolijos.',
       },
+      svgbob: {
+        label: 'Svgbob (ASCII art)',
+        description: 'Convierte dibujos ASCII de líneas y cajas en SVG.',
+      },
       dbml: {
         label: 'DBML',
         description: 'Esquemas de base de datos: tablas, tipos y relaciones ER.',
@@ -345,6 +349,13 @@ export const translations: Record<'es' | 'en', Translations> = {
           shielded: 'Con blindaje (DIN)',
         },
       },
+      svgbob: {
+        examples: {
+          flujo: 'Flujo cliente-servidor',
+          ramificacion: 'Ramificación y fusión',
+          red: 'Topología de red',
+        },
+      },
     },
     nomnoml: {
       examples: {
@@ -475,6 +486,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       ditaa: {
         label: 'Ditaa (ASCII art)',
         description: 'Converts ASCII art into neat diagrams.',
+      },
+      svgbob: {
+        label: 'Svgbob (ASCII art)',
+        description: 'Converts ASCII box-and-line drawings into SVG.',
       },
       dbml: {
         label: 'DBML',
@@ -747,6 +762,13 @@ export const translations: Record<'es' | 'en', Translations> = {
         examples: {
           simple: 'Simple connector',
           shielded: 'Shielded (DIN)',
+        },
+      },
+      svgbob: {
+        examples: {
+          flujo: 'Client-server flow',
+          ramificacion: 'Branch and merge',
+          red: 'Network topology',
         },
       },
     },

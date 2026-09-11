@@ -73,6 +73,16 @@ if ! command -v d2 >/dev/null; then
   exit 1
 fi
 
+echo "==> Comprobando Rust (cargo) para Svgbob"
+if ! command -v cargo >/dev/null; then
+  echo "ERROR: falta 'cargo'. Instálalo: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh" >&2
+  exit 1
+fi
+if ! command -v svgbob_cli >/dev/null; then
+  echo "==> Instalando svgbob_cli (cargo install, tarda un rato la primera vez)"
+  cargo install svgbob_cli
+fi
+
 echo "==> Instalando lanzador de escritorio"
 mkdir -p "$HOME/Desktop"
 sed "s#__APP_DIR__#$(pwd)#g" desktop/diagram-studio.desktop.template > "$HOME/Desktop/diagram-studio.desktop"
