@@ -1,6 +1,6 @@
 # Diagram Studio
 
-Visor y editor local de diagramas, 20 formatos agrupados por herramienta o por tipo de diagrama (secuencia, procesos, redes, etc.) desde la home: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, D2, Nomnoml (software/UML); draw.io (editor visual completo, arrastrar y soltar) y Excalidraw (pizarra a mano alzada); Blockdiag y su familia (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag); TikZ, DBML y SMC (modelos técnicos); Sankey y Ditaa (ASCII art); más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
+Visor y editor local de diagramas, 28 formatos agrupados por herramienta o por tipo de diagrama (secuencia, procesos, redes, etc.) desde la home: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, D2, Nomnoml, Markmap (software/UML); draw.io (editor visual completo, arrastrar y soltar) y Excalidraw (pizarra a mano alzada); Blockdiag y su familia (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag) y WireViz (arneses de cable); TikZ y su familia (CircuiTikz, Feynman, Chemfig, Skak), MetaPost, WaveDrom, DBML y SMC (modelos técnicos); Sankey y Ditaa (ASCII art); más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
 
 ## Setup
 
@@ -12,7 +12,7 @@ Visor y editor local de diagramas, 20 formatos agrupados por herramienta o por t
 
 Deja instaladas las dependencias de Node, un entorno virtual de Python con `diagrams`, y un lanzador de escritorio (`~/Desktop/diagram-studio.desktop`).
 
-Requiere `node`/`npm`, `python3` (crea el venv con `diagrams`, `blockdiag` y toda su familia — `seqdiag`/`actdiag`/`nwdiag`/`packetdiag`/`rackdiag`), el binario `graphviz` (`dot`), una distribución LaTeX con `pgf/tikz` y `dvisvgm` (p.ej. TinyTeX), `java` (SMC y Ditaa usan `tools/Smc.jar`/`tools/ditaa.jar`, ya incluidos en el repo) y `d2` instalados en el sistema.
+Requiere `node`/`npm`, `python3` (crea el venv con `diagrams`, `blockdiag` y toda su familia — `seqdiag`/`actdiag`/`nwdiag`/`packetdiag`/`rackdiag` — y `wireviz`), el binario `graphviz` (`dot`, usado también por SMC y WireViz), una distribución LaTeX con `pgf/tikz` y `dvisvgm` (p.ej. TinyTeX; MetaPost y CircuiTikz/Feynman/Chemfig/Skak vienen incluidos en la misma distribución, sin nada extra), `java` (SMC y Ditaa usan `tools/Smc.jar`/`tools/ditaa.jar`, ya incluidos en el repo) y `d2` instalados en el sistema.
 
 ### Windows
 
@@ -27,13 +27,13 @@ Dependencias del sistema:
 | Herramienta | Para qué | Cómo instalarla |
 |---|---|---|
 | Node.js | todo — es la app | `winget install OpenJS.NodeJS.LTS` |
-| Python 3 | Blockdiag y su familia, arquitectura AWS/GCP/Azure | `winget install Python.Python.3.12` |
-| Graphviz (`dot`) | diagramas de arquitectura y SMC | `winget install Graphviz.Graphviz` |
-| MiKTeX (`latex`, `dvisvgm`) | TikZ | `winget install MiKTeX.MiKTeX` (instala `pgf`/tikz.sty solo en el primer uso) |
+| Python 3 | Blockdiag y su familia, WireViz, arquitectura AWS/GCP/Azure | `winget install Python.Python.3.12` |
+| Graphviz (`dot`) | diagramas de arquitectura, SMC y WireViz | `winget install Graphviz.Graphviz` |
+| MiKTeX (`latex`, `dvisvgm`) | TikZ y su familia (CircuiTikz, Feynman, Chemfig, Skak), MetaPost | `winget install MiKTeX.MiKTeX` (instala cada paquete `.sty` solo en el primer uso) |
 | Java (JRE) | SMC y Ditaa (`tools/Smc.jar`, `tools/ditaa.jar`, incluidos) | `winget install EclipseAdoptium.Temurin.21.JRE` |
 | D2 | diagramas D2 | `winget install Terrastruct.D2` (abrí una terminal nueva después para que tome el PATH) |
 
-Los editores puramente client-side (BPMN, Mermaid, PlantUML, Graphviz, draw.io, Excalidraw, Sankey, Nomnoml, DBML) funcionan con solo `npm install`, sin nada de la tabla de arriba — draw.io además viene vendorizado en el repo (`public/drawio/`, ~150 MB), no depende de ningún servicio online.
+Los editores puramente client-side (BPMN, Mermaid, PlantUML, Graphviz, draw.io, Excalidraw, Sankey, Nomnoml, Markmap, WaveDrom, DBML) funcionan con solo `npm install`, sin nada de la tabla de arriba — draw.io además viene vendorizado en el repo (`public/drawio/`, ~150 MB), no depende de ningún servicio online.
 
 ## Uso
 
@@ -51,4 +51,4 @@ Cada editor de código permite pegar/editar el código fuente, descargarlo en su
 
 `public/drawio/` es el webapp estático de [draw.io](https://github.com/jgraph/drawio) (Apache 2.0, ver `public/drawio/LICENSE.txt`), vendorizado para que el editor funcione 100% local/offline en vez de depender de embed.diagrams.net.
 
-`npm run check` corre un chequeo rápido de que cada formato tenga sus labels de i18n (ES/EN) y, si usa el adapter CLI-backed, su renderer registrado — conviene correrlo después de agregar un formato nuevo.
+`npm run check` corre un chequeo rápido (estático, sin servidor) de que cada formato tenga sus labels de i18n (ES/EN) y, si usa el adapter CLI-backed, su renderer registrado. `npm run check-examples` va más a fondo: con `npm run dev` corriendo en otra terminal, renderiza *todos* los ejemplos de *todos* los formatos CLI-backed contra el server real — así se detectan bugs de contenido (sintaxis LaTeX rota, API mal usada, etc.) que el chequeo estático no puede ver. Conviene correr ambos después de agregar o tocar un formato.

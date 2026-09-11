@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "check": "node scripts/check-wiring.mjs"
+    "check": "node scripts/check-wiring.mjs",
+    "check-examples": "node scripts/check-examples.mjs"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.1",
