@@ -91,7 +91,7 @@ $shortcut.TargetPath = 'powershell.exe'
 $shortcut.Arguments = "-NoLogo -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$PSScriptRoot\launch-diagrams.ps1`""
 $shortcut.WorkingDirectory = $PSScriptRoot
 $shortcut.IconLocation = 'shell32.dll,44'
-$shortcut.Description = 'Visor y editor local de diagramas (BPMN, Mermaid, PlantUML, Graphviz, Excalidraw, TikZ, Ditaa, DBML, Blockdiag, Sankey, Nomnoml, SMC)'
+$shortcut.Description = 'Visor y editor local de diagramas: 20 formatos (BPMN, Mermaid, PlantUML, Graphviz, D2, draw.io, Excalidraw, TikZ, Ditaa, DBML, Blockdiag y familia, Sankey, Nomnoml, SMC)'
 $shortcut.Save()
 
 Write-Host "==> Listo. Doble clic en 'Diagram Studio' en el escritorio, o: .\launch-diagrams.ps1"
