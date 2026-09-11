@@ -57,6 +57,9 @@ export interface Translations {
   smiles: {
     examples: Record<string, string>;
   };
+  pikchr: {
+    examples: Record<string, string>;
+  };
   pythonDiagrams: {
     examples: Record<string, string>;
   };

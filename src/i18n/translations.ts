@@ -112,6 +112,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Nomnoml',
         description: 'UML simple (clases, herencia), 100% en el navegador.',
       },
+      pikchr: {
+        label: 'Pikchr',
+        description: 'Diagramas de cajas y flechas, livianos, 100% en el navegador.',
+      },
       wavedrom: {
         label: 'WaveDrom',
         description: 'Diagramas de temporización digital, 100% en el navegador.',
@@ -366,6 +370,12 @@ export const translations: Record<'es' | 'en', Translations> = {
         glucose: 'Glucosa',
       },
     },
+    pikchr: {
+      examples: {
+        flow: 'Flujo simple',
+        colors: 'Círculos con color',
+      },
+    },
     pythonDiagrams: {
       examples: {
         aws: 'AWS 3-capas',
@@ -495,6 +505,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       nomnoml: {
         label: 'Nomnoml',
         description: 'Simple UML (classes, inheritance), 100% in the browser.',
+      },
+      pikchr: {
+        label: 'Pikchr',
+        description: 'Lightweight box-and-arrow diagrams, 100% in the browser.',
       },
       wavedrom: {
         label: 'WaveDrom',
@@ -748,6 +762,12 @@ export const translations: Record<'es' | 'en', Translations> = {
         aspirin: 'Aspirin',
         caffeine: 'Caffeine',
         glucose: 'Glucose',
+      },
+    },
+    pikchr: {
+      examples: {
+        flow: 'Simple flow',
+        colors: 'Colored circles',
       },
     },
     pythonDiagrams: {
