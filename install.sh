@@ -38,6 +38,9 @@ python3 -m venv .venv-diagrams
 # scripts/blockdiag-runner.py instead of pinning an old Pillow (no wheels
 # exist for current Python versions).
 .venv-diagrams/bin/pip install --quiet "setuptools<81" blockdiag seqdiag actdiag nwdiag
+# wireviz (cable/harness diagrams) renders through the graphviz binary
+# already required above, no extra system dependency.
+.venv-diagrams/bin/pip install --quiet wireviz
 
 echo "==> Comprobando LaTeX/TikZ"
 if ! command -v latex >/dev/null || ! command -v dvisvgm >/dev/null; then

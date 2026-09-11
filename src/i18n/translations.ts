@@ -64,6 +64,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'MetaPost',
         description: 'Figuras vectoriales precisas con curvas suaves (incluido con MiKTeX).',
       },
+      wireviz: {
+        label: 'WireViz',
+        description: 'Diagramas de arneses y cables eléctricos desde YAML.',
+      },
       ditaa: {
         label: 'Ditaa (ASCII art)',
         description: 'Convierte arte ASCII en diagramas prolijos.',
@@ -323,6 +327,12 @@ export const translations: Record<'es' | 'en', Translations> = {
           curve: 'Curva suave',
         },
       },
+      wireviz: {
+        examples: {
+          simple: 'Conector simple',
+          shielded: 'Con blindaje (DIN)',
+        },
+      },
     },
     nomnoml: {
       examples: {
@@ -426,6 +436,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       metapost: {
         label: 'MetaPost',
         description: 'Precise vector figures with smooth curves (bundled with MiKTeX).',
+      },
+      wireviz: {
+        label: 'WireViz',
+        description: 'Cable and wire harness diagrams from YAML.',
       },
       ditaa: {
         label: 'Ditaa (ASCII art)',
@@ -684,6 +698,12 @@ export const translations: Record<'es' | 'en', Translations> = {
         examples: {
           square: 'Square with diagonal',
           curve: 'Smooth curve',
+        },
+      },
+      wireviz: {
+        examples: {
+          simple: 'Simple connector',
+          shielded: 'Shielded (DIN)',
         },
       },
     },

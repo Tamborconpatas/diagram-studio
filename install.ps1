@@ -55,6 +55,10 @@ if ($LASTEXITCODE -ne 0) { Fail "pip install diagrams fallo" }
 # exist for current Python versions).
 & $venvPython -m pip install --quiet "setuptools<81" blockdiag seqdiag actdiag nwdiag
 if ($LASTEXITCODE -ne 0) { Fail "pip install blockdiag fallo" }
+# wireviz (cable/harness diagrams) renders through the graphviz binary
+# already required above, no extra system dependency.
+& $venvPython -m pip install --quiet wireviz
+if ($LASTEXITCODE -ne 0) { Fail "pip install wireviz fallo" }
 
 Write-Host "==> Comprobando LaTeX/TikZ"
 if (-not (Ensure-Dep 'una distribucion LaTeX (MiKTeX)' { (Test-Cmd 'latex') -and (Test-Cmd 'dvisvgm') } 'MiKTeX.MiKTeX')) {

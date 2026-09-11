@@ -20,6 +20,12 @@ const DBML_RENDERER = join(
 );
 const SMC_JAR = join(import.meta.dirname, 'tools', 'Smc.jar');
 const DITAA_JAR = join(import.meta.dirname, 'tools', 'ditaa.jar');
+const WIREVIZ = join(
+  import.meta.dirname,
+  '.venv-diagrams',
+  process.platform === 'win32' ? 'Scripts' : 'bin',
+  process.platform === 'win32' ? 'wireviz.exe' : 'wireviz',
+);
 const MAX_BODY_BYTES = 200_000;
 
 async function readBody(req: import('node:http').IncomingMessage): Promise<string> {
@@ -185,6 +191,9 @@ const RENDERERS: Record<string, Handler> = {
   // with MiKTeX already, same as tikz/dvisvgm.
   metapost: runner('input.mp', 'input.1', [
     { command: 'mpost', args: ['-interaction=nonstopmode', '-s', 'outputformat="svg"', 'input.mp'], timeout: 20_000 },
+  ]),
+  wireviz: runner('input.yml', 'output.svg', [
+    { command: WIREVIZ, args: ['-f', 's', '-O', 'output', 'input.yml'], timeout: 20_000 },
   ]),
 };
 

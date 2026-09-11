@@ -1,4 +1,4 @@
-import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, Compass, type LucideIcon } from 'lucide-react';
+import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, Compass, Cable, type LucideIcon } from 'lucide-react';
 import type { Language, Translations } from './i18n/types';
 
 // Single source of truth for every CLI-backed diagram format (one that
@@ -506,7 +506,7 @@ const TIKZ_ES = {
   \\draw[fill=red, opacity=0.4] (1.5,0) circle (1.5cm);
   \\node at (-0.6,0) {A};
   \\node at (2.1,0) {B};
-  \\node at (0.75,0) {A∩B};
+  \\node at (0.75,0) {$A \cap B$};
 \\end{tikzpicture}
 `,
   bars: `\\begin{tikzpicture}
@@ -547,7 +547,7 @@ const TIKZ_EN = {
   \\draw[fill=red, opacity=0.4] (1.5,0) circle (1.5cm);
   \\node at (-0.6,0) {A};
   \\node at (2.1,0) {B};
-  \\node at (0.75,0) {A∩B};
+  \\node at (0.75,0) {$A \cap B$};
 \\end{tikzpicture}
 `,
   bars: `\\begin{tikzpicture}
@@ -619,7 +619,8 @@ const CHEMFIG = {
 const SKAK = {
   empty: `\\showboard
 `,
-  opening: `\\mainline{1. e4 e5 2. Nf3 Nc6 3. Bb5}
+  opening: `\\newgame
+\\mainline{1. e4 e5 2. Nf3 Nc6 3. Bb5}
 \\showboard
 `,
 };
@@ -639,6 +640,59 @@ drawarrow (0,50)--(150,50) withcolor red;
 label.top("curva suave", (75,90));
 endfig;
 end
+`,
+};
+
+const WIREVIZ = {
+  simple: `connectors:
+  X1:
+    type: Molex KK 254
+    subtype: male
+    pinlabels: [GND, VCC, DATA]
+  X2:
+    type: Molex KK 254
+    subtype: female
+    pinlabels: [GND, VCC, DATA]
+
+cables:
+  W1:
+    gauge: 0.5 mm2
+    length: 0.3
+    wirecount: 3
+    colors: [BK, RD, YE]
+
+connections:
+  -
+    - X1: [1-3]
+    - W1: [1-3]
+    - X2: [1-3]
+`,
+  shielded: `connectors:
+  X1:
+    type: D-Sub
+    subtype: female
+    pinlabels: [DCD, RX, TX, DTR, GND, DSR, RTS, CTS, RI]
+  X2:
+    type: Molex KK 254
+    subtype: female
+    pinlabels: [GND, RX, TX]
+
+cables:
+  W1:
+    gauge: 0.25 mm2
+    length: 0.2
+    color_code: DIN
+    wirecount: 3
+    shield: true
+
+connections:
+  -
+    - X1: [5,2,3]
+    - W1: [1,2,3]
+    - X2: [1,3,2]
+  -
+    - X1: 5
+    - W1: s
 `,
 };
 
@@ -791,5 +845,14 @@ export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
     fileExt: '.mp',
     downloadFilename: 'diagrama.mp',
     examples: { es: METAPOST, en: METAPOST },
+  },
+  {
+    id: 'wireviz',
+    icon: Cable,
+    category: 'infra',
+    useCases: ['network'],
+    fileExt: '.yml',
+    downloadFilename: 'arnes.yml',
+    examples: { es: WIREVIZ, en: WIREVIZ },
   },
 ];
