@@ -127,35 +127,43 @@ async function renderDitaa(code: string, dir: string): Promise<string> {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" xlink:href="data:image/png;base64,${png.toString('base64')}"/></svg>`;
 }
 
-async function renderDbml(code: string, dir: string): Promise<string> {
-  await writeFile(join(dir, 'input.dbml'), code, 'utf-8');
-  await run(DBML_RENDERER, ['-i', 'input.dbml', '-o', 'output.svg'], dir, 15_000);
-  return readFile(join(dir, 'output.svg'), 'utf-8');
+// Most CLI-backed renderers are: write the code to one input file, run one or
+// more commands against it, read back output.svg. `runner` builds a Handler
+// from that shape so adding a new single/multi-step CLI renderer (e.g. the
+// blockdiag family, or D2) is one map entry below instead of a new function.
+type CmdStep = { command: string; args: string[]; timeout: number };
+
+function runner(inputFile: string, outputFile: string, steps: CmdStep[]): Handler {
+  return async (code, dir) => {
+    await writeFile(join(dir, inputFile), code, 'utf-8');
+    for (const step of steps) await run(step.command, step.args, dir, step.timeout);
+    return readFile(join(dir, outputFile), 'utf-8');
+  };
 }
 
-async function renderBlockdiag(code: string, dir: string): Promise<string> {
-  await writeFile(join(dir, 'input.diag'), code, 'utf-8');
-  await run(PYTHON, [BLOCKDIAG_RUNNER, '-Tsvg', 'input.diag', '-o', 'output.svg'], dir, 15_000);
-  return readFile(join(dir, 'output.svg'), 'utf-8');
-}
-
-async function renderSmc(code: string, dir: string): Promise<string> {
-  await writeFile(join(dir, 'input.sm'), code, 'utf-8');
-  await run('java', ['-jar', SMC_JAR, '-graph', '-glevel', '1', 'input.sm'], dir, 15_000);
-  await run('dot', ['-Tsvg', 'input_sm.dot', '-o', 'output.svg'], dir, 10_000);
-  return readFile(join(dir, 'output.svg'), 'utf-8');
-}
+const RENDERERS: Record<string, Handler> = {
+  diagrams: renderDiagrams,
+  tikz: renderTikz,
+  ditaa: renderDitaa,
+  dbml: runner('input.dbml', 'output.svg', [
+    { command: DBML_RENDERER, args: ['-i', 'input.dbml', '-o', 'output.svg'], timeout: 15_000 },
+  ]),
+  blockdiag: runner('input.diag', 'output.svg', [
+    { command: PYTHON, args: [BLOCKDIAG_RUNNER, '-Tsvg', 'input.diag', '-o', 'output.svg'], timeout: 15_000 },
+  ]),
+  smc: runner('input.sm', 'output.svg', [
+    { command: 'java', args: ['-jar', SMC_JAR, '-graph', '-glevel', '1', 'input.sm'], timeout: 15_000 },
+    { command: 'dot', args: ['-Tsvg', 'input_sm.dot', '-o', 'output.svg'], timeout: 10_000 },
+  ]),
+};
 
 export function diagramsApiPlugin(): Plugin {
   return {
     name: 'diagrams-python-api',
     configureServer(server) {
-      jsonEndpoint(server, '/api/render-diagrams', 'diagrams-', renderDiagrams);
-      jsonEndpoint(server, '/api/render-tikz', 'tikz-', renderTikz);
-      jsonEndpoint(server, '/api/render-ditaa', 'ditaa-', renderDitaa);
-      jsonEndpoint(server, '/api/render-dbml', 'dbml-', renderDbml);
-      jsonEndpoint(server, '/api/render-blockdiag', 'blockdiag-', renderBlockdiag);
-      jsonEndpoint(server, '/api/render-smc', 'smc-', renderSmc);
+      for (const [id, handler] of Object.entries(RENDERERS)) {
+        jsonEndpoint(server, `/api/render-${id}`, `${id}-`, handler);
+      }
     },
   };
 }

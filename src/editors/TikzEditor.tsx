@@ -1,12 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { EditorLayout, toolbarBtn } from '../EditorLayout';
-import { ExportButtons } from '../ExportButtons';
-import { OpenFileButton } from '../OpenFileButton';
-import { ExamplesMenu } from '../ExamplesMenu';
-import { downloadText } from '../export';
+import CliBackedEditor from './CliBackedEditor';
 import { useI18n } from '../i18n';
 
-const DEFAULT_CODE = `\\begin{tikzpicture}
+const NODES_ARROW = `\\begin{tikzpicture}
   \\node[draw, circle] (a) {A};
   \\node[draw, circle, right=2cm of a] (b) {B};
   \\draw[-{Latex}] (a) -- (b);
@@ -15,7 +10,7 @@ const DEFAULT_CODE = `\\begin{tikzpicture}
 
 const CODE_EXAMPLES = {
   es: {
-    nodesArrow: DEFAULT_CODE,
+    nodesArrow: NODES_ARROW,
     math: `\\begin{tikzpicture}
   \\draw[->] (-0.2,0) -- (3.2,0) node[right] {$x$};
   \\draw[->] (0,-0.2) -- (0,3.2) node[above] {$y$};
@@ -56,7 +51,7 @@ const CODE_EXAMPLES = {
 `,
   },
   en: {
-    nodesArrow: DEFAULT_CODE,
+    nodesArrow: NODES_ARROW,
     math: `\\begin{tikzpicture}
   \\draw[->] (-0.2,0) -- (3.2,0) node[right] {$x$};
   \\draw[->] (0,-0.2) -- (0,3.2) node[above] {$y$};
@@ -99,100 +94,16 @@ const CODE_EXAMPLES = {
 };
 
 export default function TikzEditor() {
-  const { t, language } = useI18n();
-  const [code, setCode] = useState(DEFAULT_CODE);
-  const [svgMarkup, setSvgMarkup] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const examples = [
-    { label: t.tikz.examples.nodesArrow, code: CODE_EXAMPLES[language].nodesArrow },
-    { label: t.tikz.examples.math, code: CODE_EXAMPLES[language].math },
-    { label: t.tikz.examples.tree, code: CODE_EXAMPLES[language].tree },
-    { label: t.tikz.examples.venn, code: CODE_EXAMPLES[language].venn },
-    { label: t.tikz.examples.bars, code: CODE_EXAMPLES[language].bars },
-    { label: t.tikz.examples.pattern, code: CODE_EXAMPLES[language].pattern },
-  ];
-
-  const prevLangRef = useRef(language);
-  useEffect(() => {
-    if (prevLangRef.current !== language) {
-      const prevLang = prevLangRef.current;
-      prevLangRef.current = language;
-      const prevCodes = Object.values(CODE_EXAMPLES[prevLang]);
-      const nextCodes = Object.values(CODE_EXAMPLES[language]);
-      const idx = prevCodes.indexOf(code);
-      if (idx !== -1) {
-        const nextCode = nextCodes[idx];
-        setCode(nextCode);
-        render(nextCode);
-      }
-    }
-  }, [language, code]);
-
-  const render = async (src: string) => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/render-tikz', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: src }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? `Error ${res.status}`);
-      setSvgMarkup(data.svg);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    render(DEFAULT_CODE);
-  }, []);
-
+  const { t } = useI18n();
   return (
-    <EditorLayout
-      examples={
-        <ExamplesMenu
-          examples={examples}
-          onSelect={(exampleCode) => {
-            setCode(exampleCode);
-            render(exampleCode);
-          }}
-        />
-      }
-      actions={
-        <>
-          <OpenFileButton
-            accept=".tex,.txt"
-            label={t.openFileBtn('.tex')}
-            onOpen={(text) => {
-              setCode(text);
-              render(text);
-            }}
-          />
-          <button className={toolbarBtn} onClick={() => render(code)} disabled={loading}>
-            {loading ? t.compilingBtn : t.renderBtn}
-          </button>
-          <button className={toolbarBtn} onClick={() => downloadText(code, 'diagrama.tex')}>
-            {t.downloadFileBtn('.tex')}
-          </button>
-          <ExportButtons filename="diagrama-tikz" getSvg={async () => svgMarkup} />
-        </>
-      }
-      error={error}
-      code={code}
-      onCodeChange={setCode}
-      onAutoRender={(src) => render(src)}
-      renderArea={
-        <div
-          className="w-full h-full flex items-center justify-center overflow-auto p-6 bg-white [&_svg]:max-w-none"
-          dangerouslySetInnerHTML={{ __html: svgMarkup }}
-        />
-      }
+    <CliBackedEditor
+      apiPath="tikz"
+      examples={CODE_EXAMPLES}
+      exampleLabels={t.tikz.examples}
+      fileExt=".tex"
+      downloadFilename="diagrama.tex"
+      exportFilename="diagrama-tikz"
+      loadingLabel={(t) => t.compilingBtn}
     />
   );
 }
