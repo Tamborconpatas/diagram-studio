@@ -148,9 +148,14 @@ const RENDERERS: Record<string, Handler> = {
   dbml: runner('input.dbml', 'output.svg', [
     { command: DBML_RENDERER, args: ['-i', 'input.dbml', '-o', 'output.svg'], timeout: 15_000 },
   ]),
-  blockdiag: runner('input.diag', 'output.svg', [
-    { command: PYTHON, args: [BLOCKDIAG_RUNNER, '-Tsvg', 'input.diag', '-o', 'output.svg'], timeout: 15_000 },
-  ]),
+  ...Object.fromEntries(
+    (['blockdiag', 'seqdiag', 'actdiag', 'nwdiag', 'packetdiag', 'rackdiag'] as const).map((family) => [
+      family,
+      runner('input.diag', 'output.svg', [
+        { command: PYTHON, args: [BLOCKDIAG_RUNNER, family, '-Tsvg', 'input.diag', '-o', 'output.svg'], timeout: 15_000 },
+      ]),
+    ]),
+  ),
   smc: runner('input.sm', 'output.svg', [
     { command: 'java', args: ['-jar', SMC_JAR, '-graph', '-glevel', '1', 'input.sm'], timeout: 15_000 },
     { command: 'dot', args: ['-Tsvg', 'input_sm.dot', '-o', 'output.svg'], timeout: 10_000 },

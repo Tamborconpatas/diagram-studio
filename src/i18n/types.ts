@@ -41,6 +41,21 @@ export interface Translations {
   blockdiag: {
     examples: Record<string, string>;
   };
+  seqdiag: {
+    examples: Record<string, string>;
+  };
+  actdiag: {
+    examples: Record<string, string>;
+  };
+  nwdiag: {
+    examples: Record<string, string>;
+  };
+  packetdiag: {
+    examples: Record<string, string>;
+  };
+  rackdiag: {
+    examples: Record<string, string>;
+  };
   dbml: {
     examples: Record<string, string>;
   };

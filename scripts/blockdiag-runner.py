@@ -1,8 +1,10 @@
+import importlib
 import sys
 
 from PIL import ImageDraw, ImageFont
 
-# blockdiag (last released 2021) measures text via the removed
+# blockdiag and the rest of its family (seqdiag/actdiag/nwdiag/packetdiag/
+# rackdiag all build on blockdiag.imagedraw) measure text via the removed
 # PIL ImageDraw.textsize API, even when the output format is SVG. Patch it
 # back in using the modern textbbox equivalent instead of pinning an old
 # Pillow (no wheels exist for current Python).
@@ -25,6 +27,9 @@ def _font_getsize(self, text, *args, **kwargs):
 ImageFont.FreeTypeFont.getsize = _font_getsize
 ImageFont.ImageFont.getsize = _font_getsize
 
-from blockdiag.command import main  # noqa: E402
-
-sys.exit(main(sys.argv[1:]))
+# argv[1] picks the family member (blockdiag/seqdiag/actdiag/nwdiag/
+# packetdiag/rackdiag); the rest is forwarded to its own command.main, same
+# CLI shape as the standalone `blockdiag` executable.
+family = sys.argv[1]
+main = importlib.import_module(f'{family}.command').main
+sys.exit(main(sys.argv[2:]))

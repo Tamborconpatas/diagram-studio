@@ -23,12 +23,13 @@ if ($LASTEXITCODE -ne 0) { Fail "no se pudo crear el venv" }
 $venvPython = '.\.venv-diagrams\Scripts\python.exe'
 & $venvPython -m pip install --quiet --upgrade pip diagrams
 if ($LASTEXITCODE -ne 0) { Fail "pip install diagrams fallo" }
-# blockdiag (last released 2021) needs pkg_resources, removed from
-# setuptools>=81; pin an older setuptools that still ships it. Its text-size
-# call also uses a removed Pillow API, patched at runtime in
+# blockdiag and its family (seqdiag/actdiag/nwdiag also provide
+# packetdiag/rackdiag) were last released in 2021 and need pkg_resources,
+# removed from setuptools>=81; pin an older setuptools that still ships it.
+# Their text-size call also uses a removed Pillow API, patched at runtime in
 # scripts/blockdiag-runner.py instead of pinning an old Pillow (no wheels
 # exist for current Python versions).
-& $venvPython -m pip install --quiet "setuptools<81" blockdiag
+& $venvPython -m pip install --quiet "setuptools<81" blockdiag seqdiag actdiag nwdiag
 if ($LASTEXITCODE -ne 0) { Fail "pip install blockdiag fallo" }
 
 Write-Host "==> Comprobando LaTeX/TikZ"

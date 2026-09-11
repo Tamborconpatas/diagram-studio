@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft, Globe } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft, Globe, MessagesSquare, Route, Network, Package, Server } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -10,6 +10,11 @@ import TikzEditor from './editors/TikzEditor';
 import DitaaEditor from './editors/DitaaEditor';
 import DbmlEditor from './editors/DbmlEditor';
 import BlockdiagEditor from './editors/BlockdiagEditor';
+import SeqdiagEditor from './editors/SeqdiagEditor';
+import ActdiagEditor from './editors/ActdiagEditor';
+import NwdiagEditor from './editors/NwdiagEditor';
+import PacketdiagEditor from './editors/PacketdiagEditor';
+import RackdiagEditor from './editors/RackdiagEditor';
 import SankeyEditor from './editors/SankeyEditor';
 import NomnomlEditor from './editors/NomnomlEditor';
 import SmcEditor from './editors/SmcEditor';
@@ -27,6 +32,11 @@ const TOOLS = [
   { id: 'ditaa', icon: Terminal, Component: DitaaEditor },
   { id: 'dbml', icon: Database, Component: DbmlEditor },
   { id: 'blockdiag', icon: Boxes, Component: BlockdiagEditor },
+  { id: 'seqdiag', icon: MessagesSquare, Component: SeqdiagEditor },
+  { id: 'actdiag', icon: Route, Component: ActdiagEditor },
+  { id: 'nwdiag', icon: Network, Component: NwdiagEditor },
+  { id: 'packetdiag', icon: Package, Component: PacketdiagEditor },
+  { id: 'rackdiag', icon: Server, Component: RackdiagEditor },
   { id: 'sankey', icon: Waves, Component: SankeyEditor },
   { id: 'nomnoml', icon: ComponentIcon, Component: NomnomlEditor },
   { id: 'smc', icon: ArrowRightLeft, Component: SmcEditor },

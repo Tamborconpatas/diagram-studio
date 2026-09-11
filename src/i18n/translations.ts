@@ -52,6 +52,26 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Blockdiag',
         description: 'Diagramas de bloques y redes desde texto simple.',
       },
+      seqdiag: {
+        label: 'Seqdiag',
+        description: 'Diagramas de secuencia simples, misma familia que Blockdiag.',
+      },
+      actdiag: {
+        label: 'Actdiag',
+        description: 'Diagramas de actividad con carriles (lanes).',
+      },
+      nwdiag: {
+        label: 'Nwdiag',
+        description: 'Diagramas de red: hosts agrupados por subred.',
+      },
+      packetdiag: {
+        label: 'Packetdiag',
+        description: 'Diagramas de estructura de paquetes/bytes.',
+      },
+      rackdiag: {
+        label: 'Rackdiag',
+        description: 'Diagramas de racks de servidores.',
+      },
       sankey: {
         label: 'Sankey',
         description: 'Diagramas de flujo proporcional, 100% en el navegador.',
@@ -140,6 +160,37 @@ export const translations: Record<'es' | 'en', Translations> = {
         colors: 'Con colores',
         groups: 'Con grupos',
         shapes: 'Formas y estilos',
+      },
+    },
+    seqdiag: {
+      examples: {
+        simple: 'Simple',
+        async: 'Asíncrono',
+        selfCall: 'Llamada a sí mismo',
+      },
+    },
+    actdiag: {
+      examples: {
+        lanes: 'Con carriles',
+        simple: 'Lineal',
+      },
+    },
+    nwdiag: {
+      examples: {
+        twoNetworks: 'Dos subredes',
+        simple: 'Una subred',
+      },
+    },
+    packetdiag: {
+      examples: {
+        tcpHeader: 'Cabecera TCP',
+        simple: 'Simple',
+      },
+    },
+    rackdiag: {
+      examples: {
+        simple: 'Rack simple',
+        withUnits: 'Con tamaños en U',
       },
     },
     dbml: {
@@ -252,6 +303,26 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Blockdiag',
         description: 'Block and network diagrams from simple text.',
       },
+      seqdiag: {
+        label: 'Seqdiag',
+        description: 'Simple sequence diagrams, same family as Blockdiag.',
+      },
+      actdiag: {
+        label: 'Actdiag',
+        description: 'Activity diagrams with swimlanes.',
+      },
+      nwdiag: {
+        label: 'Nwdiag',
+        description: 'Network diagrams: hosts grouped by subnet.',
+      },
+      packetdiag: {
+        label: 'Packetdiag',
+        description: 'Packet/byte layout diagrams.',
+      },
+      rackdiag: {
+        label: 'Rackdiag',
+        description: 'Server rack diagrams.',
+      },
       sankey: {
         label: 'Sankey',
         description: 'Proportional flow diagrams, 100% in the browser.',
@@ -340,6 +411,37 @@ export const translations: Record<'es' | 'en', Translations> = {
         colors: 'With colors',
         groups: 'With groups',
         shapes: 'Shapes and styles',
+      },
+    },
+    seqdiag: {
+      examples: {
+        simple: 'Simple',
+        async: 'Async',
+        selfCall: 'Self call',
+      },
+    },
+    actdiag: {
+      examples: {
+        lanes: 'With lanes',
+        simple: 'Linear',
+      },
+    },
+    nwdiag: {
+      examples: {
+        twoNetworks: 'Two subnets',
+        simple: 'One subnet',
+      },
+    },
+    packetdiag: {
+      examples: {
+        tcpHeader: 'TCP header',
+        simple: 'Simple',
+      },
+    },
+    rackdiag: {
+      examples: {
+        simple: 'Simple rack',
+        withUnits: 'With unit sizes',
       },
     },
     dbml: {

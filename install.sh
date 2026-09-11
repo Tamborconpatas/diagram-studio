@@ -22,12 +22,13 @@ fi
 rm -rf .venv-diagrams
 python3 -m venv .venv-diagrams
 .venv-diagrams/bin/pip install --quiet --upgrade pip diagrams
-# blockdiag (last released 2021) needs pkg_resources, removed from
-# setuptools>=81; pin an older setuptools that still ships it. Its text-size
-# call also uses a removed Pillow API, patched at runtime in
+# blockdiag and its family (seqdiag/actdiag/nwdiag also provide
+# packetdiag/rackdiag) were last released in 2021 and need pkg_resources,
+# removed from setuptools>=81; pin an older setuptools that still ships it.
+# Their text-size call also uses a removed Pillow API, patched at runtime in
 # scripts/blockdiag-runner.py instead of pinning an old Pillow (no wheels
 # exist for current Python versions).
-.venv-diagrams/bin/pip install --quiet "setuptools<81" blockdiag
+.venv-diagrams/bin/pip install --quiet "setuptools<81" blockdiag seqdiag actdiag nwdiag
 
 echo "==> Comprobando LaTeX/TikZ"
 if ! command -v latex >/dev/null || ! command -v dvisvgm >/dev/null; then
