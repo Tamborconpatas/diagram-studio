@@ -102,17 +102,25 @@ async function renderDiagrams(code: string, dir: string): Promise<string> {
   return inlineLocalImages(rawSvg);
 }
 
-const TIKZ_LIBRARIES = 'arrows.meta,positioning,shapes.geometric,calc,decorations.pathmorphing,patterns';
-
-async function renderTikz(code: string, dir: string): Promise<string> {
-  const doc = code.includes('\\documentclass')
-    ? code
-    : `\\documentclass[tikz,dvisvgm,border=2pt]{standalone}\n\\usetikzlibrary{${TIKZ_LIBRARIES}}\n\\begin{document}\n${code}\n\\end{document}`;
-  await writeFile(join(dir, 'doc.tex'), doc, 'utf-8');
-  await run('latex', ['-interaction=nonstopmode', '-halt-on-error', 'doc.tex'], dir, 20_000);
-  await run('dvisvgm', ['doc.dvi', '-o', 'doc.svg'], dir, 20_000);
-  return readFile(join(dir, 'doc.svg'), 'utf-8');
+// Every LaTeX-based format (TikZ and friends: CircuiTikz, tikz-feynman,
+// chemfig, skak) is the same 2-step pipeline with a different preamble —
+// wrap the user's snippet in a standalone doc (unless they already wrote
+// their own \documentclass), compile, convert to SVG. MiKTeX auto-installs
+// whatever package the preamble pulls in on first use (see install.ps1/sh),
+// same as it already does for plain tikz/pgf.
+function latexFormat(classOptions: string, preamble: string): Handler {
+  return async (code, dir) => {
+    const doc = code.includes('\\documentclass')
+      ? code
+      : `\\documentclass[${classOptions}]{standalone}\n${preamble}\n\\begin{document}\n${code}\n\\end{document}`;
+    await writeFile(join(dir, 'doc.tex'), doc, 'utf-8');
+    await run('latex', ['-interaction=nonstopmode', '-halt-on-error', 'doc.tex'], dir, 20_000);
+    await run('dvisvgm', ['doc.dvi', '-o', 'doc.svg'], dir, 20_000);
+    return readFile(join(dir, 'doc.svg'), 'utf-8');
+  };
 }
+
+const TIKZ_LIBRARIES = 'arrows.meta,positioning,shapes.geometric,calc,decorations.pathmorphing,patterns';
 
 // ditaa only ever produces a raster PNG (no real SVG output), so wrap it in a
 // minimal SVG <image> to reuse the app's existing SVG-based render/export path.
@@ -147,7 +155,11 @@ function runner(inputFile: string, outputFile: string, steps: CmdStep[]): Handle
 
 const RENDERERS: Record<string, Handler> = {
   diagrams: renderDiagrams,
-  tikz: renderTikz,
+  tikz: latexFormat('tikz,dvisvgm,border=2pt', `\\usetikzlibrary{${TIKZ_LIBRARIES}}`),
+  circuitikz: latexFormat('tikz,border=2pt', '\\usepackage{circuitikz}'),
+  feynman: latexFormat('tikz,border=2pt', '\\usepackage{tikz-feynman}'),
+  chemfig: latexFormat('border=2pt', '\\usepackage{chemfig}'),
+  skak: latexFormat('border=2pt', '\\usepackage{skak}'),
   ditaa: renderDitaa,
   dbml: runner('input.dbml', 'output.svg', [
     { command: DBML_RENDERER, args: ['-i', 'input.dbml', '-o', 'output.svg'], timeout: 15_000 },

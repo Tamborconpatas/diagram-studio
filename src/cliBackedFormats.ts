@@ -1,4 +1,4 @@
-import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, type LucideIcon } from 'lucide-react';
+import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, type LucideIcon } from 'lucide-react';
 import type { Language, Translations } from './i18n/types';
 
 // Single source of truth for every CLI-backed diagram format (one that
@@ -568,6 +568,62 @@ const TIKZ_EN = {
 `,
 };
 
+const CIRCUITIKZ = {
+  rc: `\\begin{circuitikz}
+\\draw (0,0) to[R, l=$R_1$] (2,0) to[C, l=$C_1$] (2,-2) to[short] (0,-2) to[short] (0,0);
+\\end{circuitikz}
+`,
+  voltageDivider: `\\begin{circuitikz}
+\\draw (0,4) to[battery1, l=$V_{in}$] (0,0)
+      (0,4) to[R, l=$R_1$] (3,4)
+      (3,4) to[R, l=$R_2$] (3,0) -- (0,0)
+      (3,4) to[short, -o] (5,4) node[right] {$V_{out}$};
+\\end{circuitikz}
+`,
+};
+
+const FEYNMAN = {
+  annihilation: `\\begin{tikzpicture}
+\\begin{feynman}
+\\vertex (a);
+\\vertex [right=of a] (b);
+\\diagram* {(a) -- [fermion] (b)};
+\\end{feynman}
+\\end{tikzpicture}
+`,
+  compton: `\\begin{tikzpicture}
+\\begin{feynman}
+\\vertex (i1) {\\(e^-\\)};
+\\vertex [right=1.5cm of i1] (v1);
+\\vertex [right=1.5cm of v1] (v2);
+\\vertex [right=1.5cm of v2] (o1) {\\(e^-\\)};
+\\vertex [above=1.5cm of i1] (i2) {\\(\\gamma\\)};
+\\vertex [above=1.5cm of o1] (o2) {\\(\\gamma\\)};
+\\diagram* {
+  (i1) -- [fermion] (v1) -- [fermion] (v2) -- [fermion] (o1),
+  (i2) -- [photon] (v1),
+  (v2) -- [photon] (o2),
+};
+\\end{feynman}
+\\end{tikzpicture}
+`,
+};
+
+const CHEMFIG = {
+  ethanol: `\\chemfig{H_3C-CH_2-OH}
+`,
+  benzene: `\\chemfig{*6(-=-=-=)}
+`,
+};
+
+const SKAK = {
+  empty: `\\showboard
+`,
+  opening: `\\mainline{1. e4 e5 2. Nf3 Nc6 3. Bb5}
+\\showboard
+`,
+};
+
 export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
   {
     id: 'blockdiag',
@@ -667,6 +723,46 @@ export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
     fileExt: '.tex',
     downloadFilename: 'diagrama.tex',
     examples: { es: TIKZ_ES, en: TIKZ_EN },
+    loadingLabel: (t) => t.compilingBtn,
+  },
+  {
+    id: 'circuitikz',
+    icon: CircuitBoard,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.tex',
+    downloadFilename: 'circuito.tex',
+    examples: { es: CIRCUITIKZ, en: CIRCUITIKZ },
+    loadingLabel: (t) => t.compilingBtn,
+  },
+  {
+    id: 'feynman',
+    icon: Atom,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.tex',
+    downloadFilename: 'diagrama.tex',
+    examples: { es: FEYNMAN, en: FEYNMAN },
+    loadingLabel: (t) => t.compilingBtn,
+  },
+  {
+    id: 'chemfig',
+    icon: FlaskConical,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.tex',
+    downloadFilename: 'molecula.tex',
+    examples: { es: CHEMFIG, en: CHEMFIG },
+    loadingLabel: (t) => t.compilingBtn,
+  },
+  {
+    id: 'skak',
+    icon: Crown,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.tex',
+    downloadFilename: 'ajedrez.tex',
+    examples: { es: SKAK, en: SKAK },
     loadingLabel: (t) => t.compilingBtn,
   },
 ];

@@ -44,6 +44,22 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'TikZ',
         description: 'Gráficos vectoriales de precisión vía LaTeX.',
       },
+      circuitikz: {
+        label: 'CircuiTikz',
+        description: 'Circuitos electrónicos vía LaTeX (arriba de TikZ).',
+      },
+      feynman: {
+        label: 'Feynman',
+        description: 'Diagramas de Feynman (física de partículas) vía LaTeX.',
+      },
+      chemfig: {
+        label: 'Chemfig',
+        description: 'Estructuras químicas y moléculas vía LaTeX.',
+      },
+      skak: {
+        label: 'Skak (Ajedrez)',
+        description: 'Tableros y partidas de ajedrez vía LaTeX.',
+      },
       ditaa: {
         label: 'Ditaa (ASCII art)',
         description: 'Convierte arte ASCII en diagramas prolijos.',
@@ -265,6 +281,30 @@ export const translations: Record<'es' | 'en', Translations> = {
           pattern: 'Patrón/relleno',
         },
       },
+      circuitikz: {
+        examples: {
+          rc: 'Circuito RC',
+          voltageDivider: 'Divisor de voltaje',
+        },
+      },
+      feynman: {
+        examples: {
+          annihilation: 'Aniquilación simple',
+          compton: 'Dispersión Compton',
+        },
+      },
+      chemfig: {
+        examples: {
+          ethanol: 'Etanol',
+          benzene: 'Benceno',
+        },
+      },
+      skak: {
+        examples: {
+          empty: 'Tablero vacío',
+          opening: 'Apertura (Ruy López)',
+        },
+      },
     },
     nomnoml: {
       examples: {
@@ -335,6 +375,22 @@ export const translations: Record<'es' | 'en', Translations> = {
       tikz: {
         label: 'TikZ',
         description: 'Precision vector graphics via LaTeX.',
+      },
+      circuitikz: {
+        label: 'CircuiTikz',
+        description: 'Electronic circuits via LaTeX (built on TikZ).',
+      },
+      feynman: {
+        label: 'Feynman',
+        description: 'Feynman diagrams (particle physics) via LaTeX.',
+      },
+      chemfig: {
+        label: 'Chemfig',
+        description: 'Chemical structures and molecules via LaTeX.',
+      },
+      skak: {
+        label: 'Skak (Chess)',
+        description: 'Chess boards and games via LaTeX.',
       },
       ditaa: {
         label: 'Ditaa (ASCII art)',
@@ -555,6 +611,30 @@ export const translations: Record<'es' | 'en', Translations> = {
           venn: 'Venn diagram',
           bars: 'Bar chart',
           pattern: 'Pattern/fill',
+        },
+      },
+      circuitikz: {
+        examples: {
+          rc: 'RC circuit',
+          voltageDivider: 'Voltage divider',
+        },
+      },
+      feynman: {
+        examples: {
+          annihilation: 'Simple annihilation',
+          compton: 'Compton scattering',
+        },
+      },
+      chemfig: {
+        examples: {
+          ethanol: 'Ethanol',
+          benzene: 'Benzene',
+        },
+      },
+      skak: {
+        examples: {
+          empty: 'Empty board',
+          opening: 'Opening (Ruy Lopez)',
         },
       },
     },

@@ -65,6 +65,19 @@ if (Test-Cmd 'initexmf') {
     # interactiva para instalar paquetes que falten (standalone, xkeyval...),
     # lo cual cuelga cualquier compilacion no interactiva (como la del editor).
     initexmf --set-config-value='[MPM]AutoInstall'=1 *> $null
+    # Una instalacion de MiKTeX que nunca "revisó actualizaciones" (el caso de
+    # cualquier instalacion recien hecha) hace que TODAS las compilaciones
+    # (latex, dvisvgm, etc.) fallen con "major issue: So far, you have not
+    # checked for MiKTeX updates." — sin relacion con paquetes faltantes.
+    # Seteamos el timestamp directamente en vez de esperar a que el usuario
+    # abra la consola grafica de MiKTeX y lo revise a mano.
+    $unixNow = [int][double]::Parse((Get-Date -UFormat %s))
+    initexmf --set-config-value="[MPM]LastUserUpdateCheck=$unixNow" *> $null
+    # Ese chequeo ademas se cachea hasta por una semana en issues.json; si ya
+    # existia de antes de este fix, hay que borrarlo para que no siga leyendo
+    # el resultado viejo.
+    $issuesJson = Join-Path $env:APPDATA "MiKTeX\miktex\config\issues.json"
+    if (Test-Path $issuesJson) { Remove-Item -Force $issuesJson }
 }
 kpsewhich tikz.sty *> $null
 if ($LASTEXITCODE -ne 0 -and (Test-Cmd 'mpm')) {
