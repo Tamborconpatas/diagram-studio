@@ -41,33 +41,10 @@ export interface Translations {
     altText: string;
     examples: Record<string, string>;
   };
-  blockdiag: {
-    examples: Record<string, string>;
-  };
-  seqdiag: {
-    examples: Record<string, string>;
-  };
-  actdiag: {
-    examples: Record<string, string>;
-  };
-  nwdiag: {
-    examples: Record<string, string>;
-  };
-  packetdiag: {
-    examples: Record<string, string>;
-  };
-  rackdiag: {
-    examples: Record<string, string>;
-  };
-  d2: {
-    examples: Record<string, string>;
-  };
-  dbml: {
-    examples: Record<string, string>;
-  };
-  ditaa: {
-    examples: Record<string, string>;
-  };
+  // Labels for every CLI_BACKED_FORMATS entry (src/cliBackedFormats.ts),
+  // keyed by format id — one blob instead of one Translations field per
+  // format, so a new CLI-backed format needs no types.ts edit.
+  cliFormats: Record<string, { examples: Record<string, string> }>;
   nomnoml: {
     examples: Record<string, string>;
   };
@@ -77,12 +54,6 @@ export interface Translations {
   sankey: {
     invalidLine: (line: string) => string;
     noFlows: string;
-    examples: Record<string, string>;
-  };
-  smc: {
-    examples: Record<string, string>;
-  };
-  tikz: {
     examples: Record<string, string>;
   };
 }

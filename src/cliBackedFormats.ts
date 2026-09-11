@@ -1,0 +1,672 @@
+import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, type LucideIcon } from 'lucide-react';
+import type { Language, Translations } from './i18n/types';
+
+// Single source of truth for every CLI-backed diagram format (one that
+// renders via a POST to /api/render-<id>, see vite-plugin-diagrams-api.ts).
+// Adding a new single/multi-step CLI format is: one RENDERERS entry there,
+// plus one entry here — no new editor file, no DiagramApp.tsx wiring, no
+// i18n interface change (labels live under Translations.cliFormats[id]).
+export interface CliBackedFormat {
+  id: string;
+  icon: LucideIcon;
+  category: string;
+  useCases: string[];
+  fileExt: string;
+  downloadFilename: string;
+  examples: Record<Language, Record<string, string>>;
+  loadingLabel?: (t: Translations) => string;
+}
+
+const BLOCKDIAG_ES = {
+  simple: `blockdiag {
+  Cliente -> Servidor -> Base_de_datos;
+  Servidor -> Cache;
+}
+`,
+  colors: `blockdiag {
+  A [color = "#e0f2fe"];
+  B [color = "#dcfce7"];
+  C [color = "#fef3c7"];
+  A -> B -> C;
+}
+`,
+  groups: `blockdiag {
+  group {
+    label = "Frontend";
+    App; UI;
+  }
+  group {
+    label = "Backend";
+    API; DB;
+  }
+  App -> API -> DB;
+  UI -> API;
+}
+`,
+  shapes: `blockdiag {
+  Inicio [shape = beginpoint];
+  Decision [shape = diamond];
+  Proceso [shape = box];
+  Fin [shape = endpoint];
+  Inicio -> Decision -> Proceso -> Fin;
+  Decision -> Fin [style = dashed, label = "atajo"];
+}
+`,
+};
+const BLOCKDIAG_EN = {
+  simple: `blockdiag {
+  Client -> Server -> Database;
+  Server -> Cache;
+}
+`,
+  colors: `blockdiag {
+  A [color = "#e0f2fe"];
+  B [color = "#dcfce7"];
+  C [color = "#fef3c7"];
+  A -> B -> C;
+}
+`,
+  groups: `blockdiag {
+  group {
+    label = "Frontend";
+    App; UI;
+  }
+  group {
+    label = "Backend";
+    API; DB;
+  }
+  App -> API -> DB;
+  UI -> API;
+}
+`,
+  shapes: `blockdiag {
+  Start [shape = beginpoint];
+  Decision [shape = diamond];
+  Process [shape = box];
+  End [shape = endpoint];
+  Start -> Decision -> Process -> End;
+  Decision -> End [style = dashed, label = "shortcut"];
+}
+`,
+};
+
+const SEQDIAG = {
+  simple: `seqdiag {
+  client -> server [label = "login"];
+  server -> db [label = "query"];
+  db -> server [label = "result"];
+  server -> client [label = "ok"];
+}
+`,
+  async: `seqdiag {
+  client ->> server [label = "async request"];
+  server -->> client [label = "ack"];
+}
+`,
+  selfCall: `seqdiag {
+  client -> server [label = "request"];
+  server -> server [label = "validate", leftnote = "checks auth"];
+  server -> client [label = "response"];
+}
+`,
+};
+
+const ACTDIAG = {
+  lanes: `actdiag {
+  lane user {
+    label = "User";
+    start -> click;
+  }
+  lane system {
+    label = "System";
+    process -> end;
+  }
+  click -> process;
+}
+`,
+  simple: `actdiag {
+  start -> validate -> save -> end;
+  validate -> reject [label = "invalid"];
+}
+`,
+};
+
+const NWDIAG = {
+  twoNetworks: `nwdiag {
+  network dmz {
+    address = "210.1.1.0/24";
+    web01;
+    web02;
+  }
+  network internal {
+    address = "172.16.0.0/24";
+    web01;
+    web02;
+    db01;
+  }
+}
+`,
+  simple: `nwdiag {
+  network lan {
+    address = "192.168.0.0/24";
+    router;
+    server;
+    laptop;
+  }
+}
+`,
+};
+
+const PACKETDIAG = {
+  tcpHeader: `packetdiag {
+  colwidth = 32;
+  0-15: Source Port;
+  16-31: Destination Port;
+  32-63: Sequence Number;
+  64-95: Acknowledgment Number;
+  96-99: Data Offset;
+  100-105: Reserved;
+  106: URG;
+  107: ACK;
+  108: PSH;
+  109: RST;
+  110: SYN;
+  111: FIN;
+  112-127: Window;
+}
+`,
+  simple: `packetdiag {
+  colwidth = 16;
+  0-3: Version;
+  4-7: Type;
+  8-15: Length;
+}
+`,
+};
+
+const RACKDIAG = {
+  simple: `rackdiag {
+  16U;
+  1: UPS;
+  2: Switch;
+  3: Router;
+  4: Server-1;
+  5: Server-2;
+  6: Server-3;
+}
+`,
+  withUnits: `rackdiag {
+  16U;
+  1: UPS [2U];
+  3: Switch;
+  4: Router;
+  5: Firewall [2U];
+  7: Storage [4U];
+}
+`,
+};
+
+const D2 = {
+  simple: `client -> server: request
+server -> client: response
+`,
+  containers: `frontend: {
+  app
+  ui
+}
+backend: {
+  api
+  db
+}
+frontend.app -> backend.api
+backend.api -> backend.db
+`,
+  shapes: `start: {shape: circle}
+process: {shape: rectangle}
+decision: {shape: diamond}
+end: {shape: circle}
+
+start -> process -> decision
+decision -> end: yes
+decision -> process: no
+`,
+};
+
+const DBML = {
+  twoTables: `Table users {
+  id int [pk]
+  name varchar
+  email varchar
+}
+
+Table posts {
+  id int [pk]
+  user_id int
+  title varchar
+}
+
+Ref: posts.user_id > users.id
+`,
+  manyToMany: `Table students {
+  id int [pk]
+  name varchar
+}
+
+Table courses {
+  id int [pk]
+  title varchar
+}
+
+Table enrollments {
+  student_id int
+  course_id int
+  enrolled_at date
+}
+
+Ref: enrollments.student_id > students.id
+Ref: enrollments.course_id > courses.id
+`,
+  enumIndexes: `Enum estado_pedido {
+  pendiente
+  pagado
+  enviado
+  cancelado
+}
+
+Table pedidos {
+  id int [pk]
+  cliente_id int [not null]
+  estado estado_pedido [default: 'pendiente']
+  creado_en timestamp
+
+  indexes {
+    (cliente_id, creado_en) [name: "idx_cliente_fecha"]
+  }
+}
+
+Table clientes {
+  id int [pk]
+  email varchar [unique]
+}
+
+Ref: pedidos.cliente_id > clientes.id
+`,
+};
+
+const DITAA_ES = {
+  simple: `+--------+   +----------+   +-------+
+| Cliente|-->| Servidor |-->|  DB   |
++--------+   +----------+   +-------+
+`,
+  decision: `+---------+
+| Entrada |
++---------+
+     |
+     v
+ /--------\\
+< ¿Válido? >
+ \\--------/
+   |     |
+  Sí     No
+   |     |
+   v     v
++-----+ +-------+
+| OK  | | Error |
++-----+ +-------+
+`,
+  colors: `+------------+
+| cREDCache  |
++------------+
+     |
+     v
++------------+
+| cGREOrigen |
++------------+
+     |
+     v
++------------+
+|  cBLULog   |
++------------+
+`,
+  rounded: `/---------\\
+| Sistema |
+\\---------/
+     |
+     v
+/-----------\\
+| Respuesta |
+\\-----------/
+`,
+};
+const DITAA_EN = {
+  simple: `+--------+   +----------+   +-------+
+| Client |-->|  Server  |-->|  DB   |
++--------+   +----------+   +-------+
+`,
+  decision: `+---------+
+|  Input  |
++---------+
+     |
+     v
+ /--------\\
+<  Valid?  >
+ \\--------/
+   |     |
+  Yes    No
+   |     |
+   v     v
++-----+ +-------+
+| OK  | | Error |
++-----+ +-------+
+`,
+  colors: `+------------+
+| cREDCache  |
++------------+
+     |
+     v
++------------+
+| cGREOrigen |
++------------+
+     |
+     v
++------------+
+|  cBLULog   |
++------------+
+`,
+  rounded: `/---------\\
+| System  |
+\\---------/
+     |
+     v
+/-----------\\
+| Response  |
+\\-----------/
+`,
+};
+
+const SMC_TURNSTILE = `%class Turnstile
+%start MainMap::Locked
+%map MainMap
+%%
+Locked
+{
+  coin Unlocked { unlock(); }
+  pass nil { alarm(); }
+}
+Unlocked
+{
+  pass Locked { lock(); }
+  coin nil { thankyou(); }
+}
+%%
+`;
+const SMC_ES = {
+  turnstile: SMC_TURNSTILE,
+  trafficLight: `%class Semaforo
+%start MainMap::Rojo
+%map MainMap
+%%
+Rojo
+{
+  siguiente Verde { encenderVerde(); }
+}
+Verde
+{
+  siguiente Amarillo { encenderAmarillo(); }
+}
+Amarillo
+{
+  siguiente Rojo { encenderRojo(); }
+}
+%%
+`,
+  guards: `%class Cajero
+%start MainMap::Esperando
+%map MainMap
+%%
+Esperando
+{
+  ingresarPin [saldoDisponible()] Validado { mostrarMenu(); }
+  ingresarPin [!saldoDisponible()] Bloqueado { alertar(); }
+}
+Validado
+{
+  retirar Esperando { entregarEfectivo(); }
+}
+Bloqueado
+{
+}
+%%
+`,
+};
+const SMC_EN = {
+  turnstile: SMC_TURNSTILE,
+  trafficLight: `%class TrafficLight
+%start MainMap::Red
+%map MainMap
+%%
+Red
+{
+  next Green { turnGreen(); }
+}
+Green
+{
+  next Yellow { turnYellow(); }
+}
+Yellow
+{
+  next Red { turnRed(); }
+}
+%%
+`,
+  guards: `%class ATM
+%start MainMap::Waiting
+%map MainMap
+%%
+Waiting
+{
+  enterPin [hasBalance()] Validated { showMenu(); }
+  enterPin [!hasBalance()] Blocked { alert(); }
+}
+Validated
+{
+  withdraw Waiting { dispenseCash(); }
+}
+Blocked
+{
+}
+%%
+`,
+};
+
+const TIKZ_NODES_ARROW = `\\begin{tikzpicture}
+  \\node[draw, circle] (a) {A};
+  \\node[draw, circle, right=2cm of a] (b) {B};
+  \\draw[-{Latex}] (a) -- (b);
+\\end{tikzpicture}
+`;
+const TIKZ_ES = {
+  nodesArrow: TIKZ_NODES_ARROW,
+  math: `\\begin{tikzpicture}
+  \\draw[->] (-0.2,0) -- (3.2,0) node[right] {$x$};
+  \\draw[->] (0,-0.2) -- (0,3.2) node[above] {$y$};
+  \\draw[domain=0:3, smooth, variable=\\x, blue] plot ({\\x}, {\\x*\\x/3});
+\\end{tikzpicture}
+`,
+  tree: `\\begin{tikzpicture}[level distance=1.5cm, sibling distance=2.2cm]
+  \\node {Raíz}
+    child { node {Hijo A}
+      child { node {A1} }
+      child { node {A2} } }
+    child { node {Hijo B} };
+\\end{tikzpicture}
+`,
+  venn: `\\begin{tikzpicture}
+  \\draw[fill=blue, opacity=0.4] (0,0) circle (1.5cm);
+  \\draw[fill=red, opacity=0.4] (1.5,0) circle (1.5cm);
+  \\node at (-0.6,0) {A};
+  \\node at (2.1,0) {B};
+  \\node at (0.75,0) {A∩B};
+\\end{tikzpicture}
+`,
+  bars: `\\begin{tikzpicture}
+  \\draw[->] (0,0) -- (5,0);
+  \\draw[->] (0,0) -- (0,4);
+  \\draw[fill=blue!60] (0.5,0) rectangle (1.2,1.5);
+  \\draw[fill=blue!60] (1.7,0) rectangle (2.4,3);
+  \\draw[fill=blue!60] (2.9,0) rectangle (3.6,2.2);
+  \\node at (0.85,-0.3) {Ene};
+  \\node at (2.05,-0.3) {Feb};
+  \\node at (3.25,-0.3) {Mar};
+\\end{tikzpicture}
+`,
+  pattern: `\\begin{tikzpicture}
+  \\draw[pattern=north east lines] (0,0) rectangle (2,2);
+  \\draw[pattern=dots] (2.5,0) rectangle (4.5,2);
+\\end{tikzpicture}
+`,
+};
+const TIKZ_EN = {
+  nodesArrow: TIKZ_NODES_ARROW,
+  math: `\\begin{tikzpicture}
+  \\draw[->] (-0.2,0) -- (3.2,0) node[right] {$x$};
+  \\draw[->] (0,-0.2) -- (0,3.2) node[above] {$y$};
+  \\draw[domain=0:3, smooth, variable=\\x, blue] plot ({\\x}, {\\x*\\x/3});
+\\end{tikzpicture}
+`,
+  tree: `\\begin{tikzpicture}[level distance=1.5cm, sibling distance=2.2cm]
+  \\node {Root}
+    child { node {Child A}
+      child { node {A1} }
+      child { node {A2} } }
+    child { node {Child B} };
+\\end{tikzpicture}
+`,
+  venn: `\\begin{tikzpicture}
+  \\draw[fill=blue, opacity=0.4] (0,0) circle (1.5cm);
+  \\draw[fill=red, opacity=0.4] (1.5,0) circle (1.5cm);
+  \\node at (-0.6,0) {A};
+  \\node at (2.1,0) {B};
+  \\node at (0.75,0) {A∩B};
+\\end{tikzpicture}
+`,
+  bars: `\\begin{tikzpicture}
+  \\draw[->] (0,0) -- (5,0);
+  \\draw[->] (0,0) -- (0,4);
+  \\draw[fill=blue!60] (0.5,0) rectangle (1.2,1.5);
+  \\draw[fill=blue!60] (1.7,0) rectangle (2.4,3);
+  \\draw[fill=blue!60] (2.9,0) rectangle (3.6,2.2);
+  \\node at (0.85,-0.3) {Jan};
+  \\node at (2.05,-0.3) {Feb};
+  \\node at (3.25,-0.3) {Mar};
+\\end{tikzpicture}
+`,
+  pattern: `\\begin{tikzpicture}
+  \\draw[pattern=north east lines] (0,0) rectangle (2,2);
+  \\draw[pattern=dots] (2.5,0) rectangle (4.5,2);
+\\end{tikzpicture}
+`,
+};
+
+export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
+  {
+    id: 'blockdiag',
+    icon: Boxes,
+    category: 'infra',
+    useCases: ['architecture', 'network'],
+    fileExt: '.diag',
+    downloadFilename: 'diagrama.diag',
+    examples: { es: BLOCKDIAG_ES, en: BLOCKDIAG_EN },
+  },
+  {
+    id: 'seqdiag',
+    icon: MessagesSquare,
+    category: 'process',
+    useCases: ['sequence'],
+    fileExt: '.diag',
+    downloadFilename: 'diagrama.diag',
+    examples: { es: SEQDIAG, en: SEQDIAG },
+  },
+  {
+    id: 'actdiag',
+    icon: Route,
+    category: 'process',
+    useCases: ['process'],
+    fileExt: '.diag',
+    downloadFilename: 'diagrama.diag',
+    examples: { es: ACTDIAG, en: ACTDIAG },
+  },
+  {
+    id: 'nwdiag',
+    icon: Network,
+    category: 'infra',
+    useCases: ['network'],
+    fileExt: '.diag',
+    downloadFilename: 'diagrama.diag',
+    examples: { es: NWDIAG, en: NWDIAG },
+  },
+  {
+    id: 'packetdiag',
+    icon: Package,
+    category: 'infra',
+    useCases: ['network'],
+    fileExt: '.diag',
+    downloadFilename: 'diagrama.diag',
+    examples: { es: PACKETDIAG, en: PACKETDIAG },
+  },
+  {
+    id: 'rackdiag',
+    icon: Server,
+    category: 'infra',
+    useCases: ['network'],
+    fileExt: '.diag',
+    downloadFilename: 'diagrama.diag',
+    examples: { es: RACKDIAG, en: RACKDIAG },
+  },
+  {
+    id: 'd2',
+    icon: Shapes,
+    category: 'software',
+    useCases: ['architecture', 'flow'],
+    fileExt: '.d2',
+    downloadFilename: 'diagrama.d2',
+    examples: { es: D2, en: D2 },
+  },
+  {
+    id: 'dbml',
+    icon: Database,
+    category: 'technical',
+    useCases: ['database'],
+    fileExt: '.dbml',
+    downloadFilename: 'esquema.dbml',
+    examples: { es: DBML, en: DBML },
+  },
+  {
+    id: 'ditaa',
+    icon: Terminal,
+    category: 'drawing',
+    useCases: ['freeform'],
+    fileExt: '.ditaa',
+    downloadFilename: 'diagrama.ditaa',
+    examples: { es: DITAA_ES, en: DITAA_EN },
+  },
+  {
+    id: 'smc',
+    icon: ArrowRightLeft,
+    category: 'technical',
+    useCases: ['state'],
+    fileExt: '.sm',
+    downloadFilename: 'maquina.sm',
+    examples: { es: SMC_ES, en: SMC_EN },
+  },
+  {
+    id: 'tikz',
+    icon: Sigma,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.tex',
+    downloadFilename: 'diagrama.tex',
+    examples: { es: TIKZ_ES, en: TIKZ_EN },
+    loadingLabel: (t) => t.compilingBtn,
+  },
+];

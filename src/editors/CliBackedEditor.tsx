@@ -6,6 +6,25 @@ import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
 import { useI18n } from '../i18n';
 import type { Language } from '../i18n/types';
+import type { CliBackedFormat } from '../cliBackedFormats';
+
+// The single render path every CLI_BACKED_FORMATS entry (src/cliBackedFormats.ts)
+// goes through — this is what DiagramApp.tsx's TOOLS array points its
+// Component at for all of them, instead of one bespoke component per format.
+export function CliFormatEditor({ format }: { format: CliBackedFormat }) {
+  const { t } = useI18n();
+  return (
+    <CliBackedEditor
+      apiPath={format.id}
+      examples={format.examples}
+      exampleLabels={t.cliFormats[format.id]?.examples ?? {}}
+      fileExt={format.fileExt}
+      downloadFilename={format.downloadFilename}
+      exportFilename={`diagrama-${format.id}`}
+      loadingLabel={format.loadingLabel}
+    />
+  );
+}
 
 // Shared shape for every editor whose render is a POST to
 // /api/render-<apiPath> (see vite-plugin-diagrams-api.ts). Adding a new

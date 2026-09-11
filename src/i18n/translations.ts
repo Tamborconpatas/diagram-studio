@@ -186,65 +186,84 @@ export const translations: Record<'es' | 'en', Translations> = {
         ebnf: 'EBNF',
       },
     },
-    blockdiag: {
-      examples: {
-        simple: 'Simple',
-        colors: 'Con colores',
-        groups: 'Con grupos',
-        shapes: 'Formas y estilos',
+    cliFormats: {
+      blockdiag: {
+        examples: {
+          simple: 'Simple',
+          colors: 'Con colores',
+          groups: 'Con grupos',
+          shapes: 'Formas y estilos',
+        },
       },
-    },
-    seqdiag: {
-      examples: {
-        simple: 'Simple',
-        async: 'Asíncrono',
-        selfCall: 'Llamada a sí mismo',
+      seqdiag: {
+        examples: {
+          simple: 'Simple',
+          async: 'Asíncrono',
+          selfCall: 'Llamada a sí mismo',
+        },
       },
-    },
-    actdiag: {
-      examples: {
-        lanes: 'Con carriles',
-        simple: 'Lineal',
+      actdiag: {
+        examples: {
+          lanes: 'Con carriles',
+          simple: 'Lineal',
+        },
       },
-    },
-    nwdiag: {
-      examples: {
-        twoNetworks: 'Dos subredes',
-        simple: 'Una subred',
+      nwdiag: {
+        examples: {
+          twoNetworks: 'Dos subredes',
+          simple: 'Una subred',
+        },
       },
-    },
-    packetdiag: {
-      examples: {
-        tcpHeader: 'Cabecera TCP',
-        simple: 'Simple',
+      packetdiag: {
+        examples: {
+          tcpHeader: 'Cabecera TCP',
+          simple: 'Simple',
+        },
       },
-    },
-    rackdiag: {
-      examples: {
-        simple: 'Rack simple',
-        withUnits: 'Con tamaños en U',
+      rackdiag: {
+        examples: {
+          simple: 'Rack simple',
+          withUnits: 'Con tamaños en U',
+        },
       },
-    },
-    d2: {
-      examples: {
-        simple: 'Simple',
-        containers: 'Con contenedores',
-        shapes: 'Formas y flujo',
+      d2: {
+        examples: {
+          simple: 'Simple',
+          containers: 'Con contenedores',
+          shapes: 'Formas y flujo',
+        },
       },
-    },
-    dbml: {
-      examples: {
-        twoTables: '2 tablas',
-        manyToMany: 'Muchos a muchos',
-        enumIndexes: 'Con enum e índices',
+      dbml: {
+        examples: {
+          twoTables: '2 tablas',
+          manyToMany: 'Muchos a muchos',
+          enumIndexes: 'Con enum e índices',
+        },
       },
-    },
-    ditaa: {
-      examples: {
-        simple: 'Flujo simple',
-        decision: 'Con decisión',
-        colors: 'Con colores',
-        rounded: 'Esquinas redondeadas',
+      ditaa: {
+        examples: {
+          simple: 'Flujo simple',
+          decision: 'Con decisión',
+          colors: 'Con colores',
+          rounded: 'Esquinas redondeadas',
+        },
+      },
+      smc: {
+        examples: {
+          turnstile: 'Torniquete',
+          trafficLight: 'Semáforo',
+          guards: 'Con guardas',
+        },
+      },
+      tikz: {
+        examples: {
+          nodesArrow: 'Nodos y flecha',
+          math: 'Función matemática',
+          tree: 'Árbol',
+          venn: 'Diagrama de Venn',
+          bars: 'Gráfico de barras',
+          pattern: 'Patrón/relleno',
+        },
       },
     },
     nomnoml: {
@@ -271,23 +290,6 @@ export const translations: Record<'es' | 'en', Translations> = {
         budget: 'Presupuesto',
         energy: 'Energía',
         funnel: 'Embudo de ventas',
-      },
-    },
-    smc: {
-      examples: {
-        turnstile: 'Torniquete',
-        trafficLight: 'Semáforo',
-        guards: 'Con guardas',
-      },
-    },
-    tikz: {
-      examples: {
-        nodesArrow: 'Nodos y flecha',
-        math: 'Función matemática',
-        tree: 'Árbol',
-        venn: 'Diagrama de Venn',
-        bars: 'Gráfico de barras',
-        pattern: 'Patrón/relleno',
       },
     },
   },
@@ -476,65 +478,84 @@ export const translations: Record<'es' | 'en', Translations> = {
         ebnf: 'EBNF',
       },
     },
-    blockdiag: {
-      examples: {
-        simple: 'Simple',
-        colors: 'With colors',
-        groups: 'With groups',
-        shapes: 'Shapes and styles',
+    cliFormats: {
+      blockdiag: {
+        examples: {
+          simple: 'Simple',
+          colors: 'With colors',
+          groups: 'With groups',
+          shapes: 'Shapes and styles',
+        },
       },
-    },
-    seqdiag: {
-      examples: {
-        simple: 'Simple',
-        async: 'Async',
-        selfCall: 'Self call',
+      seqdiag: {
+        examples: {
+          simple: 'Simple',
+          async: 'Async',
+          selfCall: 'Self call',
+        },
       },
-    },
-    actdiag: {
-      examples: {
-        lanes: 'With lanes',
-        simple: 'Linear',
+      actdiag: {
+        examples: {
+          lanes: 'With lanes',
+          simple: 'Linear',
+        },
       },
-    },
-    nwdiag: {
-      examples: {
-        twoNetworks: 'Two subnets',
-        simple: 'One subnet',
+      nwdiag: {
+        examples: {
+          twoNetworks: 'Two subnets',
+          simple: 'One subnet',
+        },
       },
-    },
-    packetdiag: {
-      examples: {
-        tcpHeader: 'TCP header',
-        simple: 'Simple',
+      packetdiag: {
+        examples: {
+          tcpHeader: 'TCP header',
+          simple: 'Simple',
+        },
       },
-    },
-    rackdiag: {
-      examples: {
-        simple: 'Simple rack',
-        withUnits: 'With unit sizes',
+      rackdiag: {
+        examples: {
+          simple: 'Simple rack',
+          withUnits: 'With unit sizes',
+        },
       },
-    },
-    d2: {
-      examples: {
-        simple: 'Simple',
-        containers: 'With containers',
-        shapes: 'Shapes and flow',
+      d2: {
+        examples: {
+          simple: 'Simple',
+          containers: 'With containers',
+          shapes: 'Shapes and flow',
+        },
       },
-    },
-    dbml: {
-      examples: {
-        twoTables: '2 tables',
-        manyToMany: 'Many to many',
-        enumIndexes: 'With enum & indexes',
+      dbml: {
+        examples: {
+          twoTables: '2 tables',
+          manyToMany: 'Many to many',
+          enumIndexes: 'With enum & indexes',
+        },
       },
-    },
-    ditaa: {
-      examples: {
-        simple: 'Simple flow',
-        decision: 'With decision',
-        colors: 'With colors',
-        rounded: 'Rounded corners',
+      ditaa: {
+        examples: {
+          simple: 'Simple flow',
+          decision: 'With decision',
+          colors: 'With colors',
+          rounded: 'Rounded corners',
+        },
+      },
+      smc: {
+        examples: {
+          turnstile: 'Turnstile',
+          trafficLight: 'Traffic light',
+          guards: 'With guards',
+        },
+      },
+      tikz: {
+        examples: {
+          nodesArrow: 'Nodes and arrow',
+          math: 'Math function',
+          tree: 'Tree',
+          venn: 'Venn diagram',
+          bars: 'Bar chart',
+          pattern: 'Pattern/fill',
+        },
       },
     },
     nomnoml: {
@@ -561,23 +582,6 @@ export const translations: Record<'es' | 'en', Translations> = {
         budget: 'Budget',
         energy: 'Energy',
         funnel: 'Sales funnel',
-      },
-    },
-    smc: {
-      examples: {
-        turnstile: 'Turnstile',
-        trafficLight: 'Traffic light',
-        guards: 'With guards',
-      },
-    },
-    tikz: {
-      examples: {
-        nodesArrow: 'Nodes and arrow',
-        math: 'Math function',
-        tree: 'Tree',
-        venn: 'Venn diagram',
-        bars: 'Bar chart',
-        pattern: 'Pattern/fill',
       },
     },
   },

@@ -1,25 +1,16 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft, Globe, MessagesSquare, Route, Network, Package, Server, Shapes, LayoutTemplate } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Waves, Component as ComponentIcon, Globe, LayoutTemplate } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
 import GraphvizEditor from './editors/GraphvizEditor';
 import ExcalidrawEditor from './editors/ExcalidrawEditor';
 import PythonDiagramsEditor from './editors/PythonDiagramsEditor';
-import TikzEditor from './editors/TikzEditor';
-import DitaaEditor from './editors/DitaaEditor';
-import DbmlEditor from './editors/DbmlEditor';
-import BlockdiagEditor from './editors/BlockdiagEditor';
-import SeqdiagEditor from './editors/SeqdiagEditor';
-import ActdiagEditor from './editors/ActdiagEditor';
-import NwdiagEditor from './editors/NwdiagEditor';
-import PacketdiagEditor from './editors/PacketdiagEditor';
-import RackdiagEditor from './editors/RackdiagEditor';
-import D2Editor from './editors/D2Editor';
 import DrawioEditor from './editors/DrawioEditor';
 import SankeyEditor from './editors/SankeyEditor';
 import NomnomlEditor from './editors/NomnomlEditor';
-import SmcEditor from './editors/SmcEditor';
+import { CliFormatEditor } from './editors/CliBackedEditor';
+import { CLI_BACKED_FORMATS } from './cliBackedFormats';
 import type { PendingScene } from './sceneHandoff';
 import { useI18n } from './i18n';
 
@@ -28,28 +19,33 @@ import { useI18n } from './i18n';
 // e.g. Mermaid/PlantUML alone cover sequence/class/state/ER diagrams). The
 // top nav stays flat (it's already a compact scrollable strip, grouping
 // there buys nothing).
-const TOOLS = [
+//
+// Tools with a bespoke editor (client-side lib, or a hand-built layout) are
+// listed here directly. CLI-backed ones (one POST to /api/render-<id>, see
+// vite-plugin-diagrams-api.ts) come from CLI_BACKED_FORMATS instead — adding
+// one of those needs no edit here, see src/cliBackedFormats.ts.
+const CUSTOM_TOOLS = [
   { id: 'bpmn', icon: Workflow, Component: BpmnEditor, category: 'software', useCases: ['process'] },
   { id: 'mermaid', icon: GitBranch, Component: MermaidEditor, category: 'software', useCases: ['sequence', 'classUml', 'state', 'database', 'flow'] },
   { id: 'plantuml', icon: Waypoints, Component: PlantUmlEditor, category: 'software', useCases: ['sequence', 'usecase', 'process', 'classUml', 'state'] },
   { id: 'graphviz', icon: Share2, Component: GraphvizEditor, category: 'software', useCases: ['architecture', 'flow'] },
-  { id: 'd2', icon: Shapes, Component: D2Editor, category: 'software', useCases: ['architecture', 'flow'] },
   { id: 'nomnoml', icon: ComponentIcon, Component: NomnomlEditor, category: 'software', useCases: ['classUml'] },
   { id: 'aws', icon: Cloud, Component: PythonDiagramsEditor, category: 'infra', useCases: ['architecture'] },
-  { id: 'blockdiag', icon: Boxes, Component: BlockdiagEditor, category: 'infra', useCases: ['architecture', 'network'] },
-  { id: 'nwdiag', icon: Network, Component: NwdiagEditor, category: 'infra', useCases: ['network'] },
-  { id: 'packetdiag', icon: Package, Component: PacketdiagEditor, category: 'infra', useCases: ['network'] },
-  { id: 'rackdiag', icon: Server, Component: RackdiagEditor, category: 'infra', useCases: ['network'] },
-  { id: 'seqdiag', icon: MessagesSquare, Component: SeqdiagEditor, category: 'process', useCases: ['sequence'] },
-  { id: 'actdiag', icon: Route, Component: ActdiagEditor, category: 'process', useCases: ['process'] },
   { id: 'sankey', icon: Waves, Component: SankeyEditor, category: 'process', useCases: ['flow'] },
-  { id: 'tikz', icon: Sigma, Component: TikzEditor, category: 'technical', useCases: ['scientific'] },
-  { id: 'dbml', icon: Database, Component: DbmlEditor, category: 'technical', useCases: ['database'] },
-  { id: 'smc', icon: ArrowRightLeft, Component: SmcEditor, category: 'technical', useCases: ['state'] },
   { id: 'excalidraw', icon: PenTool, Component: ExcalidrawEditor, category: 'drawing', useCases: ['freeform'] },
   { id: 'drawio', icon: LayoutTemplate, Component: DrawioEditor, category: 'drawing', useCases: ['architecture', 'flow', 'freeform'] },
-  { id: 'ditaa', icon: Terminal, Component: DitaaEditor, category: 'drawing', useCases: ['freeform'] },
 ] as const;
+
+const TOOLS = [
+  ...CUSTOM_TOOLS,
+  ...CLI_BACKED_FORMATS.map((format) => ({
+    id: format.id,
+    icon: format.icon,
+    Component: () => <CliFormatEditor format={format} />,
+    category: format.category,
+    useCases: format.useCases,
+  })),
+];
 
 const CATEGORY_ORDER = ['software', 'infra', 'process', 'technical', 'drawing'] as const;
 const USE_CASE_ORDER = [
