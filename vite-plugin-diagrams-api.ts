@@ -160,6 +160,9 @@ const RENDERERS: Record<string, Handler> = {
     { command: 'java', args: ['-jar', SMC_JAR, '-graph', '-glevel', '1', 'input.sm'], timeout: 15_000 },
     { command: 'dot', args: ['-Tsvg', 'input_sm.dot', '-o', 'output.svg'], timeout: 10_000 },
   ]),
+  d2: runner('input.d2', 'output.svg', [
+    { command: 'd2', args: ['input.d2', 'output.svg'], timeout: 15_000 },
+  ]),
 };
 
 export function diagramsApiPlugin(): Plugin {

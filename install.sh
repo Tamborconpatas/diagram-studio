@@ -63,6 +63,12 @@ if ! command -v java >/dev/null; then
   exit 1
 fi
 
+echo "==> Comprobando D2"
+if ! command -v d2 >/dev/null; then
+  echo "ERROR: falta 'd2'. Instálalo: curl -fsSL https://d2lang.com/install.sh | sh -s --" >&2
+  exit 1
+fi
+
 echo "==> Instalando lanzador de escritorio"
 mkdir -p "$HOME/Desktop"
 sed "s#__APP_DIR__#$(pwd)#g" desktop/diagram-studio.desktop.template > "$HOME/Desktop/diagram-studio.desktop"

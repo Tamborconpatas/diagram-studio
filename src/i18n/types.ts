@@ -59,6 +59,9 @@ export interface Translations {
   rackdiag: {
     examples: Record<string, string>;
   };
+  d2: {
+    examples: Record<string, string>;
+  };
   dbml: {
     examples: Record<string, string>;
   };

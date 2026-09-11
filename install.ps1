@@ -78,6 +78,11 @@ if (-not (Test-Cmd 'java')) {
     Fail "falta 'java'. Instalalo, p.ej.: winget install EclipseAdoptium.Temurin.21.JRE"
 }
 
+Write-Host "==> Comprobando D2"
+if (-not (Test-Cmd 'd2')) {
+    Fail "falta 'd2'. Instalalo: winget install Terrastruct.D2 (abri una terminal nueva despues para que tome el PATH)"
+}
+
 Write-Host "==> Creando acceso directo en el escritorio"
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shell = New-Object -ComObject WScript.Shell

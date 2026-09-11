@@ -72,6 +72,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Rackdiag',
         description: 'Diagramas de racks de servidores.',
       },
+      d2: {
+        label: 'D2',
+        description: 'Diagramas modernos con layout automático y contenedores.',
+      },
       sankey: {
         label: 'Sankey',
         description: 'Diagramas de flujo proporcional, 100% en el navegador.',
@@ -217,6 +221,13 @@ export const translations: Record<'es' | 'en', Translations> = {
         withUnits: 'Con tamaños en U',
       },
     },
+    d2: {
+      examples: {
+        simple: 'Simple',
+        containers: 'Con contenedores',
+        shapes: 'Formas y flujo',
+      },
+    },
     dbml: {
       examples: {
         twoTables: '2 tablas',
@@ -346,6 +357,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       rackdiag: {
         label: 'Rackdiag',
         description: 'Server rack diagrams.',
+      },
+      d2: {
+        label: 'D2',
+        description: 'Modern diagrams with automatic layout and containers.',
       },
       sankey: {
         label: 'Sankey',
@@ -490,6 +505,13 @@ export const translations: Record<'es' | 'en', Translations> = {
       examples: {
         simple: 'Simple rack',
         withUnits: 'With unit sizes',
+      },
+    },
+    d2: {
+      examples: {
+        simple: 'Simple',
+        containers: 'With containers',
+        shapes: 'Shapes and flow',
       },
     },
     dbml: {

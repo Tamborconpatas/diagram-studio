@@ -1,5 +1,5 @@
 import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft, Globe, MessagesSquare, Route, Network, Package, Server } from 'lucide-react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Sigma, Terminal, Database, Boxes, Waves, Component as ComponentIcon, ArrowRightLeft, Globe, MessagesSquare, Route, Network, Package, Server, Shapes } from 'lucide-react';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -15,6 +15,7 @@ import ActdiagEditor from './editors/ActdiagEditor';
 import NwdiagEditor from './editors/NwdiagEditor';
 import PacketdiagEditor from './editors/PacketdiagEditor';
 import RackdiagEditor from './editors/RackdiagEditor';
+import D2Editor from './editors/D2Editor';
 import SankeyEditor from './editors/SankeyEditor';
 import NomnomlEditor from './editors/NomnomlEditor';
 import SmcEditor from './editors/SmcEditor';
@@ -31,6 +32,7 @@ const TOOLS = [
   { id: 'mermaid', icon: GitBranch, Component: MermaidEditor, category: 'software', useCases: ['sequence', 'classUml', 'state', 'database', 'flow'] },
   { id: 'plantuml', icon: Waypoints, Component: PlantUmlEditor, category: 'software', useCases: ['sequence', 'usecase', 'process', 'classUml', 'state'] },
   { id: 'graphviz', icon: Share2, Component: GraphvizEditor, category: 'software', useCases: ['architecture', 'flow'] },
+  { id: 'd2', icon: Shapes, Component: D2Editor, category: 'software', useCases: ['architecture', 'flow'] },
   { id: 'nomnoml', icon: ComponentIcon, Component: NomnomlEditor, category: 'software', useCases: ['classUml'] },
   { id: 'aws', icon: Cloud, Component: PythonDiagramsEditor, category: 'infra', useCases: ['architecture'] },
   { id: 'blockdiag', icon: Boxes, Component: BlockdiagEditor, category: 'infra', useCases: ['architecture', 'network'] },
