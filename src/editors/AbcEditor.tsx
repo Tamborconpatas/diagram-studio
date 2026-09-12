@@ -88,7 +88,7 @@ export default function AbcEditor() {
       renderArea={
         <div
           ref={outRef}
-          className="w-full h-full overflow-auto p-6 bg-white [&_svg]:max-w-none"
+          className="w-full h-full overflow-auto p-6 bg-white text-black [&_svg]:max-w-none"
         />
       }
     />

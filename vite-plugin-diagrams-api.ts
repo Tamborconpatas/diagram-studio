@@ -43,8 +43,9 @@ const MIME_BY_EXT: Record<string, string> = { png: 'image/png', jpg: 'image/jpeg
 
 // graphviz's SVG output references node icons (aws/gcp/azure PNGs) by absolute
 // filesystem path; the browser can't load those, so inline them as data URIs.
+// Matches both Unix (/home/...) and Windows (C:\... or C:/...) absolute paths.
 async function inlineLocalImages(svg: string): Promise<string> {
-  const hrefRe = /xlink:href="(\/[^"]+\.(?:png|jpe?g|svg))"/g;
+  const hrefRe = /xlink:href="((?:\/|[A-Za-z]:[\\/])[^"]+\.(?:png|jpe?g|svg))"/g;
   let result = svg;
   for (const [full, path] of svg.matchAll(hrefRe)) {
     try {
