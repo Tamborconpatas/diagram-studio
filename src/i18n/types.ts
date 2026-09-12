@@ -63,6 +63,9 @@ export interface Translations {
   abc: {
     examples: Record<string, string>;
   };
+  vegalite: {
+    examples: Record<string, string>;
+  };
   pythonDiagrams: {
     examples: Record<string, string>;
   };

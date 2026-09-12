@@ -33,6 +33,9 @@
     "react-dom": "^19.2.6",
     "smiles-drawer": "^2.4.1",
     "tailwindcss": "^4.3.0",
+    "vega": "^6.4.0",
+    "vega-embed": "^7.2.0",
+    "vega-lite": "^6.4.3",
     "wavedrom": "^3.7.0"
   },
   "devDependencies": {

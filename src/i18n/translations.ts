@@ -136,6 +136,10 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'ABC',
         description: 'Notación musical (partituras), 100% en el navegador.',
       },
+      vegalite: {
+        label: 'Vega-Lite',
+        description: 'Gráficos y visualización de datos desde una especificación declarativa (JSON).',
+      },
       smc: {
         label: 'SMC',
         description: 'Máquinas de estado desde tabla de transiciones (State Machine Compiler).',
@@ -397,6 +401,13 @@ export const translations: Record<'es' | 'en', Translations> = {
         tune: 'Melodía',
       },
     },
+    vegalite: {
+      examples: {
+        bar: 'Gráfico de barras',
+        line: 'Gráfico de líneas',
+        scatter: 'Dispersión (scatter)',
+      },
+    },
     pythonDiagrams: {
       examples: {
         aws: 'AWS 3-capas',
@@ -550,6 +561,10 @@ export const translations: Record<'es' | 'en', Translations> = {
       abc: {
         label: 'ABC',
         description: 'Music notation (sheet music), 100% in the browser.',
+      },
+      vegalite: {
+        label: 'Vega-Lite',
+        description: 'Charts and data visualization from a declarative (JSON) spec.',
       },
       smc: {
         label: 'SMC',
@@ -810,6 +825,13 @@ export const translations: Record<'es' | 'en', Translations> = {
       examples: {
         scale: 'Simple scale',
         tune: 'Melody',
+      },
+    },
+    vegalite: {
+      examples: {
+        bar: 'Bar chart',
+        line: 'Line chart',
+        scatter: 'Scatter plot',
       },
     },
     pythonDiagrams: {

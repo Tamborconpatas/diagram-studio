@@ -1,6 +1,6 @@
 # Diagram Studio
 
-Visor y editor local de diagramas, 32 formatos agrupados por herramienta o por tipo de diagrama (secuencia, procesos, redes, etc.) desde la home: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, D2, Nomnoml, Pikchr, Markmap (software/UML); draw.io (editor visual completo, arrastrar y soltar) y Excalidraw (pizarra a mano alzada); Blockdiag y su familia (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag) y WireViz (arneses de cable); TikZ y su familia (CircuiTikz, Feynman, Chemfig, Skak), MetaPost, WaveDrom, SMILES, ABC, DBML y SMC (modelos técnicos); Sankey, Ditaa y Svgbob (ASCII art); más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
+Visor y editor local de diagramas, 33 formatos agrupados por herramienta o por tipo de diagrama (secuencia, procesos, redes, etc.) desde la home: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, D2, Nomnoml, Pikchr, Markmap (software/UML); draw.io (editor visual completo, arrastrar y soltar) y Excalidraw (pizarra a mano alzada); Blockdiag y su familia (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag) y WireViz (arneses de cable); TikZ y su familia (CircuiTikz, Feynman, Chemfig, Skak), MetaPost, WaveDrom, SMILES, ABC, Vega-Lite, DBML y SMC (modelos técnicos); Sankey, Ditaa y Svgbob (ASCII art); más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
 
 ## Setup
 
@@ -34,7 +34,7 @@ Dependencias del sistema:
 | D2 | diagramas D2 | `winget install Terrastruct.D2` (abrí una terminal nueva después para que tome el PATH) |
 | Rust (`cargo`) | Svgbob (ASCII art) | `winget install Rustlang.Rustup` y luego `cargo install svgbob_cli` (abrí una terminal nueva después para que tome el PATH) |
 
-Los editores puramente client-side (BPMN, Mermaid, PlantUML, Graphviz, draw.io, Excalidraw, Sankey, Nomnoml, Pikchr, Markmap, WaveDrom, SMILES, ABC, DBML) funcionan con solo `npm install`, sin nada de la tabla de arriba — draw.io además viene vendorizado en el repo (`public/drawio/`, ~150 MB), no depende de ningún servicio online.
+Los editores puramente client-side (BPMN, Mermaid, PlantUML, Graphviz, draw.io, Excalidraw, Sankey, Nomnoml, Pikchr, Markmap, WaveDrom, SMILES, ABC, Vega-Lite, DBML) funcionan con solo `npm install`, sin nada de la tabla de arriba — draw.io además viene vendorizado en el repo (`public/drawio/`, ~150 MB), no depende de ningún servicio online.
 
 ## Uso
 
