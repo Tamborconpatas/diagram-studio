@@ -15,12 +15,12 @@ export function CollapsibleSection({
     <div className="border-b border-zinc-800/80">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono-code font-bold tracking-widest uppercase text-zinc-500 hover:text-teal-400 cursor-pointer"
+        className="w-full flex items-center justify-between px-4 py-2.5 text-xs font-mono-code font-bold tracking-widest uppercase text-zinc-500 hover:text-teal-400 cursor-pointer"
       >
         <span>{title}</span>
-        {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        {open ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
       </button>
-      {open && <div className="px-3 pb-3 flex flex-wrap gap-2">{children}</div>}
+      {open && <div className="px-4 pb-4 flex flex-wrap gap-2.5">{children}</div>}
     </div>
   );
 }

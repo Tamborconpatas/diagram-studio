@@ -20,7 +20,7 @@ export function ExportButtons({ getSvg, filename }: { getSvg: () => Promise<stri
       <button className={toolbarBtn} onClick={() => handleExport('svg')}>SVG</button>
       <button className={toolbarBtn} onClick={() => handleExport('png')}>PNG</button>
       <button className={toolbarBtn} onClick={() => handleExport('jpg')}>JPG</button>
-      {error && <span className="text-red-400 text-[10px] font-mono-code self-center">{error}</span>}
+      {error && <span className="text-red-400 text-xs font-mono-code self-center">{error}</span>}
     </>
   );
 }

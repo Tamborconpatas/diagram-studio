@@ -1,5 +1,7 @@
-import { useCallback, useState, type ComponentType } from 'react';
-import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Waves, Component as ComponentIcon, Globe, LayoutTemplate, AudioWaveform, Brain, TestTube, Box, Music, ChartColumn } from 'lucide-react';
+import { useCallback, useEffect, useState, type ComponentType } from 'react';
+import { Workflow, GitBranch, Waypoints, Share2, PenTool, Cloud, Waves, Component as ComponentIcon, Globe, LayoutTemplate, AudioWaveform, Brain, TestTube, Box, Music, ChartColumn, Search, Menu } from 'lucide-react';
+import { Sidebar } from './Sidebar';
+import { CommandPalette } from './CommandPalette';
 import BpmnEditor from './editors/BpmnEditor';
 import MermaidEditor from './editors/MermaidEditor';
 import PlantUmlEditor from './editors/PlantUmlEditor';
@@ -20,11 +22,10 @@ import { CLI_BACKED_FORMATS } from './cliBackedFormats';
 import type { PendingScene } from './sceneHandoff';
 import { useI18n } from './i18n';
 
-// Category groups the home screen by tool (single value per tool); useCases
-// groups it by what you're trying to draw (a tool can match several, since
-// e.g. Mermaid/PlantUML alone cover sequence/class/state/ER diagrams). The
-// top nav stays flat (it's already a compact scrollable strip, grouping
-// there buys nothing).
+// Category groups the home screen (and the sidebar) by tool (single value per
+// tool); useCases groups the home screen by what you're trying to draw (a
+// tool can match several, since e.g. Mermaid/PlantUML alone cover
+// sequence/class/state/ER diagrams).
 //
 // Tools with a bespoke editor (client-side lib, or a hand-built layout) are
 // listed here directly. CLI-backed ones (one POST to /api/render-<id>, see
@@ -90,11 +91,11 @@ function ToolCard({ id, icon: Icon, onSelect }: { id: ToolId; icon: ComponentTyp
   return (
     <button
       onClick={() => onSelect(id)}
-      className="cyber-card cyber-corners text-left p-5 flex flex-col gap-3 cursor-pointer"
+      className="cyber-card cyber-corners text-left p-6 flex flex-col gap-3.5 cursor-pointer"
     >
-      <Icon className="w-6 h-6 text-teal-400" />
-      <div className="font-mono-code text-sm font-bold text-zinc-100">{toolTrans?.label ?? id}</div>
-      <p className="text-xs text-zinc-500 leading-relaxed">{toolTrans?.description ?? ''}</p>
+      <Icon className="w-7 h-7 text-teal-400" />
+      <div className="font-mono-code text-base font-bold text-zinc-100">{toolTrans?.label ?? id}</div>
+      <p className="text-sm text-zinc-500 leading-relaxed">{toolTrans?.description ?? ''}</p>
     </button>
   );
 }
@@ -117,17 +118,17 @@ function HomeGrid({ onSelect }: { onSelect: (id: ToolId) => void }) {
         }));
 
   return (
-    <div className="flex-1 overflow-auto p-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-zinc-500 text-xs font-mono-code">{t.homeSubtitle}</p>
-          <div className="flex items-center gap-1 shrink-0">
+    <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-10">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between mb-8">
+          <p className="text-zinc-500 text-sm font-mono-code">{t.homeSubtitle}</p>
+          <div className="flex items-center gap-1.5 shrink-0">
             {(['tool', 'usecase'] as const).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
                 className={
-                  'px-2.5 py-1 rounded-lg text-[10px] font-mono-code font-bold tracking-wide uppercase cursor-pointer transition-all ' +
+                  'px-3 py-1.5 rounded-lg text-xs font-mono-code font-bold tracking-wide uppercase cursor-pointer transition-all ' +
                   (viewMode === mode
                     ? 'bg-teal-950/70 border border-teal-500/50 text-teal-400'
                     : 'border border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-800')
@@ -139,9 +140,9 @@ function HomeGrid({ onSelect }: { onSelect: (id: ToolId) => void }) {
           </div>
         </div>
         {groups.map(({ key, title, tools }) => (
-          <div key={key} className="mb-8 last:mb-0">
-            <h2 className="text-[11px] font-mono-code font-bold tracking-widest uppercase text-teal-400 mb-3">{title}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div key={key} className="mb-10 last:mb-0">
+            <h2 className="text-sm font-mono-code font-bold tracking-widest uppercase text-teal-400 mb-4">{title}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {tools.map(({ id, icon }) => (
                 <ToolCard key={id} id={id} icon={icon} onSelect={onSelect} />
               ))}
@@ -157,6 +158,8 @@ export default function DiagramApp() {
   const { t, language, setLanguage } = useI18n();
   const [active, setActive] = useState<ToolId | 'home'>('home');
   const [pendingScene, setPendingScene] = useState<PendingScene | null>(null);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const tool = active === 'home' ? null : TOOLS.find((t) => t.id === active)!;
   const Active = tool?.Component as ComponentType<HandoffProps> | undefined;
 
@@ -169,75 +172,87 @@ export default function DiagramApp() {
   }, []);
   const handleSceneConsumed = useCallback(() => setPendingScene(null), []);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   return (
-    <div className="h-screen w-screen flex flex-col bg-[#040507] text-zinc-100 font-sans">
-      <header className="flex items-center gap-4 px-4 py-2.5 border-b border-zinc-800/80 bg-zinc-950/60 font-mono-code">
-        <button
-          onClick={() => setActive('home')}
-          className="flex items-center gap-2 text-xs font-bold tracking-widest text-teal-400 shrink-0 cursor-pointer"
-        >
-          <Waypoints className="w-4 h-4" />
-          <span>DIAGRAM STUDIO</span>
-        </button>
-        <nav className="flex items-center gap-1.5 overflow-x-auto">
-          {TOOLS.map(({ id, icon: Icon }) => {
-            const label = t.tools[id]?.label ?? id;
-            return (
-              <button
-                key={id}
-                onClick={() => setActive(id)}
-                className={
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-wide whitespace-nowrap cursor-pointer transition-all ' +
-                  (id === active
-                    ? 'bg-teal-950/50 border border-teal-500/40 text-teal-400'
-                    : 'border border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-800')
-                }
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {label}
-              </button>
-            );
-          })}
-        </nav>
-        <div className="ml-auto flex items-center gap-1 shrink-0 pl-2">
-          <Globe className="w-3.5 h-3.5 text-zinc-500 mr-1" />
+    <div className="h-screen w-screen flex bg-[#040507] text-zinc-100 font-sans">
+      <Sidebar
+        tools={TOOLS}
+        categoryOrder={CATEGORY_ORDER}
+        active={active}
+        onSelect={(id) => setActive(id as ToolId | 'home')}
+        mobileOpen={mobileNavOpen}
+        onMobileClose={() => setMobileNavOpen(false)}
+      />
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-3.5 border-b border-zinc-800/80 bg-zinc-950/60 font-mono-code shrink-0">
           <button
-            onClick={() => setLanguage('es')}
-            className={
-              'px-2 py-1 rounded text-[11px] font-mono-code font-bold transition-all cursor-pointer ' +
-              (language === 'es'
-                ? 'bg-teal-950/70 text-teal-400 border border-teal-500/50'
-                : 'text-zinc-500 hover:text-zinc-300 border border-transparent')
-            }
-            title="Español"
+            onClick={() => setMobileNavOpen(true)}
+            className="lg:hidden p-1.5 -ml-1.5 text-zinc-400 hover:text-teal-400 cursor-pointer shrink-0"
+            title={t.sidebar.expand}
           >
-            ES
+            <Menu className="w-5 h-5" />
           </button>
-          <span className="text-zinc-700 text-xs select-none">/</span>
+          <span className="text-sm font-bold tracking-wide text-zinc-300 truncate min-w-0 flex-1 sm:flex-none">
+            {active === 'home' ? t.sidebar.home : (t.tools[active]?.label ?? active)}
+          </span>
           <button
-            onClick={() => setLanguage('en')}
-            className={
-              'px-2 py-1 rounded text-[11px] font-mono-code font-bold transition-all cursor-pointer ' +
-              (language === 'en'
-                ? 'bg-teal-950/70 text-teal-400 border border-teal-500/50'
-                : 'text-zinc-500 hover:text-zinc-300 border border-transparent')
-            }
-            title="English"
+            onClick={() => setPaletteOpen(true)}
+            className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs text-zinc-500 border border-zinc-800 hover:border-teal-500/40 hover:text-teal-400 cursor-pointer transition-all shrink-0"
           >
-            EN
+            <Search className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{t.commandPalette.hint}</span>
           </button>
-        </div>
-      </header>
-      {active === 'home' || !Active ? (
-        <HomeGrid onSelect={setActive} />
-      ) : (
-        <Active
-          key={active}
-          onEditInExcalidraw={handleEditInExcalidraw}
-          pendingScene={pendingScene}
-          onSceneConsumed={handleSceneConsumed}
-        />
-      )}
+          <div className="ml-auto flex items-center gap-1.5 shrink-0 pl-2">
+            <Globe className="w-4 h-4 text-zinc-500 mr-1 hidden sm:block" />
+            <button
+              onClick={() => setLanguage('es')}
+              className={
+                'px-2.5 py-1.5 rounded text-xs font-mono-code font-bold transition-all cursor-pointer ' +
+                (language === 'es'
+                  ? 'bg-teal-950/70 text-teal-400 border border-teal-500/50'
+                  : 'text-zinc-500 hover:text-zinc-300 border border-transparent')
+              }
+              title="Español"
+            >
+              ES
+            </button>
+            <span className="text-zinc-700 text-sm select-none">/</span>
+            <button
+              onClick={() => setLanguage('en')}
+              className={
+                'px-2.5 py-1.5 rounded text-xs font-mono-code font-bold transition-all cursor-pointer ' +
+                (language === 'en'
+                  ? 'bg-teal-950/70 text-teal-400 border border-teal-500/50'
+                  : 'text-zinc-500 hover:text-zinc-300 border border-transparent')
+              }
+              title="English"
+            >
+              EN
+            </button>
+          </div>
+        </header>
+        {active === 'home' || !Active ? (
+          <HomeGrid onSelect={setActive} />
+        ) : (
+          <Active
+            key={active}
+            onEditInExcalidraw={handleEditInExcalidraw}
+            pendingScene={pendingScene}
+            onSceneConsumed={handleSceneConsumed}
+          />
+        )}
+      </div>
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} tools={TOOLS} onSelect={(id) => setActive(id as ToolId)} />
     </div>
   );
 }

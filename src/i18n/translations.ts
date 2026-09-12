@@ -177,6 +177,16 @@ export const translations: Record<'es' | 'en', Translations> = {
       byTool: 'Por herramienta',
       byUseCase: 'Por tipo de diagrama',
     },
+    sidebar: {
+      searchPlaceholder: 'Buscar herramienta…',
+      noResults: 'Sin resultados',
+      collapse: 'Colapsar barra lateral',
+      expand: 'Expandir barra lateral',
+      home: 'Inicio',
+    },
+    commandPalette: {
+      hint: 'Ctrl+K para buscar cualquier herramienta',
+    },
     bpmn: {
       loadToDiagram: 'Cargar → diagrama',
       diagramToXml: 'Diagrama → XML',
@@ -624,6 +634,16 @@ export const translations: Record<'es' | 'en', Translations> = {
     homeViewToggle: {
       byTool: 'By tool',
       byUseCase: 'By diagram type',
+    },
+    sidebar: {
+      searchPlaceholder: 'Search a tool…',
+      noResults: 'No results',
+      collapse: 'Collapse sidebar',
+      expand: 'Expand sidebar',
+      home: 'Home',
+    },
+    commandPalette: {
+      hint: 'Ctrl+K to search any tool',
     },
     bpmn: {
       loadToDiagram: 'Load → diagram',

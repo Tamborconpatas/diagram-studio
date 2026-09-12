@@ -19,6 +19,16 @@ export interface Translations {
   categories: Record<string, string>;
   useCases: Record<string, string>;
   homeViewToggle: { byTool: string; byUseCase: string };
+  sidebar: {
+    searchPlaceholder: string;
+    noResults: string;
+    collapse: string;
+    expand: string;
+    home: string;
+  };
+  commandPalette: {
+    hint: string;
+  };
   bpmn: {
     loadToDiagram: string;
     diagramToXml: string;
