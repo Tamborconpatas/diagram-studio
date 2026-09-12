@@ -414,6 +414,7 @@ export default function BpmnEditor() {
 
   return (
     <EditorLayout
+      disableZoomPane
       examples={
         <ExamplesMenu
           examples={examples}

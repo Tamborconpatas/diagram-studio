@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { CollapsibleSection } from './CollapsibleSection';
+import { ZoomPane } from './ZoomPane';
 import { useI18n } from './i18n';
 
 export const toolbarBtn =
@@ -29,6 +30,7 @@ export function EditorLayout({
   actionsTitle,
   codeTitle,
   onAutoRender,
+  disableZoomPane,
 }: {
   examples?: ReactNode;
   actions: ReactNode;
@@ -40,6 +42,11 @@ export function EditorLayout({
   actionsTitle?: string;
   codeTitle?: string;
   onAutoRender?: (code: string) => void;
+  // Skip the generic pan/zoom wrapper for editors whose renderArea already
+  // has its own (BPMN's bpmn-js canvas, Markmap's markmap-view/d3-zoom) —
+  // stacking ZoomPane on top would fight the library for the same mouse/
+  // wheel events instead of adding anything.
+  disableZoomPane?: boolean;
 }) {
   const { t } = useI18n();
   const lastRenderedCodeRef = useRef(code);
@@ -96,7 +103,9 @@ export function EditorLayout({
           )}
         </div>
       </div>
-      <div className="flex-1 min-h-0 relative bg-[#0a0b0e]">{renderArea}</div>
+      <div className="flex-1 min-w-0 min-h-0 relative bg-[#0a0b0e]">
+        {disableZoomPane ? renderArea : <ZoomPane>{renderArea}</ZoomPane>}
+      </div>
     </div>
   );
 }

@@ -66,6 +66,7 @@ export default function MarkmapEditor() {
 
   return (
     <EditorLayout
+      disableZoomPane
       examples={
         <ExamplesMenu
           examples={examples}
