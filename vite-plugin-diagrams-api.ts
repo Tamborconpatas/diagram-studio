@@ -145,6 +145,28 @@ async function renderDitaa(code: string, dir: string): Promise<string> {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><image width="${width}" height="${height}" xlink:href="data:image/png;base64,${png.toString('base64')}"/></svg>`;
 }
 
+// gnuplot writes wherever `set output` in the script points; auto-prepend the
+// svg terminal + output boilerplate so example scripts are just plot
+// commands, hiding the same kind of preamble latexFormat hides for LaTeX.
+async function renderGnuplot(code: string, dir: string): Promise<string> {
+  const script = `set terminal svg size 700,500 enhanced\nset output 'output.svg'\n${code}`;
+  await writeFile(join(dir, 'input.gp'), script, 'utf-8');
+  await run('gnuplot', ['input.gp'], dir, 15_000);
+  return readFile(join(dir, 'output.svg'), 'utf-8');
+}
+
+// LilyPond just warns (doesn't fail) without a \version pragma, but hiding it
+// keeps examples to pure music syntax instead of every one repeating it.
+// Without -dcrop it lays out a full A4 page with the notation tiny in the
+// corner (visually blank in the app); -dcrop=#t produces a second SVG
+// (output.cropped.svg) sized to the actual content instead.
+async function renderLilypond(code: string, dir: string): Promise<string> {
+  const doc = code.includes('\\version') ? code : `\\version "2.24.4"\n${code}`;
+  await writeFile(join(dir, 'input.ly'), doc, 'utf-8');
+  await run('lilypond', ['-dbackend=svg', '-dcrop=#t', '-o', 'output', 'input.ly'], dir, 20_000);
+  return readFile(join(dir, 'output.cropped.svg'), 'utf-8');
+}
+
 // Most CLI-backed renderers are: write the code to one input file, run one or
 // more commands against it, read back output.svg. `runner` builds a Handler
 // from that shape so adding a new single/multi-step CLI renderer (e.g. the
@@ -198,6 +220,8 @@ const RENDERERS: Record<string, Handler> = {
   svgbob: runner('input.bob', 'output.svg', [
     { command: 'svgbob_cli', args: ['input.bob', '-o', 'output.svg'], timeout: 10_000 },
   ]),
+  gnuplot: renderGnuplot,
+  lilypond: renderLilypond,
 };
 
 export function diagramsApiPlugin(): Plugin {

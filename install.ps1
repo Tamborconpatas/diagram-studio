@@ -130,6 +130,16 @@ if (-not (Test-Cmd 'svgbob_cli')) {
     Refresh-Path
 }
 
+Write-Host "==> Comprobando Gnuplot"
+if (-not (Ensure-Dep 'Gnuplot' { Test-Cmd 'gnuplot' } 'gnuplot.gnuplot')) {
+    Fail "falta 'gnuplot'. Instalalo: winget install gnuplot.gnuplot"
+}
+
+Write-Host "==> Comprobando LilyPond"
+if (-not (Ensure-Dep 'LilyPond' { Test-Cmd 'lilypond' } 'LilyPond.LilyPond')) {
+    Fail "falta 'lilypond'. Instalalo: winget install LilyPond.LilyPond (abri una terminal nueva despues para que tome el PATH)"
+}
+
 Write-Host "==> Creando acceso directo en el escritorio"
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shell = New-Object -ComObject WScript.Shell
@@ -138,7 +148,7 @@ $shortcut.TargetPath = 'powershell.exe'
 $shortcut.Arguments = "-NoLogo -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$PSScriptRoot\launch-diagrams.ps1`""
 $shortcut.WorkingDirectory = $PSScriptRoot
 $shortcut.IconLocation = 'shell32.dll,44'
-$shortcut.Description = 'Visor y editor local de diagramas: 33 formatos (BPMN, Mermaid, PlantUML, Graphviz, D2, draw.io, Excalidraw, TikZ, Ditaa, Svgbob, DBML, Blockdiag y familia, Sankey, Nomnoml, Pikchr, SMC, SMILES, ABC, Vega-Lite, WaveDrom, Markmap)'
+$shortcut.Description = 'Visor y editor local de diagramas: 35 formatos (BPMN, Mermaid, PlantUML, Graphviz, D2, draw.io, Excalidraw, TikZ, Ditaa, Svgbob, DBML, Blockdiag y familia, Sankey, Nomnoml, Pikchr, SMC, SMILES, ABC, Vega-Lite, Gnuplot, LilyPond, WaveDrom, Markmap)'
 $shortcut.Save()
 
 Write-Host "==> Listo. Doble clic en 'Diagram Studio' en el escritorio, o: .\launch-diagrams.ps1"

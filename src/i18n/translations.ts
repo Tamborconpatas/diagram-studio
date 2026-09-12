@@ -76,6 +76,14 @@ export const translations: Record<'es' | 'en', Translations> = {
         label: 'Svgbob (ASCII art)',
         description: 'Convierte dibujos ASCII de líneas y cajas en SVG.',
       },
+      gnuplot: {
+        label: 'Gnuplot',
+        description: 'Gráficos científicos y funciones matemáticas desde un script.',
+      },
+      lilypond: {
+        label: 'LilyPond',
+        description: 'Notación musical completa (partituras profesionales).',
+      },
       dbml: {
         label: 'DBML',
         description: 'Esquemas de base de datos: tablas, tipos y relaciones ER.',
@@ -360,6 +368,20 @@ export const translations: Record<'es' | 'en', Translations> = {
           red: 'Topología de red',
         },
       },
+      gnuplot: {
+        examples: {
+          funciones: 'Funciones trigonométricas',
+          barras: 'Barras',
+          dispersion: 'Dispersión',
+        },
+      },
+      lilypond: {
+        examples: {
+          escala: 'Escala simple',
+          acordes: 'Acordes',
+          dinamica: 'Dinámica y articulación',
+        },
+      },
     },
     nomnoml: {
       examples: {
@@ -501,6 +523,14 @@ export const translations: Record<'es' | 'en', Translations> = {
       svgbob: {
         label: 'Svgbob (ASCII art)',
         description: 'Converts ASCII box-and-line drawings into SVG.',
+      },
+      gnuplot: {
+        label: 'Gnuplot',
+        description: 'Scientific plots and math functions from a script.',
+      },
+      lilypond: {
+        label: 'LilyPond',
+        description: 'Full music notation engraving (professional sheet music).',
       },
       dbml: {
         label: 'DBML',
@@ -784,6 +814,20 @@ export const translations: Record<'es' | 'en', Translations> = {
           flujo: 'Client-server flow',
           ramificacion: 'Branch and merge',
           red: 'Network topology',
+        },
+      },
+      gnuplot: {
+        examples: {
+          funciones: 'Trigonometric functions',
+          barras: 'Bars',
+          dispersion: 'Scatter',
+        },
+      },
+      lilypond: {
+        examples: {
+          escala: 'Simple scale',
+          acordes: 'Chords',
+          dinamica: 'Dynamics and articulation',
         },
       },
     },

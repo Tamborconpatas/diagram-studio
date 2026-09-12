@@ -138,7 +138,7 @@ export default function CliBackedEditor({
       onAutoRender={(src) => render(src)}
       renderArea={
         <div
-          className={`w-full h-full flex items-center justify-center overflow-auto p-6 ${whiteBg ? 'bg-white ' : ''}[&_svg]:max-w-none`}
+          className={`w-full h-full flex items-center justify-center overflow-auto p-6 ${whiteBg ? 'bg-white text-black ' : ''}[&_svg]:max-w-none`}
           dangerouslySetInnerHTML={{ __html: svgMarkup }}
         />
       }

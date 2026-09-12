@@ -83,6 +83,24 @@ if ! command -v svgbob_cli >/dev/null; then
   cargo install svgbob_cli
 fi
 
+echo "==> Comprobando Gnuplot"
+if ! command -v gnuplot >/dev/null; then
+  echo "ERROR: falta 'gnuplot'. Instálalo, p.ej.:" >&2
+  echo "  Debian/Ubuntu: sudo apt install gnuplot" >&2
+  echo "  Fedora:        sudo dnf install gnuplot" >&2
+  echo "  Arch:          sudo pacman -S gnuplot" >&2
+  exit 1
+fi
+
+echo "==> Comprobando LilyPond"
+if ! command -v lilypond >/dev/null; then
+  echo "ERROR: falta 'lilypond'. Instálalo, p.ej.:" >&2
+  echo "  Debian/Ubuntu: sudo apt install lilypond" >&2
+  echo "  Fedora:        sudo dnf install lilypond" >&2
+  echo "  Arch:          sudo pacman -S lilypond" >&2
+  exit 1
+fi
+
 echo "==> Instalando lanzador de escritorio"
 mkdir -p "$HOME/Desktop"
 sed "s#__APP_DIR__#$(pwd)#g" desktop/diagram-studio.desktop.template > "$HOME/Desktop/diagram-studio.desktop"

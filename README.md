@@ -1,6 +1,6 @@
 # Diagram Studio
 
-Visor y editor local de diagramas, 33 formatos agrupados por herramienta o por tipo de diagrama (secuencia, procesos, redes, etc.) desde la home: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, D2, Nomnoml, Pikchr, Markmap (software/UML); draw.io (editor visual completo, arrastrar y soltar) y Excalidraw (pizarra a mano alzada); Blockdiag y su familia (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag) y WireViz (arneses de cable); TikZ y su familia (CircuiTikz, Feynman, Chemfig, Skak), MetaPost, WaveDrom, SMILES, ABC, Vega-Lite, DBML y SMC (modelos técnicos); Sankey, Ditaa y Svgbob (ASCII art); más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
+Visor y editor local de diagramas, 35 formatos agrupados por herramienta o por tipo de diagrama (secuencia, procesos, redes, etc.) desde la home: BPMN, Mermaid, PlantUML (con preset C4), Graphviz, D2, Nomnoml, Pikchr, Markmap (software/UML); draw.io (editor visual completo, arrastrar y soltar) y Excalidraw (pizarra a mano alzada); Blockdiag y su familia (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag) y WireViz (arneses de cable); TikZ y su familia (CircuiTikz, Feynman, Chemfig, Skak), MetaPost, WaveDrom, SMILES, ABC, Vega-Lite, Gnuplot, LilyPond, DBML y SMC (modelos técnicos); Sankey, Ditaa y Svgbob (ASCII art); más generación de diagramas de arquitectura (AWS/GCP/Azure) desde Python (`diagrams`).
 
 ## Setup
 
@@ -12,7 +12,7 @@ Visor y editor local de diagramas, 33 formatos agrupados por herramienta o por t
 
 Deja instaladas las dependencias de Node, un entorno virtual de Python con `diagrams`, y un lanzador de escritorio (`~/Desktop/diagram-studio.desktop`).
 
-Requiere `node`/`npm`, `python3` (crea el venv con `diagrams`, `blockdiag` y toda su familia — `seqdiag`/`actdiag`/`nwdiag`/`packetdiag`/`rackdiag` — y `wireviz`), el binario `graphviz` (`dot`, usado también por SMC y WireViz), una distribución LaTeX con `pgf/tikz` y `dvisvgm` (p.ej. TinyTeX; MetaPost y CircuiTikz/Feynman/Chemfig/Skak vienen incluidos en la misma distribución, sin nada extra), `java` (SMC y Ditaa usan `tools/Smc.jar`/`tools/ditaa.jar`, ya incluidos en el repo), `d2` y `cargo`/`svgbob_cli` (Rust, para Svgbob — `cargo install svgbob_cli`) instalados en el sistema.
+Requiere `node`/`npm`, `python3` (crea el venv con `diagrams`, `blockdiag` y toda su familia — `seqdiag`/`actdiag`/`nwdiag`/`packetdiag`/`rackdiag` — y `wireviz`), el binario `graphviz` (`dot`, usado también por SMC y WireViz), una distribución LaTeX con `pgf/tikz` y `dvisvgm` (p.ej. TinyTeX; MetaPost y CircuiTikz/Feynman/Chemfig/Skak vienen incluidos en la misma distribución, sin nada extra), `java` (SMC y Ditaa usan `tools/Smc.jar`/`tools/ditaa.jar`, ya incluidos en el repo), `d2`, `cargo`/`svgbob_cli` (Rust, para Svgbob — `cargo install svgbob_cli`), `gnuplot` y `lilypond` instalados en el sistema.
 
 ### Windows
 
@@ -33,6 +33,8 @@ Dependencias del sistema:
 | Java (JRE) | SMC y Ditaa (`tools/Smc.jar`, `tools/ditaa.jar`, incluidos) | `winget install EclipseAdoptium.Temurin.21.JRE` |
 | D2 | diagramas D2 | `winget install Terrastruct.D2` (abrí una terminal nueva después para que tome el PATH) |
 | Rust (`cargo`) | Svgbob (ASCII art) | `winget install Rustlang.Rustup` y luego `cargo install svgbob_cli` (abrí una terminal nueva después para que tome el PATH) |
+| Gnuplot | gráficos científicos | `winget install gnuplot.gnuplot` |
+| LilyPond | notación musical | `winget install LilyPond.LilyPond` (abrí una terminal nueva después para que tome el PATH) |
 
 Los editores puramente client-side (BPMN, Mermaid, PlantUML, Graphviz, draw.io, Excalidraw, Sankey, Nomnoml, Pikchr, Markmap, WaveDrom, SMILES, ABC, Vega-Lite, DBML) funcionan con solo `npm install`, sin nada de la tabla de arriba — draw.io además viene vendorizado en el repo (`public/drawio/`, ~150 MB), no depende de ningún servicio online.
 

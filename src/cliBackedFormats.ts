@@ -1,4 +1,4 @@
-import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, Compass, Cable, Grid3x3, type LucideIcon } from 'lucide-react';
+import { Boxes, MessagesSquare, Route, Network, Package, Server, Shapes, Database, Terminal, ArrowRightLeft, Sigma, CircuitBoard, Atom, FlaskConical, Crown, Compass, Cable, Grid3x3, LineChart, Music4, type LucideIcon } from 'lucide-react';
 import type { Language, Translations } from './i18n/types';
 
 // Single source of truth for every CLI-backed diagram format (one that
@@ -744,6 +744,92 @@ const SVGBOB_EN = {
   red: SVGBOB_NETWORK,
 };
 
+// The app auto-prepends `set terminal svg` / `set output` (see renderGnuplot
+// in vite-plugin-diagrams-api.ts) — examples are just plot commands.
+const GNUPLOT_ES = {
+  funciones: `set title "Funciones trigonométricas"
+set xlabel "x"
+set ylabel "y"
+set grid
+plot sin(x) title "sin(x)", cos(x) title "cos(x)"
+`,
+  barras: `set title "Ventas por trimestre"
+set style data histograms
+set style fill solid
+set boxwidth 0.6
+set yrange [0:*]
+set xtics ("Q1" 0, "Q2" 1, "Q3" 2, "Q4" 3)
+plot '-' using 1 notitle
+120
+150
+90
+200
+e
+`,
+  dispersion: `set title "Dispersión"
+set xlabel "x"
+set ylabel "y"
+plot '-' using 1:2 with points pointtype 7 title "datos"
+1 2
+2 4
+3 5
+4 4
+5 6
+6 7
+e
+`,
+};
+const GNUPLOT_EN = {
+  funciones: `set title "Trigonometric functions"
+set xlabel "x"
+set ylabel "y"
+set grid
+plot sin(x) title "sin(x)", cos(x) title "cos(x)"
+`,
+  barras: `set title "Sales by quarter"
+set style data histograms
+set style fill solid
+set boxwidth 0.6
+set yrange [0:*]
+set xtics ("Q1" 0, "Q2" 1, "Q3" 2, "Q4" 3)
+plot '-' using 1 notitle
+120
+150
+90
+200
+e
+`,
+  dispersion: `set title "Scatter"
+set xlabel "x"
+set ylabel "y"
+plot '-' using 1:2 with points pointtype 7 title "data"
+1 2
+2 4
+3 5
+4 4
+5 6
+6 7
+e
+`,
+};
+
+// The app auto-prepends `\version` (see renderLilypond) — examples are pure
+// music syntax, no boilerplate. Same content for es/en, no text labels.
+const LILYPOND = {
+  escala: `{
+  c' d' e' f' g' a' b' c''
+}
+`,
+  acordes: `{
+  <c' e' g'>4 <f' a' c''>4 <g' b' d''>4 <c' e' g'>2
+}
+`,
+  dinamica: `{
+  c'4\\p d'4\\< e'4 f'4\\f g'2\\> a'4 g'4\\!
+}
+`,
+};
+
 export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
   {
     id: 'blockdiag',
@@ -911,5 +997,23 @@ export const CLI_BACKED_FORMATS: CliBackedFormat[] = [
     fileExt: '.bob',
     downloadFilename: 'diagrama.bob',
     examples: { es: SVGBOB_ES, en: SVGBOB_EN },
+  },
+  {
+    id: 'gnuplot',
+    icon: LineChart,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.gp',
+    downloadFilename: 'grafico.gp',
+    examples: { es: GNUPLOT_ES, en: GNUPLOT_EN },
+  },
+  {
+    id: 'lilypond',
+    icon: Music4,
+    category: 'technical',
+    useCases: ['scientific'],
+    fileExt: '.ly',
+    downloadFilename: 'partitura.ly',
+    examples: { es: LILYPOND, en: LILYPOND },
   },
 ];
