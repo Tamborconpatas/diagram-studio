@@ -1,16 +1,24 @@
 {
   "name": "diagram-studio",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "license": "Apache-2.0",
+  "description": "Editor local de diagramas: Mermaid, Excalidraw, BPMN, Graphviz, PlantUML y más de 30 formatos",
+  "author": "Tamborconpatas <Tambotconpatas@proton.me>",
+  "homepage": "https://github.com/Tamborconpatas/diagram-studio",
+  "main": "electron/main.mjs",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "licenses": "license-checker-rseidelsohn --production --excludePrivatePackages --plainVertical --out THIRD-PARTY-NOTICES.txt",
     "preview": "vite preview",
     "check": "node scripts/check-wiring.mjs",
-    "check-examples": "node scripts/check-examples.mjs"
+    "check-examples": "node scripts/check-examples.mjs",
+    "electron:build": "node scripts/build-electron.mjs",
+    "electron:dev": "npm run build && npm run electron:build && electron .",
+    "dist:win": "npm run build && npm run electron:build && electron-builder --win --publish never",
+    "dist:linux": "npm run build && npm run electron:build && electron-builder --linux --publish never"
   },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.1",
@@ -46,8 +54,59 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "electron": "^44.7.1",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.28.2",
     "license-checker-rseidelsohn": "^5.0.1",
     "typescript": "~6.0.2",
     "vite": "^8.0.12"
-  }
+  },
+  "build": {
+    "appId": "io.github.tamborconpatas.diagram-studio",
+    "productName": "Diagram Studio",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "electron/main.mjs",
+      "electron/dbml.cjs",
+      "scripts/diagrams-runner.py",
+      "scripts/blockdiag-runner.py",
+      "tools/**",
+      "LICENSE",
+      "NOTICE",
+      "THIRD-PARTY-NOTICES.txt",
+      "package.json",
+      "!**/node_modules/**"
+    ],
+    "asarUnpack": [
+      "electron/dbml.cjs",
+      "scripts/*.py",
+      "tools/**"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "${name}-${version}-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Graphics",
+      "maintainer": "Tamborconpatas <Tambotconpatas@proton.me>",
+      "artifactName": "${name}-${version}.${ext}",
+      "syncDesktopName": true
+    }
+  },
+  "desktopName": "diagram-studio.desktop"
 }

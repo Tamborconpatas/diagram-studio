@@ -4,6 +4,17 @@
 
 Local diagram viewer/editor, 35 formats grouped by tool or by diagram type (sequence, processes, networks, etc.) from the home screen: BPMN, Mermaid, PlantUML (with a C4 preset), Graphviz, D2, Nomnoml, Pikchr, Markmap (software/UML); draw.io (full visual drag-and-drop editor) and Excalidraw (freehand whiteboard); Blockdiag and its family (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag) and WireViz (wiring/cable harnesses); TikZ and its family (CircuiTikz, Feynman, Chemfig, Skak), MetaPost, WaveDrom, SMILES, ABC, Vega-Lite, Gnuplot, LilyPond, DBML and SMC (technical models); Sankey, Ditaa and Svgbob (ASCII art); plus architecture diagram generation (AWS/GCP/Azure) from Python (`diagrams`).
 
+## Install (desktop app)
+
+Download the installer from [Releases](https://github.com/Tamborconpatas/diagram-studio/releases):
+
+- **Windows:** `diagram-studio-<version>-Setup.exe` (one click, creates shortcuts).
+- **Linux:** `diagram-studio-<version>.AppImage` (run directly) or `.deb`.
+
+The app ships everything the in-browser editors need (BPMN, Mermaid, Graphviz, Excalidraw, draw.io, Vega-Lite, etc.), plus Ditaa, SMC and DBML. Formats that rely on external tools (TikZ, D2, Gnuplot, LilyPond, WireViz, Blockdiag, Svgbob, `diagrams`) still need them installed; see below.
+
+To build the installers yourself: `npm run dist:linux` or `npm run dist:win` (output in `release/`). Pushing a `v*` tag builds and publishes them (`.github/workflows/release.yml`).
+
 ## Setup
 
 ### Linux
