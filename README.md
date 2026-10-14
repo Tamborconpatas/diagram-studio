@@ -60,7 +60,7 @@ Cada editor de código permite pegar/editar el código fuente, descargarlo en su
 
 ## Licencias
 
-El código de Diagram Studio es [Apache-2.0](LICENSE). Las herramientas de terceros que usa se dividen en dos grupos:
+El código de Diagram Studio es [Apache-2.0](LICENSE). Las herramientas de terceros que usa se dividen en dos grupos: Los avisos de copyright de las dependencias npm están en [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt) (se regenera con `npm run licenses`).
 
 **Librerías de frontend** (`npm install`, quedan empaquetadas en la app):
 

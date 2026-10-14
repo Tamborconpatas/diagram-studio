@@ -60,7 +60,7 @@ Every code editor lets you paste/edit the source, download it in its native form
 
 ## Licenses
 
-Diagram Studio's own code is [Apache-2.0](LICENSE). The third-party tools it uses fall into two groups:
+Diagram Studio's own code is [Apache-2.0](LICENSE). The third-party tools it uses fall into two groups: The copyright notices of the npm dependencies are in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt) (regenerate with `npm run licenses`).
 
 **Frontend libraries** (`npm install`, bundled into the app):
 
