@@ -4,3 +4,7 @@ dist-ssr
 *.local
 .venv-diagrams
 .DS_Store
+release
+electron/main.mjs
+electron/dbml.cjs
+.tools-data

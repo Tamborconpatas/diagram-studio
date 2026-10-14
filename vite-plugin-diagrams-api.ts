@@ -2,30 +2,38 @@ import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { Connect, Plugin, ViteDevServer } from 'vite';
+import type { Connect, Plugin } from 'vite';
+import { mountToolsApi } from './tools-installer.ts';
+
+// The desktop build (electron/) points these at the unpacked app resources
+// and a per-user venv; in `vite dev` they default to the repo checkout.
+const ROOT = process.env.DIAGRAM_STUDIO_ROOT ?? import.meta.dirname;
+const VENV = process.env.DIAGRAM_STUDIO_VENV ?? join(ROOT, '.venv-diagrams');
+const DATA_DIR = process.env.DIAGRAM_STUDIO_DATA ?? join(ROOT, '.tools-data');
 
 const PYTHON = join(
-  import.meta.dirname,
-  '.venv-diagrams',
+  VENV,
   process.platform === 'win32' ? 'Scripts' : 'bin',
   process.platform === 'win32' ? 'python.exe' : 'python3',
 );
-const RUNNER = join(import.meta.dirname, 'scripts', 'diagrams-runner.py');
-const BLOCKDIAG_RUNNER = join(import.meta.dirname, 'scripts', 'blockdiag-runner.py');
+const RUNNER = join(ROOT, 'scripts', 'diagrams-runner.py');
+const BLOCKDIAG_RUNNER = join(ROOT, 'scripts', 'blockdiag-runner.py');
 const DBML_RENDERER = join(
-  import.meta.dirname,
+  ROOT,
   'node_modules',
   '.bin',
   process.platform === 'win32' ? 'dbml-renderer.cmd' : 'dbml-renderer',
 );
-const SMC_JAR = join(import.meta.dirname, 'tools', 'Smc.jar');
-const DITAA_JAR = join(import.meta.dirname, 'tools', 'ditaa.jar');
+const SMC_JAR = join(ROOT, 'tools', 'Smc.jar');
+const DITAA_JAR = join(ROOT, 'tools', 'ditaa.jar');
 const WIREVIZ = join(
-  import.meta.dirname,
-  '.venv-diagrams',
+  VENV,
   process.platform === 'win32' ? 'Scripts' : 'bin',
   process.platform === 'win32' ? 'wireviz.exe' : 'wireviz',
 );
+// Set by the desktop app: run the bundled CLI with Electron acting as Node.
+const NODE = process.env.DIAGRAM_STUDIO_NODE;
+const DBML_BUNDLE = join(ROOT, 'electron', 'dbml.cjs');
 const MAX_BODY_BYTES = 200_000;
 
 async function readBody(req: import('node:http').IncomingMessage): Promise<string> {
@@ -65,7 +73,10 @@ function run(command: string, args: string[], cwd: string, timeout: number): Pro
     // executables; execFile needs shell:true to run them there (EINVAL/ENOENT
     // otherwise), unlike Unix where the file itself is directly executable.
     const shell = process.platform === 'win32' && /\.(cmd|bat)$/i.test(command);
-    execFile(command, args, { cwd, timeout, shell }, (err, stdout, stderr) => {
+    // Only for this child: set globally it would turn Electron's own helper
+    // processes into plain Node too.
+    const env = command === NODE ? { ...process.env, ELECTRON_RUN_AS_NODE: '1' } : process.env;
+    execFile(command, args, { cwd, timeout, shell, env }, (err, stdout, stderr) => {
       if (err) reject(new Error(stderr || stdout || err.message));
       else resolve();
     });
@@ -74,8 +85,10 @@ function run(command: string, args: string[], cwd: string, timeout: number): Pro
 
 type Handler = (code: string, dir: string) => Promise<string>;
 
-function jsonEndpoint(server: ViteDevServer, path: string, tmpPrefix: string, handler: Handler) {
-  server.middlewares.use(path, (async (req: Connect.IncomingMessage, res) => {
+type UseMiddleware = (path: string, handler: Connect.NextHandleFunction) => unknown;
+
+function jsonEndpoint(use: UseMiddleware, path: string, tmpPrefix: string, handler: Handler) {
+  use(path, (async (req: Connect.IncomingMessage, res) => {
     if (req.method !== 'POST') {
       res.statusCode = 405;
       res.end('Method Not Allowed');
@@ -191,7 +204,9 @@ const RENDERERS: Record<string, Handler> = {
   skak: latexFormat('border=2pt', '\\usepackage{skak}'),
   ditaa: renderDitaa,
   dbml: runner('input.dbml', 'output.svg', [
-    { command: DBML_RENDERER, args: ['-i', 'input.dbml', '-o', 'output.svg'], timeout: 15_000 },
+    NODE
+      ? { command: NODE, args: [DBML_BUNDLE, '-i', 'input.dbml', '-o', 'output.svg'], timeout: 15_000 }
+      : { command: DBML_RENDERER, args: ['-i', 'input.dbml', '-o', 'output.svg'], timeout: 15_000 },
   ]),
   ...Object.fromEntries(
     (['blockdiag', 'seqdiag', 'actdiag', 'nwdiag', 'packetdiag', 'rackdiag'] as const).map((family) => [
@@ -225,13 +240,19 @@ const RENDERERS: Record<string, Handler> = {
   lilypond: renderLilypond,
 };
 
+// Shared by the Vite dev server (below) and the desktop app's own HTTP server.
+export function mountDiagramsApi(use: UseMiddleware) {
+  mountToolsApi(use, { dataDir: DATA_DIR, venv: VENV, python: PYTHON, wireviz: WIREVIZ });
+  for (const [id, handler] of Object.entries(RENDERERS)) {
+    jsonEndpoint(use, `/api/render-${id}`, `${id}-`, handler);
+  }
+}
+
 export function diagramsApiPlugin(): Plugin {
   return {
     name: 'diagrams-python-api',
     configureServer(server) {
-      for (const [id, handler] of Object.entries(RENDERERS)) {
-        jsonEndpoint(server, `/api/render-${id}`, `${id}-`, handler);
-      }
+      mountDiagramsApi((path, handler) => server.middlewares.use(path, handler));
     },
   };
 }

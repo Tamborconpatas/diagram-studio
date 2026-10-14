@@ -12,6 +12,15 @@ export interface Translations {
   codeTitle: string;
   renderBtn: string;
   renderingBtn: string;
+  toolInstaller: {
+    missingTitle: string;
+    missingHint: (names: string) => string;
+    installBtn: string;
+    installingTitle: string;
+    installingHint: string;
+    failedTitle: string;
+    retryBtn: string;
+  };
   compilingBtn: string;
   openFileBtn: (ext: string) => string;
   downloadFileBtn: (ext: string) => string;
