@@ -1,5 +1,6 @@
 import { execFile, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { access, chmod, copyFile, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
@@ -85,6 +86,30 @@ async function refreshWindowsPath(binDir: string) {
     "[Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')",
   ]);
   if (out.trim()) process.env.PATH = `${binDir};${out.trim()}`;
+  addWindowsToolDirs();
+}
+
+// Several Windows installers (Graphviz, gnuplot, D2, rustup...) don't put their
+// folder on PATH when installed silently, so a tool winget just installed would
+// look missing. Add the folders they use by default, when they exist.
+function addWindowsToolDirs() {
+  if (!IS_WIN) return;
+  const programFiles = process.env.ProgramFiles ?? 'C:\\Program Files';
+  const localAppData = process.env.LOCALAPPDATA ?? '';
+  const home = process.env.USERPROFILE ?? '';
+  const candidates = [
+    join(programFiles, 'Graphviz', 'bin'),
+    join(programFiles, 'gnuplot', 'bin'),
+    join(programFiles, 'D2', 'bin'),
+    join(programFiles, 'D2'),
+    join(programFiles, 'MiKTeX', 'miktex', 'bin', 'x64'),
+    join(localAppData, 'Programs', 'MiKTeX', 'miktex', 'bin', 'x64'),
+    join(localAppData, 'Microsoft', 'WinGet', 'Links'),
+    join(home, '.cargo', 'bin'),
+  ];
+  const current = (process.env.PATH ?? '').split(delimiter).map((dir) => dir.toLowerCase());
+  const missing = candidates.filter((dir) => dir && existsSync(dir) && !current.includes(dir.toLowerCase()));
+  if (missing.length) process.env.PATH = `${missing.join(delimiter)}${delimiter}${process.env.PATH ?? ''}`;
 }
 
 type PackageManager = 'apt' | 'dnf' | 'pacman';
@@ -346,6 +371,7 @@ export function mountToolsApi(use: UseMiddleware, paths: ToolPaths) {
   const binDir = join(paths.dataDir, 'tools', 'bin');
   // Tools we install ourselves (d2, svgbob) live here; spawned children see it.
   process.env.PATH = `${binDir}${delimiter}${process.env.PATH ?? ''}`;
+  addWindowsToolDirs();
   let job: Job | null = null;
 
   const sendJson = (res: import('node:http').ServerResponse, status: number, body: unknown) => {
@@ -418,6 +444,7 @@ export function mountToolsApi(use: UseMiddleware, paths: ToolPaths) {
     sendJson(res, 200, {
       tools: tools.map((t, i) => ({ id: t.id, label: t.label, installed: installed[i] })),
       formats: FORMAT_TOOLS,
+      platform: process.platform,
       job,
     });
   }) as Connect.NextHandleFunction);

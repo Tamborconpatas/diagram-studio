@@ -14,7 +14,7 @@ export interface Translations {
   renderingBtn: string;
   toolInstaller: {
     missingTitle: string;
-    missingHint: (names: string) => string;
+    missingHint: (names: string, platform: string) => string;
     installBtn: string;
     installingTitle: string;
     installingHint: string;

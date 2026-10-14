@@ -10,7 +10,9 @@ export const translations: Record<'es' | 'en', Translations> = {
     renderingBtn: 'Renderizando…',
     toolInstaller: {
       missingTitle: 'Falta software para este formato',
-      missingHint: (names) => `Este formato necesita: ${names}. La app puede instalarlo por ti; en Linux te pedirá tu contraseña.`,
+      missingHint: (names, platform) =>
+        `Este formato necesita: ${names}. La app puede instalarlo por ti` +
+        (platform === 'win32' ? '; Windows te pedirá permiso de administrador.' : platform === 'linux' ? '; te pedirá tu contraseña.' : '.'),
       installBtn: 'Instalar',
       installingTitle: 'Instalando…',
       installingHint: 'Puede tardar varios minutos. No cierres la app.',
@@ -477,7 +479,9 @@ export const translations: Record<'es' | 'en', Translations> = {
     renderingBtn: 'Rendering…',
     toolInstaller: {
       missingTitle: 'Software missing for this format',
-      missingHint: (names) => `This format needs: ${names}. The app can install it for you; on Linux it will ask for your password.`,
+      missingHint: (names, platform) =>
+        `This format needs: ${names}. The app can install it for you` +
+        (platform === 'win32' ? '; Windows will ask for administrator permission.' : platform === 'linux' ? '; it will ask for your password.' : '.'),
       installBtn: 'Install',
       installingTitle: 'Installing…',
       installingHint: 'This can take several minutes. Do not close the app.',

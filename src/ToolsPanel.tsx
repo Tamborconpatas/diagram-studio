@@ -18,6 +18,7 @@ interface Job {
 interface Status {
   tools: ToolInfo[];
   formats: Record<string, string[]>;
+  platform: string;
   job: Job | null;
 }
 
@@ -60,10 +61,10 @@ export function useTools(formatId: string) {
     await refresh();
   };
 
-  return { missing, job, install };
+  return { missing, job, install, platform: status?.platform ?? '' };
 }
 
-export function ToolsPanel({ missing, job, onInstall }: { missing: ToolInfo[]; job: Job | null; onInstall: (ids: string[]) => void }) {
+export function ToolsPanel({ missing, job, platform, onInstall }: { missing: ToolInfo[]; job: Job | null; platform: string; onInstall: (ids: string[]) => void }) {
   const { t } = useI18n();
   const running = job?.state === 'running';
   const failed = job?.state === 'error';
@@ -75,7 +76,7 @@ export function ToolsPanel({ missing, job, onInstall }: { missing: ToolInfo[]; j
           {running ? t.toolInstaller.installingTitle : failed ? t.toolInstaller.failedTitle : t.toolInstaller.missingTitle}
         </h2>
         <p className="text-sm text-zinc-400">
-          {running ? t.toolInstaller.installingHint : t.toolInstaller.missingHint(missing.map((tool) => tool.label).join(', '))}
+          {running ? t.toolInstaller.installingHint : t.toolInstaller.missingHint(missing.map((tool) => tool.label).join(', '), platform)}
         </p>
         {failed && <pre className="text-xs text-red-400 whitespace-pre-wrap">{job?.error}</pre>}
         {job && job.log.length > 0 && (

@@ -1,7 +1,7 @@
 {
   "name": "diagram-studio",
   "private": true,
-  "version": "1.1.2",
+  "version": "1.1.3",
   "type": "module",
   "license": "Apache-2.0",
   "description": "Editor local de diagramas: Mermaid, Excalidraw, BPMN, Graphviz, PlantUML y más de 30 formatos",

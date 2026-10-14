@@ -172,7 +172,7 @@ export default function CliBackedEditor({
       onAutoRender={(src) => render(src)}
       renderArea={
         blocked ? (
-          <ToolsPanel missing={tools.missing} job={tools.job} onInstall={tools.install} />
+          <ToolsPanel missing={tools.missing} job={tools.job} platform={tools.platform} onInstall={tools.install} />
         ) : (
           <div
             className={`w-full h-full flex items-center justify-center overflow-auto p-6 ${whiteBg ? 'bg-white text-black ' : ''}[&_svg]:max-w-none`}
