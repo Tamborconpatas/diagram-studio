@@ -1,6 +1,6 @@
 # Diagram Studio
 
-[MIT](LICENSE) · [Contributing](CONTRIBUTING.md) · [Español](README.md)
+[Apache-2.0](LICENSE) · [Contributing](CONTRIBUTING.md) · [Español](README.md)
 
 Local diagram viewer/editor, 35 formats grouped by tool or by diagram type (sequence, processes, networks, etc.) from the home screen: BPMN, Mermaid, PlantUML (with a C4 preset), Graphviz, D2, Nomnoml, Pikchr, Markmap (software/UML); draw.io (full visual drag-and-drop editor) and Excalidraw (freehand whiteboard); Blockdiag and its family (Seqdiag, Actdiag, Nwdiag, Packetdiag, Rackdiag) and WireViz (wiring/cable harnesses); TikZ and its family (CircuiTikz, Feynman, Chemfig, Skak), MetaPost, WaveDrom, SMILES, ABC, Vega-Lite, Gnuplot, LilyPond, DBML and SMC (technical models); Sankey, Ditaa and Svgbob (ASCII art); plus architecture diagram generation (AWS/GCP/Azure) from Python (`diagrams`).
 
@@ -60,7 +60,7 @@ Every code editor lets you paste/edit the source, download it in its native form
 
 ## Licenses
 
-Diagram Studio's own code is [MIT](LICENSE). The third-party tools it uses fall into two groups:
+Diagram Studio's own code is [Apache-2.0](LICENSE). The third-party tools it uses fall into two groups:
 
 **Frontend libraries** (`npm install`, bundled into the app):
 

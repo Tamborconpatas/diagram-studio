@@ -44,4 +44,4 @@ Mirá `src/editors/PikchrEditor.tsx` o `AbcEditor.tsx` como plantilla: un compon
 
 ## Licencias
 
-El código del proyecto es MIT ([LICENSE](LICENSE)). Si agregás una dependencia (npm o herramienta de sistema), sumala a la tabla de `## Licencias` del README con su licencia real — no asumas, varias terminan siendo distintas de lo esperado (ver el historial de commits de esa sección).
+El código del proyecto es Apache-2.0 ([LICENSE](LICENSE)). Si agregás una dependencia (npm o herramienta de sistema), sumala a la tabla de `## Licencias` del README con su licencia real — no asumas, varias terminan siendo distintas de lo esperado (ver el historial de commits de esa sección).
