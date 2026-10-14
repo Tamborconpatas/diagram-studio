@@ -236,6 +236,9 @@ function buildTools(paths: ToolPaths): Tool[] {
           {
             winget: 'MiKTeX.MiKTeX',
             apt: ['texlive-latex-base', 'texlive-pictures', 'texlive-latex-extra', 'texlive-science', 'texlive-games', 'texlive-metapost', 'texlive-binaries', 'dvisvgm'],
+            // Fedora ships one package per LaTeX package; Arch groups them by collection.
+            dnf: ['texlive-latex', 'texlive-dvisvgm', 'texlive-metapost', 'texlive-pgf', 'texlive-circuitikz', 'texlive-tikz-feynman', 'texlive-chemfig', 'texlive-skak', 'texlive-standalone', 'texlive-xkeyval'],
+            pacman: ['texlive-basic', 'texlive-binextra', 'texlive-latexrecommended', 'texlive-latexextra', 'texlive-pictures', 'texlive-games', 'dvisvgm'],
           },
           binDir,
         );
@@ -275,7 +278,7 @@ function buildTools(paths: ToolPaths): Tool[] {
       check: () => hasCommand('svgbob_cli', '--version'),
       install: async (ctx) => {
         if (!(await hasCommand('cargo', '--version'))) {
-          await installSystemPackages(ctx, 'Rust (cargo)', { winget: 'Rustlang.Rustup', apt: ['cargo'], dnf: ['cargo'], pacman: ['rust'] }, binDir);
+          await installSystemPackages(ctx, 'Rust (cargo)', { winget: 'Rustlang.Rustup', apt: ['cargo', 'gcc'], dnf: ['cargo', 'gcc'], pacman: ['rust', 'gcc'] }, binDir);
           if (IS_WIN) await ctx.sh('rustup', ['default', 'stable'], { timeoutMs: 30 * 60_000 });
         }
         ctx.log('cargo install svgbob_cli (compilando)');

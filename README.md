@@ -11,7 +11,7 @@ Descarga el instalador desde [Releases](https://github.com/Tamborconpatas/diagra
 - **Windows:** `diagram-studio-<versión>-Setup.exe` (un clic, crea accesos directos).
 - **Linux:** `diagram-studio-<versión>.AppImage` (ejecutable directo) o `.deb`.
 
-La app trae todo lo necesario para los editores que funcionan en el navegador (BPMN, Mermaid, Graphviz, Excalidraw, draw.io, Vega-Lite, etc.), más Ditaa, SMC y DBML. Los formatos que dependen de herramientas externas (TikZ, D2, Gnuplot, LilyPond, WireViz, Blockdiag, Svgbob, `diagrams`) muestran un panel con un botón **Instalar** la primera vez que los abres: en Windows usa winget (pide permiso de administrador) y en Linux el gestor de paquetes (`apt`, `dnf` o `pacman`, pide tu contraseña con `pkexec`). D2 se descarga con su SHA-256 verificado y Svgbob se compila con `cargo` (tarda varios minutos). Con `dnf`/`pacman` la instalación automática de LaTeX no está soportada: instálalo a mano.
+La app trae todo lo necesario para los editores que funcionan en el navegador (BPMN, Mermaid, Graphviz, Excalidraw, draw.io, Vega-Lite, etc.), más Ditaa, SMC y DBML. Los formatos que dependen de herramientas externas (TikZ, D2, Gnuplot, LilyPond, WireViz, Blockdiag, Svgbob, `diagrams`) muestran un panel con un botón **Instalar** la primera vez que los abres: en Windows usa winget (pide permiso de administrador) y en Linux el gestor de paquetes (`apt`, `dnf` o `pacman`, pide tu contraseña con `pkexec`). D2 se descarga con su SHA-256 verificado y Svgbob se compila con `cargo` (tarda varios minutos).
 
 Para generar los instaladores tú mismo: `npm run dist:linux` o `npm run dist:win` (salen en `release/`). Un tag `v*` los construye y publica solo (`.github/workflows/release.yml`).
 
