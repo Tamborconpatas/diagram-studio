@@ -47,11 +47,11 @@ const FORMAT_TOOLS: Record<string, string[]> = {
   rackdiag: ['python-env'],
   wireviz: ['python-env', 'graphviz'],
   tikz: ['latex'],
-  circuitikz: ['latex'],
-  feynman: ['latex'],
-  chemfig: ['latex'],
-  skak: ['latex'],
-  metapost: ['latex'],
+  circuitikz: ['latex', 'tex-circuitikz'],
+  feynman: ['latex', 'tex-feynman'],
+  chemfig: ['latex', 'tex-chemfig'],
+  skak: ['latex', 'tex-skak'],
+  metapost: ['latex', 'metapost'],
   ditaa: ['java'],
   smc: ['java', 'graphviz'],
   d2: ['d2'],
@@ -110,6 +110,15 @@ function addWindowsToolDirs() {
   const current = (process.env.PATH ?? '').split(delimiter).map((dir) => dir.toLowerCase());
   const missing = candidates.filter((dir) => dir && existsSync(dir) && !current.includes(dir.toLowerCase()));
   if (missing.length) process.env.PATH = `${missing.join(delimiter)}${delimiter}${process.env.PATH ?? ''}`;
+}
+
+// True when kpsewhich can locate every given TeX file (installed LaTeX packages).
+async function hasTexFiles(...files: string[]): Promise<boolean> {
+  for (const file of files) {
+    const { out } = await exec('kpsewhich', [file]);
+    if (!out.trim()) return false;
+  }
+  return true;
 }
 
 type PackageManager = 'apt' | 'dnf' | 'pacman';
@@ -216,6 +225,43 @@ function buildTools(paths: ToolPaths): Tool[] {
   const binDir = join(paths.dataDir, 'tools', 'bin');
   const pipPackages = [['diagrams'], ['setuptools<81', 'blockdiag', 'seqdiag', 'actdiag', 'nwdiag'], ['wireviz']];
 
+  // One install covers every LaTeX-related tool below (the packages overlap).
+  const installLatex = async (ctx: InstallCtx) => {
+    await installSystemPackages(
+      ctx,
+      'LaTeX',
+      {
+        winget: 'MiKTeX.MiKTeX',
+        apt: ['texlive-latex-base', 'texlive-pictures', 'texlive-latex-extra', 'texlive-science', 'texlive-games', 'texlive-metapost', 'texlive-binaries', 'dvisvgm'],
+        // Fedora ships one package per LaTeX package; Arch groups them by collection.
+        // Besides the obvious ones: dvisvgm needs the dvips PostScript headers (tex.pro),
+        // skak needs metafont (mf) on Fedora, chemfig/skak need plaingeneric on Arch.
+        dnf: ['texlive-latex', 'texlive-dvisvgm', 'texlive-metapost', 'texlive-pgf', 'texlive-circuitikz', 'texlive-tikz-feynman', 'texlive-chemfig', 'texlive-skak', 'texlive-standalone', 'texlive-xkeyval', 'texlive-dvips', 'texlive-metafont', 'texlive-skaknew'],
+        pacman: ['texlive-basic', 'texlive-binextra', 'texlive-latexrecommended', 'texlive-latexextra', 'texlive-pictures', 'texlive-plaingeneric', 'texlive-metapost', 'texlive-games', 'dvisvgm'],
+      },
+      binDir,
+    );
+    if (!IS_WIN) return;
+    // Same MiKTeX setup as install.ps1: without these, compilations hang
+    // waiting for a confirmation prompt or fail with "not checked for updates".
+    await ctx.sh('initexmf', ['--set-config-value=[MPM]AutoInstall=1']).catch(() => undefined);
+    await ctx
+      .sh('initexmf', [`--set-config-value=[MPM]LastUserUpdateCheck=${Math.floor(Date.now() / 1000)}`])
+      .catch(() => undefined);
+    // Warm-up compile so MiKTeX fetches standalone/xkeyval/tikz libraries now, not on first use.
+    const work = await mkdtemp(join(tmpdir(), 'tikz-warmup-'));
+    try {
+      await writeFile(
+        join(work, 'doc.tex'),
+        '\\documentclass[tikz,dvisvgm,border=2pt]{standalone}\n\\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,decorations.pathmorphing,patterns}\n\\begin{document}\\begin{tikzpicture}\\draw (0,0) -- (1,1);\\end{tikzpicture}\\end{document}\n',
+      );
+      ctx.log('Precalentando paquetes LaTeX (puede tardar)');
+      await ctx.sh('latex', ['-interaction=nonstopmode', '-halt-on-error', 'doc.tex'], { cwd: work, timeoutMs: 20 * 60_000 }).catch(() => undefined);
+    } finally {
+      await rm(work, { recursive: true, force: true });
+    }
+  };
+
   return [
     {
       id: 'java',
@@ -252,43 +298,34 @@ function buildTools(paths: ToolPaths): Tool[] {
     },
     {
       id: 'latex',
-      label: 'LaTeX (TikZ, MetaPost, dvisvgm)',
-      check: async () => (await hasCommand('latex', '--version')) && (await hasCommand('dvisvgm', '--version')),
-      install: async (ctx) => {
-        await installSystemPackages(
-          ctx,
-          'LaTeX',
-          {
-            winget: 'MiKTeX.MiKTeX',
-            apt: ['texlive-latex-base', 'texlive-pictures', 'texlive-latex-extra', 'texlive-science', 'texlive-games', 'texlive-metapost', 'texlive-binaries', 'dvisvgm'],
-            // Fedora ships one package per LaTeX package; Arch groups them by collection.
-            // Besides the obvious ones: dvisvgm needs the dvips PostScript headers (tex.pro),
-            // skak needs metafont (mf) on Fedora, chemfig/skak need plaingeneric on Arch.
-            dnf: ['texlive-latex', 'texlive-dvisvgm', 'texlive-metapost', 'texlive-pgf', 'texlive-circuitikz', 'texlive-tikz-feynman', 'texlive-chemfig', 'texlive-skak', 'texlive-standalone', 'texlive-xkeyval', 'texlive-dvips', 'texlive-metafont', 'texlive-skaknew'],
-            pacman: ['texlive-basic', 'texlive-binextra', 'texlive-latexrecommended', 'texlive-latexextra', 'texlive-pictures', 'texlive-plaingeneric', 'texlive-metapost', 'texlive-games', 'dvisvgm'],
-          },
-          binDir,
-        );
-        if (!IS_WIN) return;
-        // Same MiKTeX setup as install.ps1: without these, compilations hang
-        // waiting for a confirmation prompt or fail with "not checked for updates".
-        await ctx.sh('initexmf', ['--set-config-value=[MPM]AutoInstall=1']).catch(() => undefined);
-        await ctx
-          .sh('initexmf', [`--set-config-value=[MPM]LastUserUpdateCheck=${Math.floor(Date.now() / 1000)}`])
-          .catch(() => undefined);
-        // Warm-up compile so MiKTeX fetches standalone/xkeyval/tikz libraries now, not on first use.
-        const work = await mkdtemp(join(tmpdir(), 'tikz-warmup-'));
-        try {
-          await writeFile(
-            join(work, 'doc.tex'),
-            '\\documentclass[tikz,dvisvgm,border=2pt]{standalone}\n\\usetikzlibrary{arrows.meta,positioning,shapes.geometric,calc,decorations.pathmorphing,patterns}\n\\begin{document}\\begin{tikzpicture}\\draw (0,0) -- (1,1);\\end{tikzpicture}\\end{document}\n',
-          );
-          ctx.log('Precalentando paquetes LaTeX (puede tardar)');
-          await ctx.sh('latex', ['-interaction=nonstopmode', '-halt-on-error', 'doc.tex'], { cwd: work, timeoutMs: 20 * 60_000 }).catch(() => undefined);
-        } finally {
-          await rm(work, { recursive: true, force: true });
-        }
-      },
+      label: 'LaTeX (latex, dvisvgm, TikZ)',
+      // MiKTeX fetches missing packages on first use (AutoInstall below), so on
+      // Windows only the programs matter.
+      check: async () =>
+        (await hasCommand('latex', '--version')) && (await hasCommand('dvisvgm', '--version')) && (IS_WIN || (await hasTexFiles('tikz.sty'))),
+      install: installLatex,
+    },
+    // One tool per LaTeX package a format needs, so a format only asks for what it lacks.
+    ...(
+      [
+        ['circuitikz', 'circuitikz', ['circuitikz.sty']],
+        ['feynman', 'tikz-feynman', ['tikz-feynman.sty']],
+        ['chemfig', 'chemfig', ['chemfig.sty', 'simplekv.tex']],
+        ['skak', 'skak', ['skak.sty']],
+      ] as const
+    ).map(([id, name, files]) => ({
+      id: `tex-${id}`,
+      label: `LaTeX: paquete ${name}`,
+      check: async () => IS_WIN || (await hasTexFiles(...files)),
+      install: installLatex,
+    })),
+    {
+      id: 'metapost',
+      label: 'MetaPost (mpost)',
+      // The mpost binary alone isn't enough: texlive-metapost ships the plain.mp
+      // preload file it needs to run at all.
+      check: async () => (await hasCommand('mpost', '--version')) && (IS_WIN || (await hasTexFiles('plain.mp'))),
+      install: installLatex,
     },
     {
       id: 'd2',
@@ -429,6 +466,12 @@ export function mountToolsApi(use: UseMiddleware, paths: ToolPaths) {
       for (const id of current.ids) {
         const tool = byId.get(id)!;
         log(`== ${tool.label}`);
+        // A previous tool in this job may already have installed it (e.g. the
+        // LaTeX tools share one package list): don't ask for the password twice.
+        if (await tool.check()) {
+          log('Ya instalado');
+          continue;
+        }
         await tool.install(ctx);
         if (!(await tool.check())) throw new Error(`${tool.label}: se instaló pero no se detecta todavía. Reinicia la app.`);
       }
