@@ -3,11 +3,13 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { Connect, Plugin } from 'vite';
+import { mountToolsApi } from './tools-installer.ts';
 
 // The desktop build (electron/) points these at the unpacked app resources
 // and a per-user venv; in `vite dev` they default to the repo checkout.
 const ROOT = process.env.DIAGRAM_STUDIO_ROOT ?? import.meta.dirname;
 const VENV = process.env.DIAGRAM_STUDIO_VENV ?? join(ROOT, '.venv-diagrams');
+const DATA_DIR = process.env.DIAGRAM_STUDIO_DATA ?? join(ROOT, '.tools-data');
 
 const PYTHON = join(
   VENV,
@@ -240,6 +242,7 @@ const RENDERERS: Record<string, Handler> = {
 
 // Shared by the Vite dev server (below) and the desktop app's own HTTP server.
 export function mountDiagramsApi(use: UseMiddleware) {
+  mountToolsApi(use, { dataDir: DATA_DIR, venv: VENV, python: PYTHON, wireviz: WIREVIZ });
   for (const [id, handler] of Object.entries(RENDERERS)) {
     jsonEndpoint(use, `/api/render-${id}`, `${id}-`, handler);
   }

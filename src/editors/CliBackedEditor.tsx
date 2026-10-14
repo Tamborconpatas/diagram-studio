@@ -4,6 +4,7 @@ import { ExportButtons } from '../ExportButtons';
 import { OpenFileButton } from '../OpenFileButton';
 import { ExamplesMenu } from '../ExamplesMenu';
 import { downloadText } from '../export';
+import { ToolsPanel, useTools } from '../ToolsPanel';
 import { useI18n } from '../i18n';
 import type { Language } from '../i18n/types';
 import type { CliBackedFormat } from '../cliBackedFormats';
@@ -79,6 +80,8 @@ export default function CliBackedEditor({
   const [svgMarkup, setSvgMarkup] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const tools = useTools(apiPath);
+  const blocked = tools.missing.length > 0;
 
   const exampleList = Object.keys(examples[language]).map((key) => ({
     label: exampleLabels[key] ?? key,
@@ -124,6 +127,14 @@ export default function CliBackedEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Once the missing tools finish installing, render what the user has.
+  const wasBlockedRef = useRef(false);
+  useEffect(() => {
+    if (wasBlockedRef.current && !blocked) render(code);
+    wasBlockedRef.current = blocked;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blocked]);
+
   return (
     <EditorLayout
       examples={
@@ -154,15 +165,20 @@ export default function CliBackedEditor({
           <ExportButtons filename={exportFilename} getSvg={async () => svgMarkup} />
         </>
       }
-      error={error}
+      error={blocked ? null : error}
+      disableZoomPane={blocked}
       code={code}
       onCodeChange={setCode}
       onAutoRender={(src) => render(src)}
       renderArea={
-        <div
-          className={`w-full h-full flex items-center justify-center overflow-auto p-6 ${whiteBg ? 'bg-white text-black ' : ''}[&_svg]:max-w-none`}
-          dangerouslySetInnerHTML={{ __html: svgMarkup }}
-        />
+        blocked ? (
+          <ToolsPanel missing={tools.missing} job={tools.job} onInstall={tools.install} />
+        ) : (
+          <div
+            className={`w-full h-full flex items-center justify-center overflow-auto p-6 ${whiteBg ? 'bg-white text-black ' : ''}[&_svg]:max-w-none`}
+            dangerouslySetInnerHTML={{ __html: svgMarkup }}
+          />
+        )
       }
     />
   );

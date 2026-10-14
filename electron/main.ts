@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Menu, shell } from 'electron';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { readFileSync } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, sep } from 'node:path';
 
@@ -34,6 +35,7 @@ async function startServer(): Promise<number> {
   // runners) next to app.asar, since java/python can't read inside it.
   process.env.DIAGRAM_STUDIO_ROOT = app.isPackaged ? `${appPath}.unpacked` : appPath;
   process.env.DIAGRAM_STUDIO_VENV = join(app.getPath('userData'), 'venv');
+  process.env.DIAGRAM_STUDIO_DATA = app.getPath('userData');
   // No node_modules/.bin shims when packaged: run bundled CLIs with Electron
   // itself acting as Node.
   process.env.DIAGRAM_STUDIO_NODE = process.execPath;
@@ -113,6 +115,29 @@ async function createWindow() {
   });
 
   await win.loadURL(origin);
+}
+
+// An AppImage can't carry the SUID chrome-sandbox helper, so Chromium's
+// sandbox relies on unprivileged user namespaces. Ubuntu 24.04+ restricts
+// those through AppArmor and the app would abort at startup; only in that
+// case fall back to --no-sandbox (this window only loads our own local pages).
+function userNamespacesBlocked(): boolean {
+  const blockedWhen: [string, string][] = [
+    ['/proc/sys/kernel/apparmor_restrict_unprivileged_userns', '1'],
+    ['/proc/sys/kernel/unprivileged_userns_clone', '0'],
+    ['/proc/sys/user/max_user_namespaces', '0'],
+  ];
+  return blockedWhen.some(([file, value]) => {
+    try {
+      return readFileSync(file, 'utf-8').trim() === value;
+    } catch {
+      return false;
+    }
+  });
+}
+
+if (process.platform === 'linux' && process.env.APPIMAGE && userNamespacesBlocked()) {
+  app.commandLine.appendSwitch('no-sandbox');
 }
 
 if (!app.requestSingleInstanceLock()) {

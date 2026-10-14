@@ -7,3 +7,4 @@ dist-ssr
 release
 electron/main.mjs
 electron/dbml.cjs
+.tools-data
