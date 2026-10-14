@@ -237,8 +237,10 @@ function buildTools(paths: ToolPaths): Tool[] {
             winget: 'MiKTeX.MiKTeX',
             apt: ['texlive-latex-base', 'texlive-pictures', 'texlive-latex-extra', 'texlive-science', 'texlive-games', 'texlive-metapost', 'texlive-binaries', 'dvisvgm'],
             // Fedora ships one package per LaTeX package; Arch groups them by collection.
-            dnf: ['texlive-latex', 'texlive-dvisvgm', 'texlive-metapost', 'texlive-pgf', 'texlive-circuitikz', 'texlive-tikz-feynman', 'texlive-chemfig', 'texlive-skak', 'texlive-standalone', 'texlive-xkeyval'],
-            pacman: ['texlive-basic', 'texlive-binextra', 'texlive-latexrecommended', 'texlive-latexextra', 'texlive-pictures', 'texlive-games', 'dvisvgm'],
+            // Besides the obvious ones: dvisvgm needs the dvips PostScript headers (tex.pro),
+            // skak needs metafont (mf) on Fedora, chemfig/skak need plaingeneric on Arch.
+            dnf: ['texlive-latex', 'texlive-dvisvgm', 'texlive-metapost', 'texlive-pgf', 'texlive-circuitikz', 'texlive-tikz-feynman', 'texlive-chemfig', 'texlive-skak', 'texlive-standalone', 'texlive-xkeyval', 'texlive-dvips', 'texlive-metafont', 'texlive-skaknew'],
+            pacman: ['texlive-basic', 'texlive-binextra', 'texlive-latexrecommended', 'texlive-latexextra', 'texlive-pictures', 'texlive-plaingeneric', 'texlive-metapost', 'texlive-games', 'dvisvgm'],
           },
           binDir,
         );
