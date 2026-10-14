@@ -1,11 +1,11 @@
 {
   "name": "diagram-studio",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "license": "Apache-2.0",
   "description": "Editor local de diagramas: Mermaid, Excalidraw, BPMN, Graphviz, PlantUML y más de 30 formatos",
-  "author": "Tamborconpatas <Tambotconpatas@proton.me>",
+  "author": "Tamborconpatas <129793076+Tamborconpatas@users.noreply.github.com>",
   "homepage": "https://github.com/Tamborconpatas/diagram-studio",
   "main": "electron/main.mjs",
   "scripts": {
@@ -100,10 +100,11 @@
     "linux": {
       "target": [
         "AppImage",
-        "deb"
+        "deb",
+        "rpm"
       ],
       "category": "Graphics",
-      "maintainer": "Tamborconpatas <Tambotconpatas@proton.me>",
+      "maintainer": "Tamborconpatas <129793076+Tamborconpatas@users.noreply.github.com>",
       "artifactName": "${name}-${version}.${ext}",
       "syncDesktopName": true
     }
