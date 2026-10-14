@@ -9,7 +9,7 @@ Local diagram viewer/editor, 35 formats grouped by tool or by diagram type (sequ
 Download the installer from [Releases](https://github.com/Tamborconpatas/diagram-studio/releases):
 
 - **Windows:** `diagram-studio-<version>-Setup.exe` (one click, creates shortcuts).
-- **Linux:** `diagram-studio-<version>.AppImage` (run directly) or `.deb`.
+- **Linux:** `diagram-studio-<version>.AppImage` (run directly), `.deb` (Debian/Ubuntu) or `.rpm` (Fedora/openSUSE).
 
 The app ships everything the in-browser editors need (BPMN, Mermaid, Graphviz, Excalidraw, draw.io, Vega-Lite, etc.), plus Ditaa, SMC and DBML. Formats that rely on external tools (TikZ, D2, Gnuplot, LilyPond, WireViz, Blockdiag, Svgbob, `diagrams`) show a panel with an **Install** button the first time you open them: on Windows it uses winget (asks for administrator permission) and on Linux the package manager (`apt`, `dnf` or `pacman`, asking for your password via `pkexec`). D2 is downloaded with its SHA-256 verified and Svgbob is compiled with `cargo` (takes several minutes).
 

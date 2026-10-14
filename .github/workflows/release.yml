@@ -23,6 +23,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # electron-builder's rpm target shells out to rpmbuild.
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y rpm
       - run: npm ci
       - run: npm run ${{ matrix.script }}
       - uses: actions/upload-artifact@v4
@@ -32,6 +35,7 @@ jobs:
             release/*.exe
             release/*.AppImage
             release/*.deb
+            release/*.rpm
           if-no-files-found: error
 
   publish:
